@@ -1,0 +1,16 @@
+<div class="flex items-center justify-between gap-5 pt-5">
+    <div class="logo max-w-70 w-full">
+        <img src="/assets/header-logo.svg" alt="logo">
+    </div>
+    <div class="filter max-w-145 w-full">
+        <input type="text" class="w-full bg-white h-10 rounded-lg outline-0 px-3 text-(--text-color)">
+    </div>
+    <div class="profile max-w-70 w-full flex justify-center gap-3">
+        @for (menuItem of menu; track $index) {
+        <div class="flex flex-col items-center gap-px cursor-pointer">
+            <i [class]="menuItem.icon" class="text-2xl text-(--text-color)"></i>
+            <span class="text-(--text-color) text-sm">{{menuItem.label}}</span>
+        </div>
+        }
+    </div>
+</div>

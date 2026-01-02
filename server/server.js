@@ -15,7 +15,11 @@ fastify.register(require('@fastify/swagger-ui'), {
     exposeRoute: true
 });
 
-fastify.register(require('./routes/items.js'));
+fastify.register(require('@fastify/cors'), {
+    origin: 'http://localhost:4200'
+});
+
+fastify.register(require('./routes/companies.js'));
 
 const start = async () => {
     try {

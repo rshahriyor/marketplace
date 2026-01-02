@@ -1,0 +1,102 @@
+<a class="flex h-full cursor-pointer flex-col gap-1.5 rounded-[18px] bg-white p-3.75
+         max-sm:flex-row max-sm:max-h-36 max-sm:px-2.5 max-sm:py-2.75" [routerLink]="'/m/' + cardId()">
+    <div class="relative h-44.75 w-full max-sm:max-w-46.25 max-sm:h-full">
+        <!-- @if (cardImage()) { -->
+        <img class="h-full w-full rounded-2xl border border-[#D0D0D0] object-cover" loading="lazy"
+            [src]="cardImage()" [alt]="cardTitle()" />
+
+        <!-- @if (imageLoading()) {
+        <div class="absolute inset-0 z-[1001]">
+            <mk-skeleton class="h-full w-full"></mk-skeleton>
+        </div>
+        } -->
+        <!-- } @else {
+        <img class="h-full w-full rounded-2xl border border-[#D0D0D0] object-cover" loading="lazy"
+            [src]="imageBaseUrl + '/assets/card.jpg'" [alt]="cardTitle()" />
+        } -->
+
+        @if (!myCompaniesCard()) {
+        <div class="absolute left-2 top-2 flex h-6 w-6 items-center justify-center rounded-full"
+            (click)="scheduleClick($event)" [ngClass]="{
+          'bg-[#00D7AC]': isWorking(),
+          'bg-[#FFDC3F]': atLunch(),
+          'bg-[#FF8282]': isClosed()
+        }">
+            <i class="pi pi-clock text-white text-sm"></i>
+        </div>
+        } @else {
+        <div class="absolute right-2 top-2">
+            <div class="relative flex cursor-pointer justify-end"
+                (click)="eventsClick($event)">
+                <i class="pi pi-ellipsis-v hover:bg-(--text-color)/10 p-1.5 rounded-full duration-200"></i>
+
+                <ul class="absolute right-0 top-7.5 z-100 flex w-max flex-col rounded-[5px] bg-white shadow-md"
+                    [class.hidden]="!isShowEditMenu()">
+                    <li class="cursor-pointer border-y border-[#F0F0F0] px-3.25 py-2.5 font-semibold text-[#525261]
+                     hover:rounded-[5px] hover:bg-[#F0F0F0]" [routerLink]="'/m/' + cardId()"
+                        (click)="eventsClick($event)">
+                        Просмотр
+                    </li>
+
+                    <li class="cursor-pointer border-y border-[#F0F0F0] px-3.25 py-2.5 font-semibold text-[#525261]
+                     hover:rounded-[5px] hover:bg-[#F0F0F0]" [routerLink]="'../establishment'"
+                        [queryParams]="{ cardId: cardId() }" (click)="eventsClick($event)">
+                        Редактирование
+                    </li>
+
+                    <li class="cursor-pointer border-y border-[#F0F0F0] px-3.25 py-2.5 font-semibold text-[#525261]
+                     hover:rounded-[5px] hover:bg-[#F0F0F0]" (click)="onUpdateStatus()(cardId()); eventsClick($event)">
+                        {{ isActive() ? 'Скрыть' : 'Показать' }}
+                    </li>
+
+                    <!-- <li class="cursor-pointer border-y border-[#F0F0F0] px-[13px] py-[10px] font-semibold text-[#525261]
+                     hover:rounded-[5px] hover:bg-[#F0F0F0]" [routerLink]="'../add-post'"
+                        [queryParams]="{ company_id: cardId() }" (click)="eventsClick($event)">
+                        Добавить пост
+                    </li> -->
+                </ul>
+            </div>
+        </div>
+        }
+    </div>
+
+    <div class="flex h-full w-full flex-col justify-between gap-3 max-sm:gap-1.5">
+        <div class="flex flex-col gap-1.5">
+            <h3 class="line-clamp-2 text-[24px] font-bold text-[#6153FF] max-sm:text-[20px]">
+                {{ cardTitle() }}
+            </h3>
+
+            <div class="flex flex-wrap gap-1.5 overflow-hidden" [ngClass]="cardTitle()?.length <= 12 ? 'max-h-14' : cardTitle()?.length <= 15 ? 'max-h-14' : 'max-h-6.25'">
+                @for (tag of cardTags(); track tag.id) {
+                <div class="max-h-6.25 rounded-xl bg-[#F0F0F0CC] px-2.5 py-1.25 text-[13px]">
+                    <span class="line-clamp-1">
+                        {{ tag.company_tag_name }}
+                    </span>
+                </div>
+                }
+            </div>
+        </div>
+
+        <div class="flex justify-between">
+            @if (favoritesCount() >= 0) {
+            <div class="flex items-center gap-1.25"
+                (click)="eventsClick($event)">
+                <i class="pi pi-heart text-[#FF7676] text-xl"></i>
+                <span class="text-[18px] text-[#FF7676]">
+                    {{ favoritesCount() }}
+                </span>
+            </div>
+            }
+
+            <!-- @if (cardDiscount() !== undefined) {
+            <div class="flex items-center gap-[5px] rounded-full bg-[#FF5050] px-[6px] py-[5px]">
+                <img src="/assets/icons/discount.svg" alt="discount_icon" />
+                <span class="font-semibold text-white">
+                    -{{ cardDiscount()?.value.substring(0, 2) }}
+                    {{ cardDiscount()?.is_percent ? '%' : 'c' }}
+                </span>
+            </div>
+            } -->
+        </div>
+    </div>
+</a>

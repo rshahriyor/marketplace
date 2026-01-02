@@ -1,0 +1,31 @@
+@for (company of companiesList(); track $index) {
+<div class="mt-2.5">
+
+    @if (company.companies.length) {
+    <ng-container
+        *ngTemplateOutlet="titleTemp; context: { $implicit: company.category_name, id: company.category_id }">
+    </ng-container>
+    }
+
+    <div class="flex flex-wrap gap-5 mt-2">
+        @for (company of company.companies; track $index) {
+        <div class="max-w-70 w-full">
+            <mk-company-card [cardTitle]="company.name" [cardId]="company.id" [cardFavoritesCount]="1"></mk-company-card>
+        </div>
+        }
+    </div>
+</div>
+}
+
+<ng-template #titleTemp let-name let-id="id">
+    <div class="flex justify-between items-center">
+        <div class="gap-3.5 flex items-center">
+            <p class="text-[35px] font-bold m-0 text-(--text-color)">{{ name }}</p>
+        </div>
+        <a [routerLink]="['/m-i/' + id]"
+            class="flex justify-center items-center cursor-pointer gap-1.75 max-w-25 w-full h-11.5 py-2.5 px-2.75 rounded-[18px] bg-white border border-[#ECEEEF] duration-300">
+            <span class="view-all-label">Еще</span>
+            <i class="pi pi-arrow-right"></i>
+        </a>
+    </div>
+</ng-template>
