@@ -2,8 +2,9 @@
     <div class="logo max-w-70 w-full">
         <img src="/assets/header-logo.svg" alt="logo">
     </div>
-    <div class="filter max-w-145 w-full">
-        <input type="text" class="w-full bg-white h-10 rounded-lg outline-0 px-3 text-(--text-color)">
+    <div class="filter max-w-145 w-full relative">
+        <input type="text" placeholder="Поиск" class="w-full bg-white h-10 rounded-lg outline-0 pl-3 pr-8 text-(--text-color)">
+        <i class="pi pi-search absolute right-3 top-1/2 transform -translate-y-1/2"></i>
     </div>
     <div class="profile max-w-70 w-full flex justify-center gap-3">
         @for (menuItem of menu; track $index) {
