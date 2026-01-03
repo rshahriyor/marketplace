@@ -5,16 +5,16 @@ const db = new Database('db.sqlite');
 // companies
 db.prepare(`
   CREATE TABLE IF NOT EXISTS companies (
-    id TEXT PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    category_id TEXT NOT NULL
+    category_id NUMBER NOT NULL
   )
 `).run();
 
-// categories (если их ещё нет)
+// categories
 db.prepare(`
   CREATE TABLE IF NOT EXISTS categories (
-    id TEXT PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL
   )
 `).run();

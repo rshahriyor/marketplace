@@ -84,15 +84,15 @@ const addCompany = (req, reply) => {
         return reply.status(400).send({ message: 'Invalid category_id' });
     }
 
+    const result = db.prepare(
+        'INSERT INTO companies (name, category_id) VALUES (?, ?)'
+    ).run(name, category_id);
+
     const item = {
-        id: uuidv4(),
+        id: result.lastInsertRowid,
         name,
         category_id
     };
-
-    db.prepare(
-        'INSERT INTO companies (id, name, category_id) VALUES (?, ?, ?)'
-    ).run(item.id, item.name, item.category_id);
 
     reply.code(201).send(item);
 };

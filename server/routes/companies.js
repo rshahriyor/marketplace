@@ -3,7 +3,7 @@ const {getCompanies, getCompaniesByCategories, getCompaniesForMainPage, getCompa
 const companySchema = {
     type: 'object',
     properties: {
-        id: { type: 'string' },
+        id: { type: 'number' },
         name: { type: 'string' },
         category_id: { type: 'number' },
         category_name: { type: 'string' }
