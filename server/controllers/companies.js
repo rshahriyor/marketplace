@@ -1,105 +1,158 @@
-const { v4: uuidv4 } = require('uuid');
 const db = require('../data/db');
+const BASE_COMPANY_QUERY = `
+    SELECT
+        c.id AS company_id,
+        c.name AS company_name,
+        c.category_id,
+        cat.name AS category_name,
+        t.id AS tag_id,
+        t.name AS tag_name
+    FROM companies c
+    JOIN categories cat ON cat.id = c.category_id
+    LEFT JOIN company_tags ct ON ct.company_id = c.id
+    LEFT JOIN tags t ON t.id = ct.tag_id
+`;
+const mapCompanies = (rows) => {
+    const map = new Map();
 
-/**
- * GET /companies
- */
+    for (const row of rows) {
+        if (!map.has(row.company_id)) {
+            map.set(row.company_id, {
+                id: row.company_id,
+                name: row.company_name,
+                category_id: row.category_id,
+                category_name: row.category_name,
+                tags: []
+            });
+        }
+
+        if (row.tag_id) {
+            map.get(row.company_id).tags.push({
+                tag_id: row.tag_id,
+                tag_name: row.tag_name
+            });
+        }
+    }
+
+    return [...map.values()];
+};
+
+
 const getCompanies = (req, reply) => {
-    const companies = db.prepare(
-        'SELECT * FROM companies'
-    ).all();
+    const rows = db.prepare(`
+        ${BASE_COMPANY_QUERY}
+        ORDER BY c.id
+    `).all();
 
-    reply.send(companies);
+    reply.send(mapCompanies(rows));
 };
 
-/**
- * GET /companies?category_id=xxx
- */
-const getCompaniesByCategories = (req, reply) => {
-    const { category_id } = req.query;
 
-    const companies = category_id
-        ? db.prepare(
-            'SELECT * FROM companies WHERE category_id = ?'
-        ).all(category_id)
-        : db.prepare(
-            'SELECT * FROM companies'
-        ).all();
+const getCompaniesByFilter = (req, reply) => {
+    const { category_ids, tag_ids } = req.query;
 
-    reply.send(companies);
+    let sql = BASE_COMPANY_QUERY + ' WHERE 1=1 ';
+    const params = [];
+
+    if (category_ids) {
+        const ids = category_ids.split(',');
+        sql += ` AND c.category_id IN (${ids.map(() => '?').join(',')})`;
+        params.push(...ids);
+    }
+
+    if (tag_ids) {
+        const ids = tag_ids.split(',');
+
+        sql += `
+            AND EXISTS (
+                SELECT 1
+                FROM company_tags ct2
+                WHERE ct2.company_id = c.id
+                AND ct2.tag_id IN (${ids.map(() => '?').join(',')})
+            )
+        `;
+
+        params.push(...ids);
+    }
+
+    const rows = db.prepare(sql).all(...params);
+    reply.send(mapCompanies(rows));
 };
 
-/**
- * GET /companies/main
- */
+
 const getCompaniesForMainPage = (req, reply) => {
-    const categories = db.prepare(
-        'SELECT * FROM categories'
-    ).all();
+    const rows = db.prepare(BASE_COMPANY_QUERY).all();
+    const companies = mapCompanies(rows);
 
-    const companies = db.prepare(
-        'SELECT * FROM companies'
-    ).all();
+    const grouped = {};
 
-    const groupedItems = categories.map(category => ({
-        category_id: category.id,
-        category_name: category.name,
-        companies: companies.filter(
-            item => item.category_id === category.id
-        )
-    }));
+    for (const item of companies) {
+        if (!grouped[item.category_id]) {
+            grouped[item.category_id] = {
+                category_id: item.category_id,
+                category_name: item.category_name,
+                companies: []
+            };
+        }
 
-    reply.send(groupedItems);
+        grouped[item.category_id].companies.push(item);
+    }
+
+    reply.send(Object.values(grouped));
 };
 
-/**
- * GET /companies/:id
- */
+
 const getCompany = (req, reply) => {
     const { id } = req.params;
 
-    const item = db.prepare(
-        'SELECT * FROM companies WHERE id = ?'
-    ).get(id);
+    const rows = db.prepare(`
+        ${BASE_COMPANY_QUERY}
+        WHERE c.id = ?
+    `).all(id);
 
-    if (!item) {
+    if (!rows.length) {
         return reply.status(404).send({ message: 'Item not found' });
     }
 
-    reply.send(item);
+    reply.send(mapCompanies(rows)[0]);
 };
 
-/**
- * POST /companies
- */
+
 const addCompany = (req, reply) => {
-    const { name, category_id } = req.body;
+    const { name, category_id, tag_id } = req.body;
 
-    // проверка категории
-    const categoryExists = db.prepare(
-        'SELECT 1 FROM categories WHERE id = ?'
-    ).get(category_id);
+    const transaction = db.transaction(() => {
+        const result = db
+            .prepare('INSERT INTO companies (name, category_id) VALUES (?, ?)')
+            .run(name, category_id);
 
-    if (!categoryExists) {
-        return reply.status(400).send({ message: 'Invalid category_id' });
-    }
+        const companyId = result.lastInsertRowid;
 
-    const result = db.prepare(
-        'INSERT INTO companies (name, category_id) VALUES (?, ?)'
-    ).run(name, category_id);
+        const stmt = db.prepare(
+            'INSERT INTO company_tags (company_id, tag_id) VALUES (?, ?)'
+        );
 
-    const item = {
-        id: result.lastInsertRowid,
-        name,
-        category_id
-    };
+        for (const tag of tag_id) {
+            stmt.run(companyId, tag);
+        }
 
-    reply.code(201).send(item);
+        return companyId;
+    });
+
+    const companyId = transaction();
+
+    const rows = db.prepare(`
+        ${BASE_COMPANY_QUERY}
+        WHERE c.id = ?
+    `).all(companyId);
+
+    reply.code(201).send(mapCompanies(rows)[0]);
 };
+
 
 module.exports = {
     getCompanies,
-    getCompaniesByCategories,
+    getCompaniesByFilter,
     getCompaniesForMainPage,
     getCompany,
     addCompany

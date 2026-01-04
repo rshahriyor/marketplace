@@ -1,4 +1,4 @@
-const {getCompanies, getCompaniesByCategories, getCompaniesForMainPage, getCompany, addCompany} = require('../controllers/companies');
+const {getCompanies, getCompaniesByFilter, getCompaniesForMainPage, getCompany, addCompany} = require('../controllers/companies');
 
 const companySchema = {
     type: 'object',
@@ -6,7 +6,17 @@ const companySchema = {
         id: { type: 'number' },
         name: { type: 'string' },
         category_id: { type: 'number' },
-        category_name: { type: 'string' }
+        category_name: { type: 'string' },
+        tags: {
+            type: 'array',
+            items: {
+                type: 'object',
+                properties: {
+                    tag_id: { type: 'number' },
+                    tag_name: { type: 'string' }
+                }
+            }
+        }
     }
 };
 
@@ -15,29 +25,30 @@ const getCompaniesOpts = {
         response: {
             200: {
                 type: 'array',
-                companies: companySchema
+                items: companySchema
             }
         }
     },
     handler: getCompanies
 };
 
-const getCompaniesByCategoriesOpts = {
+const getCompaniesByFilterOpts = {
     schema: {
         querystring: {
             type: 'object',
             properties: {
-                category_id: { type: 'number' }
+                category_ids: { type: 'string' },
+                tag_ids: { type: 'string' }
             }
         },
         response: {
             200: {
                 type: 'array',
-                companies: companySchema
+                items: companySchema
             }
         }
     },
-    handler: getCompaniesByCategories
+    handler: getCompaniesByFilter
 };
 
 const getCompaniesForMainPageOpts = {
@@ -52,7 +63,7 @@ const getCompaniesForMainPageOpts = {
                         category_name: { type: 'string' },
                         companies: {
                             type: 'array',
-                            companies: companySchema
+                            items: companySchema
                         }
                     }
                 }
@@ -84,9 +95,14 @@ const postCompanyOpts = {
             type: 'object',
             properties: {
                 name: { type: 'string' },
-                category_id: { type: 'number' }
+                category_id: { type: 'number' },
+                tag_id: {
+                    type: 'array',
+                    items: { type: 'number' },
+                    minItems: 1
+                }
             },
-            required: ['name', 'category_id']
+            required: ['name', 'category_id', 'tag_id']
         },
         response: {
             201: companySchema
@@ -97,7 +113,7 @@ const postCompanyOpts = {
 
 function itemRoutes(fastify, options, done) {
     fastify.get('/companies', getCompaniesOpts);
-    fastify.get('/companies/by_category', getCompaniesByCategoriesOpts);
+    fastify.get('/companies/by_filter', getCompaniesByFilterOpts);
     fastify.get('/companies/for_main_page', getCompaniesForMainPageOpts);
     fastify.get('/companies/:id', getCompanyOpts);
     fastify.post('/companies', postCompanyOpts)
