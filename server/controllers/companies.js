@@ -6,11 +6,17 @@ const BASE_COMPANY_QUERY = `
         c.category_id,
         cat.name AS category_name,
         t.id AS tag_id,
-        t.name AS tag_name
+        t.name AS tag_name,
+        r.id as region_id,
+        r.name as region_name,
+        ci.id as city_id,
+        ci.name as city_name
     FROM companies c
     JOIN categories cat ON cat.id = c.category_id
     LEFT JOIN company_tags ct ON ct.company_id = c.id
     LEFT JOIN tags t ON t.id = ct.tag_id
+    LEFT JOIN regions r ON r.id = c.region_id
+    LEFT JOIN cities ci ON ci.id = c.city_id
 `;
 const mapCompanies = (rows) => {
     const map = new Map();
@@ -22,7 +28,11 @@ const mapCompanies = (rows) => {
                 name: row.company_name,
                 category_id: row.category_id,
                 category_name: row.category_name,
-                tags: []
+                tags: [],
+                region_id: row.region_id,
+                region_name: row.region_name,
+                city_id: row.city_id,
+                city_name: row.city_name
             });
         }
 
@@ -49,7 +59,7 @@ const getCompanies = (req, reply) => {
 
 
 const getCompaniesByFilter = (req, reply) => {
-    const { category_ids, tag_ids } = req.query;
+    const { category_ids, tag_ids, region_ids, city_ids } = req.query;
 
     let sql = BASE_COMPANY_QUERY + ' WHERE 1=1 ';
     const params = [];
@@ -72,6 +82,18 @@ const getCompaniesByFilter = (req, reply) => {
             )
         `;
 
+        params.push(...ids);
+    }
+
+    if (region_ids) {
+        const ids = region_ids.split(',');
+        sql += ` AND c.region_id IN (${ids.map(() => '?').join(',')})`;
+        params.push(...ids);
+    }
+
+    if (city_ids) {
+        const ids = city_ids.split(',');
+        sql += ` AND c.city_id IN (${ids.map(() => '?').join(',')})`;
         params.push(...ids);
     }
 
@@ -119,17 +141,17 @@ const getCompany = (req, reply) => {
 
 
 const addCompany = (req, reply) => {
-    const { name, category_id, tag_id } = req.body;
+    const { name, category_id, tag_id, region_id, city_id } = req.body;
 
     const transaction = db.transaction(() => {
         const result = db
-            .prepare('INSERT INTO companies (name, category_id) VALUES (?, ?)')
-            .run(name, category_id);
+            .prepare('INSERT INTO companies (name, category_id, region_id, city_id) VALUES (?, ?, ?, ?)')
+            .run(name, category_id, region_id, city_id);
 
         const companyId = result.lastInsertRowid;
 
         const stmt = db.prepare(
-            'INSERT INTO company_tags (company_id, tag_id) VALUES (?, ?)'
+            'INSERT OR IGNORE INTO company_tags (company_id, tag_id) VALUES (?, ?)'
         );
 
         for (const tag of tag_id) {

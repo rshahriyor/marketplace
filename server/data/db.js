@@ -2,12 +2,16 @@ const Database = require('better-sqlite3');
 
 const db = new Database('db.sqlite');
 
+// db.prepare(`DROP TABLE IF EXISTS companies`).run();
+
 // companies
 db.prepare(`
   CREATE TABLE IF NOT EXISTS companies (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    category_id NUMBER NOT NULL
+    category_id NUMBER NOT NULL,
+    region_id NUMBER NOT NULL,
+    city_id NUMBER NOT NULL
   )
 `).run();
 
@@ -25,6 +29,23 @@ db.prepare(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     category_id NUMBER NOT NULL
+  )
+`).run();
+
+// regions
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS regions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL
+  )
+`).run();
+
+// cities
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS cities (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    region_id NUMBER NOT NULL
   )
 `).run();
 

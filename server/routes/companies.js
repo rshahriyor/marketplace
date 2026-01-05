@@ -16,7 +16,11 @@ const companySchema = {
                     tag_name: { type: 'string' }
                 }
             }
-        }
+        },
+        region_id: { type: 'number' },
+        region_name: { type: 'string' },
+        city_id: { type: 'number' },
+        city_name: { type: 'string' }
     }
 };
 
@@ -38,7 +42,9 @@ const getCompaniesByFilterOpts = {
             type: 'object',
             properties: {
                 category_ids: { type: 'string' },
-                tag_ids: { type: 'string' }
+                tag_ids: { type: 'string' },
+                region_ids: { type: 'string' },
+                city_ids: { type: 'string' }
             }
         },
         response: {
@@ -100,9 +106,11 @@ const postCompanyOpts = {
                     type: 'array',
                     items: { type: 'number' },
                     minItems: 1
-                }
+                },
+                region_id: { type: 'number' },
+                city_id: { type: 'number' }
             },
-            required: ['name', 'category_id', 'tag_id']
+            required: ['name', 'category_id', 'tag_id', 'region_id', 'city_id']
         },
         response: {
             201: companySchema

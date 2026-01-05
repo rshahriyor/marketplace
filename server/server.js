@@ -22,6 +22,8 @@ fastify.register(require('@fastify/cors'), {
 fastify.register(require('./routes/companies.js'));
 fastify.register(require('./routes/categories.js'));
 fastify.register(require('./routes/tags.js'));
+fastify.register(require('./routes/regions.js'));
+fastify.register(require('./routes/cities.js'));
 
 const start = async () => {
     try {
