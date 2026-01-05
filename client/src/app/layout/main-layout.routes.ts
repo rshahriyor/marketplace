@@ -7,7 +7,7 @@ export const MAIN_LAYOUT_CHILDREN_ROTES: Routes = [
     },
     {
         path: 'm/:id',
-        loadChildren: () => import('../pages/company-detail/company-detail').then(c => c.CompanyDetail)
+        loadComponent: () => import('../pages/company-detail/company-detail').then(c => c.CompanyDetail)
     },
     {
         path: 'user',

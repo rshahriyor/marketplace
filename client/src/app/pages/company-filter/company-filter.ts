@@ -3,6 +3,9 @@ import { Filter } from "../../shared/components/filter/filter";
 import { CompanyCard } from "../../shared/components/company-card/company-card";
 import { CompaniesService } from '../../core/services/companies.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ICompany } from '../../core/models/company.model';
+import { IFilter, IFilterRequest } from '../../core/models/filter.model';
+import { FilterService } from '../../core/services/filter.service';
 
 @Component({
   selector: 'mk-company-filter',
@@ -12,22 +15,63 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export class CompanyFilter implements OnInit {
 
-  companies: WritableSignal<any[]> = signal([]);
+  companiesList: WritableSignal<ICompany[]> = signal([]);
+  categories: WritableSignal<IFilter[]> = signal([]);
+  tags: WritableSignal<IFilter[]> = signal([]);
+
+  filterRequest: IFilterRequest = {
+    category_ids: [],
+    tag_ids: []
+  }
 
   private companyService = inject(CompaniesService);
+  private filterService = inject(FilterService);
   private destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
-    this.getCompanies();
+    this.getFilteredCompanies();
+    this.getCategories();
+    this.getTags();
   }
 
-  private getCompanies(): void {
-    this.companyService.getCompaniesByCategory()
+  private getFilteredCompanies(): void {
+    this.filterService.filter
     .pipe(
       takeUntilDestroyed(this.destroyRef)
     )
     .subscribe((res) => {
-      this.companies.set(res);
+      this.filterRequest = res;
+      this.getCompanies();
+    })
+  }
+
+  private getCompanies(): void {
+    this.companyService.getCompaniesByFilter(this.filterRequest)
+    .pipe(
+      takeUntilDestroyed(this.destroyRef)
+    )
+    .subscribe((res) => {
+      this.companiesList.set(res);
+    })
+  }
+
+  private getCategories(): void {
+    this.filterService.getCategories()
+    .pipe(
+      takeUntilDestroyed(this.destroyRef)
+    )
+    .subscribe((res) => {
+      this.categories.set(res)
+    })
+  }
+
+  private getTags(): void {
+    this.filterService.getTags()
+    .pipe(
+      takeUntilDestroyed(this.destroyRef)
+    )
+    .subscribe((res) => {
+      this.tags.set(res);
     })
   }
 

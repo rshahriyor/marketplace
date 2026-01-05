@@ -1,8 +1,9 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 
 @Component({
   selector: 'mk-company-detail',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './company-detail.html',
   styleUrl: './company-detail.css',
 })

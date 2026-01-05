@@ -1,24 +1,53 @@
 <section class="flex gap-5 mt-5">
-    <aside class="max-w-70 w-full">
+  <aside class="max-w-70 w-full flex flex-col gap-5">
+    <div class="flex items-center gap-2.5">
+      <i class="pi pi-filter text-3xl text-(--text-color)"></i>
+      <p class="my-0 font-semibold text-(--text-color) text-[32px]">Фильтры</p>
+    </div>
+    <div class="flex flex-col gap-2">
+      <span class="text-lg font-bold">Категории</span>
+      <div>
         <li class="flex items-center gap-4.25">
-            <input type="checkbox" class="custom-checkbox">
-            <div class="relative max-w-50 w-full">
-                <input type="text" class="max-w-50 w-full h-10 bg-transparent border border-[#CECECE] rounded-lg py-3 px-3.75 text-base outline-none">
-                <i class="pi pi-search absolute top-1/2 right-4.5 transform -translate-y-1/2 text-(--text-color)"></i>
-            </div>
+          <input type="checkbox" class="custom-checkbox">
+          <div class="relative max-w-50 w-full">
+            <input type="text"
+              class="max-w-50 w-full h-10 bg-transparent border border-[#CECECE] rounded-lg py-3 px-3.75 text-base outline-none">
+            <i class="pi pi-search absolute top-1/2 right-4.5 transform -translate-y-1/2 text-(--text-color)"></i>
+          </div>
         </li>
-        <mk-filter></mk-filter>
-    </aside>
-    <div class="w-full flex flex-col">
-        <p class="text-[32px] font-semibold m-0 text-(--text-color) leading-none">Результаты поиска</p>
-        <div class="flex flex-wrap gap-5 mt-3.5">
-          @for (company of companies(); track $index) {
-            <div class="max-w-70 w-full">
-                <mk-company-card [cardTitle]="company.name" [cardId]="company.id" [cardFavoritesCount]="1"></mk-company-card>
-            </div>
-          } @empty {
-            <p class="text-[26px] font-medium m-0 text-[#52526190]">К сожалению нет данных</p>
-          }
-        </div>
+        @for (category of categories(); track $index) {
+        <mk-filter [id]="category.id" [label]="category.name" [filterRequestType]="'category_ids'"></mk-filter>
+        }
       </div>
+    </div>
+    <div class="flex flex-col gap-2">
+      <span class="text-lg font-bold">Теги</span>
+      <div>
+        <li class="flex items-center gap-4.25">
+          <input type="checkbox" class="custom-checkbox">
+          <div class="relative max-w-50 w-full">
+            <input type="text"
+              class="max-w-50 w-full h-10 bg-transparent border border-[#CECECE] rounded-lg py-3 px-3.75 text-base outline-none">
+            <i class="pi pi-search absolute top-1/2 right-4.5 transform -translate-y-1/2 text-(--text-color)"></i>
+          </div>
+        </li>
+        @for (tag of tags(); track $index) {
+        <mk-filter [id]="tag.id" [label]="tag.name" [filterRequestType]="'tag_ids'"></mk-filter>
+        }
+      </div>
+    </div>
+  </aside>
+  <div class="w-full flex flex-col gap-5">
+    <p class="text-[32px] font-semibold m-0 text-(--text-color)">Результаты поиска</p>
+    <div class="flex flex-wrap gap-5">
+      @for (company of companiesList(); track $index) {
+      <div class="max-w-70 w-full">
+        <mk-company-card [cardTitle]="company.name" [cardId]="company.id" [cardTags]="company.tags"
+          [cardFavoritesCount]="1"></mk-company-card>
+      </div>
+      } @empty {
+      <p class="text-[26px] font-medium m-0 text-[#52526190]">К сожалению нет данных</p>
+      }
+    </div>
+  </div>
 </section>

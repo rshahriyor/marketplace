@@ -2,7 +2,7 @@
          max-sm:flex-row max-sm:max-h-36 max-sm:px-2.5 max-sm:py-2.75" [routerLink]="'/m/' + cardId()">
     <div class="relative h-44.75 w-full max-sm:max-w-46.25 max-sm:h-full">
         <!-- @if (cardImage()) { -->
-        <img class="h-full w-full rounded-2xl border border-[#D0D0D0] object-cover" loading="lazy"
+        <img class="h-44.75 w-full rounded-2xl border border-[#D0D0D0] object-cover" loading="lazy"
             [src]="cardImage()" [alt]="cardTitle()" />
 
         <!-- @if (imageLoading()) {
@@ -68,9 +68,9 @@
 
             <div class="flex flex-wrap gap-1.5 overflow-hidden" [ngClass]="cardTitle()?.length <= 12 ? 'max-h-14' : cardTitle()?.length <= 15 ? 'max-h-14' : 'max-h-6.25'">
                 @for (tag of cardTags(); track tag.id) {
-                <div class="max-h-6.25 rounded-xl bg-[#F0F0F0CC] px-2.5 py-1.25 text-[13px]">
+                <div class="max-h-6.25 flex justify-center items-center rounded-xl bg-[#F0F0F0CC] px-2.5 py-1.25 text-[13px]">
                     <span class="line-clamp-1">
-                        {{ tag.company_tag_name }}
+                        {{ tag.tag_name }}
                     </span>
                 </div>
                 }
