@@ -4,7 +4,8 @@ const categorySchema = {
     type: 'object',
     properties: {
         id: { type: 'number' },
-        name: { type: 'string' }
+        name: { type: 'string' },
+        icon: { type: 'string' }
     }
 };
 
@@ -41,9 +42,10 @@ const postCategoryOpts = {
         body: {
             type: 'object',
             properties: {
-                name: { type: 'string' }
+                name: { type: 'string' },
+                icon: { type: 'string' }
             },
-            required: ['name']
+            required: ['name', 'icon']
         },
         response: {
             201: categorySchema

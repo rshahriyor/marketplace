@@ -3,6 +3,7 @@ const Database = require('better-sqlite3');
 const db = new Database('db.sqlite');
 
 // db.prepare(`DROP TABLE IF EXISTS companies`).run();
+// db.prepare(`DROP TABLE IF EXISTS categories`).run();
 
 // companies
 db.prepare(`
@@ -19,7 +20,8 @@ db.prepare(`
 db.prepare(`
   CREATE TABLE IF NOT EXISTS categories (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL
+    name TEXT NOT NULL,
+    icon TEXT NOT NULL
   )
 `).run();
 

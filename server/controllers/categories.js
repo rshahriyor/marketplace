@@ -28,15 +28,16 @@ const getCategory = (req, reply) => {
  * POST /categories
  */
 const addCategory = (req, reply) => {
-    const { name } = req.body;
+    const { name, icon } = req.body;
 
     const result = db
-        .prepare('INSERT INTO categories (name) VALUES (?)')
-        .run(name);
+        .prepare('INSERT INTO categories (name, icon) VALUES (?, ?)')
+        .run(name, icon);
     
     reply.code(201).send({
         id: result.lastInsertRowid,
-        name
+        name,
+        icon
     });
 };
 
