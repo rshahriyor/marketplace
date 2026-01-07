@@ -1,6 +1,7 @@
 export interface IFilter {
     id?: number,
-    name?: string
+    name?: string,
+    icon?: string
 }
 
 export interface IFilterRequest {
