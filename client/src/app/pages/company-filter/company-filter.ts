@@ -18,10 +18,14 @@ export class CompanyFilter implements OnInit {
   companiesList: WritableSignal<ICompany[]> = signal([]);
   categories: WritableSignal<IFilter[]> = signal([]);
   tags: WritableSignal<IFilter[]> = signal([]);
+  regions: WritableSignal<IFilter[]> = signal([]);
+  cities: WritableSignal<IFilter[]> = signal([]);
 
   filterRequest: IFilterRequest = {
     category_ids: [],
-    tag_ids: []
+    tag_ids: [],
+    region_ids: [],
+    city_ids: []
   }
 
   private companyService = inject(CompaniesService);
@@ -32,6 +36,8 @@ export class CompanyFilter implements OnInit {
     this.getFilteredCompanies();
     this.getCategories();
     this.getTags();
+    this.getRegions();
+    this.getCities();
   }
 
   private getFilteredCompanies(): void {
@@ -72,6 +78,26 @@ export class CompanyFilter implements OnInit {
     )
     .subscribe((res) => {
       this.tags.set(res);
+    })
+  }
+
+  private getRegions(): void {
+    this.filterService.getRegions()
+    .pipe(
+      takeUntilDestroyed(this.destroyRef)
+    )
+    .subscribe((res) => {
+      this.regions.set(res);
+    })
+  }
+
+  private getCities(): void {
+    this.filterService.getCities()
+    .pipe(
+      takeUntilDestroyed(this.destroyRef)
+    )
+    .subscribe((res) => {
+      this.cities.set(res);
     })
   }
 

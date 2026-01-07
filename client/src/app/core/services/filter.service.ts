@@ -13,7 +13,9 @@ const API_URL = `${environment.apiUrl}`;
 export class FilterService {
     filter = new BehaviorSubject<IFilterRequest>({
         category_ids: [],
-        tag_ids: []
+        tag_ids: [],
+        region_ids: [],
+        city_ids: []
     });
     private http = inject(HttpClient);
 
@@ -23,5 +25,13 @@ export class FilterService {
 
     getTags(): Observable<IFilter[]> {
         return this.http.get<IFilter[]>(`${API_URL}/tags`);
+    }
+
+    getRegions(): Observable<IFilter[]> {
+        return this.http.get<IFilter[]>(`${API_URL}/regions`);
+    }
+
+    getCities(): Observable<IFilter[]> {
+        return this.http.get<IFilter[]>(`${API_URL}/cities`);
     }
 }

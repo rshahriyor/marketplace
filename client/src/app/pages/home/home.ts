@@ -5,12 +5,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { NgTemplateOutlet } from '@angular/common';
 import { ICompaniesResponseForMainPage } from '../../core/models/company.model';
+import { Menu } from "../../shared/components/menu/menu";
 
 
 
 @Component({
   selector: 'mk-home',
-  imports: [CompanyCard, RouterLink, NgTemplateOutlet],
+  imports: [CompanyCard, RouterLink, NgTemplateOutlet, Menu],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })

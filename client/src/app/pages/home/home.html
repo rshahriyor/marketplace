@@ -1,3 +1,14 @@
+<div class="flex gap-5">
+    <div class="max-w-70 w-full">
+      <mk-menu [currentPage]="{name: 'Главная', icon: 'pi pi-home'}" [currentPage]=""></mk-menu>
+    </div>
+    <div class="max-w-145 w-full cursor-pointer">
+      <img src="/assets/main-banner.png" alt="main_banner" class="w-full rounded-[18px] h-full">
+    </div>
+    <div class="main-banner__image-second max-w-70 w-full cursor-pointer">
+      <img src="/assets/right-side-main-image.svg" alt="second_main_banner" class="w-full rounded-[18px]">
+    </div>
+  </div>
 @for (company of companiesList(); track $index) {
 <div class="mt-2.5">
 

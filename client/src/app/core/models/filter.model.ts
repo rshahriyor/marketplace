@@ -5,5 +5,7 @@ export interface IFilter {
 
 export interface IFilterRequest {
     category_ids: number[],
-    tag_ids: number[]
+    tag_ids: number[],
+    region_ids: number[],
+    city_ids: number[]
 }

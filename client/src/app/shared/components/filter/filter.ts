@@ -12,7 +12,7 @@ export class Filter {
 
   id = input.required<number>();
   label = input.required<string>();
-  filterRequestType = input.required<'category_ids' | 'tag_ids'>();
+  filterRequestType = input.required<'category_ids' | 'tag_ids' | 'region_ids' | 'city_ids'>();
 
   checked: boolean = false;
 

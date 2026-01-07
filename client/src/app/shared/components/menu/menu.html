@@ -1,0 +1,21 @@
+<aside class="max-w-70 max-h-162.5 overflow-auto rounded-[18px] z-1000">
+    <div class="flex flex-col w-full max-h-162.5 overflow-auto">
+        <button class="group flex items-center gap-2 w-full min-h-12.5
+             px-4 py-3 text-left break-all
+             text-[16px] font-semibold bg-(--bg-color) text-white cursor-pointer">
+            <i [class]="currentPage().icon" class="text-2xl"></i>
+            {{currentPage().name}}
+        </button>
+        @for (category of categories(); track $index) {
+        <button [routerLink]="`/m-i/${category.id}`" class="group flex items-center gap-2 w-full min-h-12.5
+             bg-white border-b border-[#EAEAEA]
+             px-4 py-3 text-left break-all
+             text-[16px] font-semibold text-black
+             transition duration-200
+             hover:bg-(--bg-color)/80 hover:text-white cursor-pointer">
+            <i class="pi pi-home text-2xl"></i>
+            {{category.name}}
+        </button>
+        }
+    </div>
+</aside>

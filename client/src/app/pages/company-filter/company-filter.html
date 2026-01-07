@@ -1,4 +1,4 @@
-<section class="flex gap-5 mt-5">
+<section class="flex gap-5">
   <aside class="max-w-70 w-full flex flex-col gap-5">
     <div class="flex items-center gap-2.5">
       <i class="pi pi-filter text-3xl text-(--text-color)"></i>
@@ -33,6 +33,38 @@
         </li>
         @for (tag of tags(); track $index) {
         <mk-filter [id]="tag.id" [label]="tag.name" [filterRequestType]="'tag_ids'"></mk-filter>
+        }
+      </div>
+    </div>
+    <div class="flex flex-col gap-2">
+      <span class="text-lg font-bold">Регионы</span>
+      <div>
+        <li class="flex items-center gap-4.25">
+          <input type="checkbox" class="custom-checkbox">
+          <div class="relative max-w-50 w-full">
+            <input type="text"
+              class="max-w-50 w-full h-10 bg-transparent border border-[#CECECE] rounded-lg py-3 px-3.75 text-base outline-none">
+            <i class="pi pi-search absolute top-1/2 right-4.5 transform -translate-y-1/2 text-(--text-color)"></i>
+          </div>
+        </li>
+        @for (region of regions(); track $index) {
+        <mk-filter [id]="region.id" [label]="region.name" [filterRequestType]="'region_ids'"></mk-filter>
+        }
+      </div>
+    </div>
+    <div class="flex flex-col gap-2">
+      <span class="text-lg font-bold">Города</span>
+      <div>
+        <li class="flex items-center gap-4.25">
+          <input type="checkbox" class="custom-checkbox">
+          <div class="relative max-w-50 w-full">
+            <input type="text"
+              class="max-w-50 w-full h-10 bg-transparent border border-[#CECECE] rounded-lg py-3 px-3.75 text-base outline-none">
+            <i class="pi pi-search absolute top-1/2 right-4.5 transform -translate-y-1/2 text-(--text-color)"></i>
+          </div>
+        </li>
+        @for (city of cities(); track $index) {
+        <mk-filter [id]="city.id" [label]="city.name" [filterRequestType]="'city_ids'"></mk-filter>
         }
       </div>
     </div>

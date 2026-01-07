@@ -34,6 +34,24 @@ export class CompaniesService {
                 filter.tag_ids.join(',')
             );
         }
+
+        if (filter.region_ids.length > 0) {
+            params = params.set(
+                'region_ids',
+                filter.region_ids.join(',')
+            );
+        }
+
+        if (filter.city_ids.length > 0) {
+            params = params.set(
+                'city_ids',
+                filter.city_ids.join(',')
+            );
+        }
         return this.http.get<ICompany[]>(`${API_URL}/by_filter`, { params });
+    }
+
+    getCompanyDetail(company_id: number): Observable<ICompany> {
+        return this.http.get<ICompany>(`${API_URL}/${company_id}`);
     }
 }
