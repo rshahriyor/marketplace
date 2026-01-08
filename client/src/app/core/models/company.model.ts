@@ -9,6 +9,8 @@ export interface ICompany {
     is_favorited?: boolean,
     favorites_count?: number,
     categories?: string[],
+    desc?: string,
+    phone_number?: number
 }
 
 export interface ICompaniesResponseForMainPage {

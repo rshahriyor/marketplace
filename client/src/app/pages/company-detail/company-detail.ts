@@ -5,10 +5,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { ICompany } from '../../core/models/company.model';
 import { Menu } from "../../shared/components/menu/menu";
+import { FormatPhonePipe } from "../../core/pipes/format-phone";
 
 @Component({
   selector: 'mk-company-detail',
-  imports: [CommonModule, Menu],
+  imports: [CommonModule, Menu, FormatPhonePipe],
   templateUrl: './company-detail.html',
   styleUrl: './company-detail.css',
 })

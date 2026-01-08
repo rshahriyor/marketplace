@@ -1,5 +1,5 @@
 <div class="border border-x-0 border-(--text-color)/40 w-full py-2 mb-5">
-    <p class="text-center text-5xl text-(--text-color) font-bold leading-[normal]">{{company().name}}</p>
+    <p class="text-center text-5xl text-(--text-color) font-bold leading-[normal]">{{company()?.name}}</p>
 </div>
 <div class="flex gap-5">
     <div class="max-w-70 w-full">
@@ -71,7 +71,7 @@
             <div class="bg-white p-3.75 rounded-[18px] mt-4">
                 <p class="text-[27px] text-(--text-color) font-semibold my-0">Теги:</p>
                 <div class="flex flex-wrap gap-[10px_8px] mt-2.5">
-                    @for (tag of company().tags; track $index) {
+                    @for (tag of company()?.tags; track $index) {
                     <div class="text-[16px] bg-[#F0F0F0CC] rounded-full px-3 py-1.5">
                         {{tag.tag_name}}
                     </div>
@@ -86,21 +86,12 @@
                 <p class="text-[27px] text-(--text-color) font-semibold my-0">Контакты:</p>
     
                 <div class="flex flex-wrap gap-6.25 justify-center mt-3">
-                    <!-- @for (phone of companyData().company_data; track $index) {
-                    @if (phone?.company_data_type_name === companyDataType.PHONE_NUMBER) {
-                    @for (item of phone.value; track $index) { -->
                     <a class="flex items-center justify-center gap-3
                        bg-[#5B42FF] text-white font-semibold text-[19px]
                        h-12 max-w-65.5 w-full rounded-lg">
                         <i class="pi pi-phone"></i>
-                        <!-- {{ companyPhones()[$index]?.number && alreadyLoadedCompanyPhone[$index]
-                        ? '(+992) ' + (companyPhones()[$index].number | formatPhone)
-                        : 'Показать номер' }} -->
-                        (+992) 92 7417997
+                        +992 {{ company()?.phone_number | formatPhone }}
                     </a>
-                    <!-- }
-                    }
-                    } -->
                 </div>
             </div>
     
@@ -136,7 +127,7 @@
             <div class="bg-white p-3.75 rounded-[18px] mt-4 flex flex-col gap-5.25">
                 <p class="text-[27px] text-(--text-color) font-semibold my-0">Описание:</p>
                 <span class="text-[22px] wrap-break-word">
-                    {{'companyData().company?.desc'}}
+                    {{company()?.desc}}
                 </span>
             </div>
         </div>
