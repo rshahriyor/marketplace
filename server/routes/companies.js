@@ -20,7 +20,9 @@ const companySchema = {
         region_id: { type: 'number' },
         region_name: { type: 'string' },
         city_id: { type: 'number' },
-        city_name: { type: 'string' }
+        city_name: { type: 'string' },
+        desc: { type: 'string' },
+        phone_number: { type: 'number' }
     }
 };
 
@@ -108,9 +110,11 @@ const postCompanyOpts = {
                     minItems: 1
                 },
                 region_id: { type: 'number' },
-                city_id: { type: 'number' }
+                city_id: { type: 'number' },
+                desc: { type: 'string' },
+                phone_number: { type: 'number' }
             },
-            required: ['name', 'category_id', 'tag_id', 'region_id', 'city_id']
+            required: ['name', 'category_id', 'tag_id', 'region_id', 'city_id', 'desc', 'phone_number']
         },
         response: {
             201: companySchema

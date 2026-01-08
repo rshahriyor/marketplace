@@ -3,6 +3,8 @@ const BASE_COMPANY_QUERY = `
     SELECT
         c.id AS company_id,
         c.name AS company_name,
+        c.desc AS company_desc,
+        c.phone_number AS company_phone_number,
         c.category_id,
         cat.name AS category_name,
         t.id AS tag_id,
@@ -32,7 +34,9 @@ const mapCompanies = (rows) => {
                 region_id: row.region_id,
                 region_name: row.region_name,
                 city_id: row.city_id,
-                city_name: row.city_name
+                city_name: row.city_name,
+                desc: row.company_desc,
+                phone_number: row.company_phone_number
             });
         }
 
@@ -141,12 +145,12 @@ const getCompany = (req, reply) => {
 
 
 const addCompany = (req, reply) => {
-    const { name, category_id, tag_id, region_id, city_id } = req.body;
+    const { name, category_id, tag_id, region_id, city_id, desc, phone_number } = req.body;
 
     const transaction = db.transaction(() => {
         const result = db
-            .prepare('INSERT INTO companies (name, category_id, region_id, city_id) VALUES (?, ?, ?, ?)')
-            .run(name, category_id, region_id, city_id);
+            .prepare('INSERT INTO companies (name, category_id, region_id, city_id, desc, phone_number) VALUES (?, ?, ?, ?, ?, ?)')
+            .run(name, category_id, region_id, city_id, desc, phone_number);
 
         const companyId = result.lastInsertRowid;
 

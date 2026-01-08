@@ -12,7 +12,9 @@ db.prepare(`
     name TEXT NOT NULL,
     category_id NUMBER NOT NULL,
     region_id NUMBER NOT NULL,
-    city_id NUMBER NOT NULL
+    city_id NUMBER NOT NULL,
+    desc TEXT NOT NULL,
+    phone_number NUMBER NOT NULL
   )
 `).run();
 
