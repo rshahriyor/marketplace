@@ -7,7 +7,7 @@
     </div>
     <div class="max-w-145 w-full">
         <div class="flex flex-col">
-    
+
             <!-- HEADER -->
             <div class="flex items-center gap-1.25 h-12.5 pl-2.5">
                 <i class="pi pi-exclamation-circle text-[27px]"></i>
@@ -15,7 +15,7 @@
                     Информация
                 </h1>
             </div>
-    
+
             <!-- MAIN IMAGE -->
             <!-- @if (companyData().images?.length) { -->
             <div class="relative max-h-82.5">
@@ -23,10 +23,11 @@
                     (click)="expandImageToView(mainImagePath())" (wheel)="onMainImageScroll($event)" ngSwipe
                     (swipeEnd)="onSwipeEnd($event)" class="cursor-pointer border border-[#D0D0D0] bg-[#F3F3F3]
                      object-cover max-w-[580px] w-full h-[330px] rounded-[15px]"> -->
-                <img class="cursor-pointer border border-[#D0D0D0] bg-[#F3F3F3] object-cover max-w-145 w-full h-82.5 rounded-[15px]">
-    
+                <img
+                    class="cursor-pointer border border-[#D0D0D0] bg-[#F3F3F3] object-cover max-w-145 w-full h-82.5 rounded-[15px]">
+
                 <div class="absolute top-3 w-full px-2.5 flex justify-between items-center">
-    
+
                     <!-- STATUS -->
                     <!-- <div class="flex items-center gap-[5px] h-[31px] px-[12px] rounded-full" [ngClass]="{
                   'bg-[#00D7AC]': workSchedule.is_work_day && companyIsWorking,
@@ -42,10 +43,11 @@
                             Закрыто
                         </span>
                     </div>
-    
+
                     <!-- EXPAND -->
                     <button class="flex justify-center items-center bg-white/70 p-2 rounded-[10px]
-                       transition-transform duration-300 hover:scale-110 cursor-pointer"> <!-- (click)="expandImageToView(mainImagePath())">-->
+                       transition-transform duration-300 hover:scale-110 cursor-pointer">
+                        <!-- (click)="expandImageToView(mainImagePath())">-->
                         <i class="pi pi-expand text-lg"></i>
                     </button>
                 </div>
@@ -54,7 +56,7 @@
             <img src="/assets/card.jpg" class="border border-[#D0D0D0] bg-[#F3F3F3]
                         object-cover max-w-[580px] w-full h-[330px] rounded-[15px]">
             } -->
-    
+
             <!-- REST IMAGES -->
             <div class="flex gap-6 mt-4 overflow-x-auto"> <!-- (wheel)="onMouseWheel($event)">-->
                 <!-- @for (image of companyData().images; track $index) { -->
@@ -66,7 +68,7 @@
                         border border-[#D0D0D0] rounded-[15px]">
                 } -->
             </div>
-    
+
             <!-- TAGS -->
             <div class="bg-white p-3.75 rounded-[18px] mt-4">
                 <p class="text-[27px] text-(--text-color) font-semibold my-0">Теги:</p>
@@ -80,11 +82,11 @@
                     }
                 </div>
             </div>
-    
+
             <!-- CONTACTS -->
             <div class="bg-white p-3.75 rounded-[18px] mt-4">
                 <p class="text-[27px] text-(--text-color) font-semibold my-0">Контакты:</p>
-    
+
                 <div class="flex flex-wrap gap-6.25 justify-center mt-3">
                     <a class="flex items-center justify-center gap-3
                        bg-[#5B42FF] text-white font-semibold text-[19px]
@@ -94,35 +96,30 @@
                     </a>
                 </div>
             </div>
-    
+
             <!-- ADDRESS -->
             <div class="bg-white p-3.75 rounded-[18px] mt-4">
                 <p class="text-[27px] text-(--text-color) font-semibold my-0">Адрес:</p>
-    
-                <!-- @for (address of companyData().company_data; track $index) {
-                @if (address?.company_data_type_name === companyDataType.ADDRESS) { -->
+
                 <div class="bg-[#F3F3F3] rounded-lg mt-4 text-[18px]">
                     <span class="block p-[8px_10px] break-all">
-                        {{'address.value.text'}}
+                        {{`${company()?.region_name}, ${company()?.city_name}, ${company()?.address}`}}
                     </span>
                 </div>
-                <!-- }
-                } -->
-    
-                <!-- @if (companyData().company?.has_map_data) { -->
+
                 <div class="relative mt-4">
                     <img src="/assets/map.svg" class="w-full max-w-137.5">
-                    <button class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-                       bg-[#5B42FF] hover:bg-[#4f34fc]
-                       text-white text-[19px] font-semibold
-                       rounded-lg w-full max-w-52.5
-                       py-3 shadow transition">
+                    <a [href]="'https://www.google.com/maps?q=' + company()?.latitude + ',' + company()?.longitude" target="_blank" 
+                        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+                                bg-[#5B42FF] hover:bg-[#4f34fc]
+                                text-white text-[19px] font-semibold
+                                rounded-lg w-full max-w-52.5
+                                py-3 shadow transition text-center">
                         Показать на карте
-                    </button>
+                    </a>
                 </div>
-                <!-- } -->
             </div>
-    
+
             <!-- DESCRIPTION -->
             <div class="bg-white p-3.75 rounded-[18px] mt-4 flex flex-col gap-5.25">
                 <p class="text-[27px] text-(--text-color) font-semibold my-0">Описание:</p>

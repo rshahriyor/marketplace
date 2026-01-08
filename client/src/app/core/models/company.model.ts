@@ -10,7 +10,14 @@ export interface ICompany {
     favorites_count?: number,
     categories?: string[],
     desc?: string,
-    phone_number?: number
+    phone_number?: number,
+    address?: string,
+    latitude?: number,
+    longitude?: number,
+    region_id?: number,
+    region_name?: string,
+    city_id?: number,
+    city_name?: string
 }
 
 export interface ICompaniesResponseForMainPage {
