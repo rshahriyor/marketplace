@@ -4,7 +4,10 @@ const BASE_COMPANY_QUERY = `
         c.id AS company_id,
         c.name AS company_name,
         c.desc AS company_desc,
+        c.latitude AS company_latitude,
+        c.longitude AS company_longitude,
         c.phone_number AS company_phone_number,
+        c.address AS company_address,
         c.category_id,
         cat.name AS category_name,
         t.id AS tag_id,
@@ -36,7 +39,10 @@ const mapCompanies = (rows) => {
                 city_id: row.city_id,
                 city_name: row.city_name,
                 desc: row.company_desc,
-                phone_number: row.company_phone_number
+                phone_number: row.company_phone_number,
+                latitude: row.company_latitude,
+                longitude: row.company_longitude,
+                address: row.company_address
             });
         }
 
@@ -145,12 +151,12 @@ const getCompany = (req, reply) => {
 
 
 const addCompany = (req, reply) => {
-    const { name, category_id, tag_id, region_id, city_id, desc, phone_number } = req.body;
+    const { name, category_id, tag_id, region_id, city_id, desc, phone_number, longitude, latitude, address } = req.body;
 
     const transaction = db.transaction(() => {
         const result = db
-            .prepare('INSERT INTO companies (name, category_id, region_id, city_id, desc, phone_number) VALUES (?, ?, ?, ?, ?, ?)')
-            .run(name, category_id, region_id, city_id, desc, phone_number);
+            .prepare('INSERT INTO companies (name, category_id, region_id, city_id, desc, phone_number, longitude, latitude, address) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
+            .run(name, category_id, region_id, city_id, desc, phone_number, longitude, latitude, address);
 
         const companyId = result.lastInsertRowid;
 

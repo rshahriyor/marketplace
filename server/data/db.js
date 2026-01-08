@@ -14,7 +14,10 @@ db.prepare(`
     region_id NUMBER NOT NULL,
     city_id NUMBER NOT NULL,
     desc TEXT NOT NULL,
-    phone_number NUMBER NOT NULL
+    phone_number NUMBER NOT NULL,
+    latitude REAL NOT NULL,
+    longitude REAL NOT NULL,
+    address TEXT NOT NULL
   )
 `).run();
 

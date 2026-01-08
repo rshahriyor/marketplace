@@ -22,7 +22,10 @@ const companySchema = {
         city_id: { type: 'number' },
         city_name: { type: 'string' },
         desc: { type: 'string' },
-        phone_number: { type: 'number' }
+        phone_number: { type: 'number' },
+        latitude: { type: 'number' },
+        longitude: { type: 'number' },
+        address: { type: 'string' }
     }
 };
 
@@ -112,9 +115,12 @@ const postCompanyOpts = {
                 region_id: { type: 'number' },
                 city_id: { type: 'number' },
                 desc: { type: 'string' },
-                phone_number: { type: 'number' }
+                phone_number: { type: 'number' },
+                latitude: { type: 'number' },
+                longitude: { type: 'number' },
+                address: { type: 'string' }
             },
-            required: ['name', 'category_id', 'tag_id', 'region_id', 'city_id', 'desc', 'phone_number']
+            required: ['name', 'category_id', 'tag_id', 'region_id', 'city_id', 'desc', 'phone_number', 'latitude', 'longitude', 'address']
         },
         response: {
             201: companySchema
