@@ -1,1 +1,84 @@
-<p>login works!</p>
+<div class="flex flex-col min-h-screen w-full pt-15.5 gap-28.25
+         bg-[linear-gradient(116.82deg,#1482FF_0%,#CD1CFF_100%)]">
+
+    <!-- Logo -->
+    <div class="flex justify-center items-center cursor-pointer" [routerLink]="['/']">
+        <img src="/assets/header-logo.svg" alt="">
+    </div>
+
+    <!-- Content -->
+    <div class="flex justify-center items-center">
+        <form [formGroup]="form" (ngSubmit)="login()" class="w-full max-w-105">
+
+            <!-- Title -->
+            <h2 class="text-white text-center text-[28px] my-0">
+                Вход
+            </h2>
+
+            <!-- Login -->
+            <div class="flex flex-col mt-6.5">
+                <label class="text-white text-[20px] font-semibold">
+                    Логин
+                </label>
+
+                <div class="relative mt-2">
+                    <input id="login" type="text" formControlName="username" placeholder="Введите логин"
+                        [ngClass]="{ 'border-2 border-orange-400': isWrongCredentials }" class="w-full max-w-105 h-13.75
+                     pl-14.5 pr-4 py-3.5
+                     rounded-md outline-none
+                     bg-white/40 text-white text-[16px]
+                     placeholder-white/70 placeholder:font-semibold" />
+                    <i class="pi pi-user text-2xl absolute left-4 top-1/2 -translate-y-[50%] text-white/70"></i>
+                </div>
+            </div>
+
+            <!-- Password -->
+            <div class="flex flex-col mt-6.5">
+                <label class="text-white text-[20px] font-semibold">
+                    Пароль
+                </label>
+
+                <div class="relative mt-2">
+                    <input id="password" type="password" formControlName="password" placeholder="Введите пароль"
+                        [ngClass]="{ 'border-2 border-orange-400': isWrongCredentials }" class="w-full max-w-105 h-13.75
+                     pl-14.5 pr-4 py-3.5
+                     rounded-md outline-none
+                     bg-white/40 text-white text-[16px]
+                     placeholder-white/70 placeholder:font-semibold" />
+
+                    <i class="pi pi-lock text-2xl absolute left-4 top-1/2 -translate-y-[50%] text-white/70"></i>
+                </div>
+
+                <!-- Error -->
+                @if (isWrongCredentials) {
+                <span class="flex items-center gap-2.5 mt-2.75 text-orange-400 text-sm">
+                    <i class="pi pi-exclamation-circle"></i>
+                    Неверное имя пользователя или пароль
+                </span>
+                }
+            </div>
+
+            <!-- Button -->
+            <div class="relative mt-6.5">
+                <button type="submit" [disabled]="form.invalid || loading()" class="w-full max-w-105 h-13.75
+                   rounded-[10px]
+                   bg-white text-[#6600FF]
+                   text-[23px] font-medium
+                   transition
+                   disabled:cursor-not-allowed
+                   disabled:bg-white/80">
+                    Войти
+                </button>
+
+                @if (loading()) {
+                <span class="absolute top-5 left-2.5
+                     w-4 h-4
+                     border-2 border-gray-300
+                     border-t-[#6600FF]
+                     rounded-full animate-spin">
+                </span>
+                }
+            </div>
+        </form>
+    </div>
+</div>
