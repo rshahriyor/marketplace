@@ -3,9 +3,9 @@ const { login } = require('../controllers/login');
 const loginSchema = {
     type: 'object',
     properties: {
-        username: { type: 'string' },
-        password: { type: 'string' },
-        token: { type: 'string' }
+        code: { type: 'number' },
+        token: { type: 'string' },
+        message: { type: 'string' }
     }
 };
 

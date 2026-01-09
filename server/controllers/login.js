@@ -8,15 +8,21 @@ function login(req, reply) {
         .get(username, password);
 
     if (!user) {
-        return reply.status(401).send({ message: 'Неверные данные' });
+        return reply.code(401).send({
+            code: 401,
+            message: 'Неверные данные'
+        });
     }
 
     const token = this.jwt.sign(
         { userId: user.user_id },
-        { expiresIn: '3h' }
+        { expiresIn: '1h' }
     );
 
-    return reply.code(201).send({ token });
+    return reply.code(201).send({
+        code: 0,
+        token
+    });
 }
 
 module.exports = { login };
