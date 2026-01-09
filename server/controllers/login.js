@@ -8,7 +8,7 @@ function login(req, reply) {
         .get(username, password);
 
     if (!user) {
-        return reply.code(401).send({
+        return reply.code(201).send({
             code: 401,
             message: 'Неверные данные'
         });
