@@ -1,4 +1,4 @@
-const {getCompanies, getCompaniesByFilter, getCompaniesForMainPage, getCompany, addCompany} = require('../controllers/companies');
+const { getCompanies, getCompaniesByFilter, getCompaniesForMainPage, getCompany, addCompany } = require('../controllers/companies');
 
 const companySchema = {
     type: 'object',
@@ -102,6 +102,11 @@ const getCompanyOpts = {
 
 const postCompanyOpts = {
     schema: {
+        security: [
+            {
+                BearerAuth: []
+            }
+        ],
         body: {
             type: 'object',
             properties: {
@@ -134,7 +139,10 @@ function itemRoutes(fastify, options, done) {
     fastify.get('/companies/by_filter', getCompaniesByFilterOpts);
     fastify.get('/companies/for_main_page', getCompaniesForMainPageOpts);
     fastify.get('/companies/:id', getCompanyOpts);
-    fastify.post('/companies', postCompanyOpts)
+    fastify.post('/companies', {
+        ...postCompanyOpts,
+        preValidation: [fastify.authenticate]
+    });
     done();
 };
 
