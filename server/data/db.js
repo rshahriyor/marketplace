@@ -65,4 +65,24 @@ db.prepare(`
   )
 `).run();
 
+// users
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS users (
+    user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL UNIQUE,
+    password TEXT NOT NULL,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    phone_number NUMBER NOT NULL,
+    gender_id NUMBER NOT NULL
+  )
+`).run();
+
+// genders
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS genders (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL
+  )
+`).run();
 module.exports = db;
