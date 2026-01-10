@@ -8,7 +8,7 @@
     </div>
     <div class="profile max-w-70 w-full flex justify-center gap-3">
         @for (menuItem of menu; track $index) {
-        <div [routerLink]="'/login'" class="flex flex-col items-center gap-px cursor-pointer">
+        <div [routerLink]="token ? '/u' : '/login'" class="flex flex-col items-center gap-px cursor-pointer">
             <i [class]="menuItem.icon" class="text-2xl text-(--text-color)"></i>
             <span class="text-(--text-color) text-sm">{{menuItem.label}}</span>
         </div>
