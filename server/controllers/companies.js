@@ -8,6 +8,7 @@ const BASE_COMPANY_QUERY = `
         c.longitude AS company_longitude,
         c.phone_number AS company_phone_number,
         c.address AS company_address,
+        c.created_by_user_id AS company_created_by_user_id,
         c.category_id,
         cat.name AS category_name,
         t.id AS tag_id,
@@ -150,13 +151,26 @@ const getCompany = (req, reply) => {
 };
 
 
+const getOwnCompanies = (req, reply) => {
+    const userId = req.user.userId;
+
+    const rows = db.prepare(`
+        ${BASE_COMPANY_QUERY}
+        WHERE c.created_by_user_id = ?
+    `).all(userId);
+
+    reply.send(mapCompanies(rows));
+};
+
+
 const addCompany = (req, reply) => {
     const { name, category_id, tag_id, region_id, city_id, desc, phone_number, longitude, latitude, address } = req.body;
+    const userId = req.user.userId;
 
     const transaction = db.transaction(() => {
         const result = db
-            .prepare('INSERT INTO companies (name, category_id, region_id, city_id, desc, phone_number, longitude, latitude, address) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
-            .run(name, category_id, region_id, city_id, desc, phone_number, longitude, latitude, address);
+            .prepare('INSERT INTO companies (name, category_id, region_id, city_id, desc, phone_number, longitude, latitude, address, created_by_user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+            .run(name, category_id, region_id, city_id, desc, phone_number, longitude, latitude, address, userId);
 
         const companyId = result.lastInsertRowid;
 
@@ -187,5 +201,6 @@ module.exports = {
     getCompaniesByFilter,
     getCompaniesForMainPage,
     getCompany,
+    getOwnCompanies,
     addCompany
 };

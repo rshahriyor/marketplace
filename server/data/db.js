@@ -17,7 +17,8 @@ db.prepare(`
     phone_number NUMBER NOT NULL,
     latitude REAL NOT NULL,
     longitude REAL NOT NULL,
-    address TEXT NOT NULL
+    address TEXT NOT NULL,
+    created_by_user_id NUMBER NOT NULL
   )
 `).run();
 
