@@ -37,6 +37,7 @@ fastify.decorate('authenticate', async function (request, reply) {
         await request.jwtVerify();
     } catch (err) {
         return reply.status(401).send({
+            code: -5,
             message: 'Unauthorized'
         });
     }
