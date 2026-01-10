@@ -44,7 +44,7 @@ export class Login implements OnInit {
       )
       .subscribe((res) => {
         if (res.code === StatusCodeEnum.SUCCESS) {
-          this.router.navigate(['/']);
+          this.router.navigate(['/u']);
           localStorage.setItem('token', res.token);
         }
         if (res.code === StatusCodeEnum.WRONG_CREDENTIALS_ERROR) {

@@ -22,10 +22,11 @@ export const authTokenInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, n
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      const code = error?.error?.status?.code;
+      const code = error?.error?.code;
 
       if ([StatusCodeEnum.TOKEN_EXPIRED_ERROR, StatusCodeEnum.AUTHENTICATION_ERROR].includes(code)) {
         router.navigate(['/']);
+        localStorage.clear();
       }
 
       throw error;

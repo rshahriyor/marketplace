@@ -1,0 +1,30 @@
+<div class="relative" (mkClickOutside)="menuVisible = false">
+    <div class="cursor-pointer h-12.5 w-full bg-white flex relative justify-between items-center rounded-md px-2.5" [style]="dropdownStyle" (click)="openMenu()">
+        <span class="text-(--text-color) font-medium" [style]="labelStyle">{{value?.[optionLabel] ?? ''}}</span>
+        <i class="pi pi-angle-down text-2xl absolute right-2.5 duration-300" [ngClass]="{'rotate-180' : menuVisible}"></i>
+    </div>
+    @if (menuVisible) {
+    <div class="dropdown-menu absolute w-full bg-white z-10 shadow-lg">
+        @if (showFilter) {
+        <div class="flex py-3.75 px-5 gap-3.75 border-b border-[#f1efef]">
+            <div class="relative w-full">
+                <input type="text" class="dropdown-search-input w-full bg-[#ECEDF3] outline-none h-12 px-5 rounded-md" [formControl]="searchFormControl" />
+                <i class="pi pi-search absolute right-2.5 top-1/2 transform -translate-y-1/2"></i>
+            </div>
+        </div>
+        }
+
+        <ul class="list-none text-left p-0 m-0 max-h-65 overflow-y-auto">
+            @for (option of dropdownOptions; track $index) {
+            <div #itemsList class="flex items-center pt-2.5 pb-2 pr-1.25 pl-5 cursor-pointer gap-1.75 border-b border-[#ECEDF3] wrap-break-word transition duration-300 first:pt-3 last:border-b-0 hover:bg-[#ECEDF3]/60"
+                [ngClass]="{'bg-[#ECEDF3]': value?.[optionValue] === option?.[optionValue]}"
+                (click)="handleChangeValue(option)">
+                <img [src]="optionIcon" alt="option_icon" [ngStyle]="{ display: optionIcon ? 'flex' : 'none' }"
+                    width="16" height="16">
+                <li class="text-(--text-color) font-medium">{{option[optionLabel]}}</li>
+            </div>
+            }
+        </ul>
+    </div>
+    }
+</div>

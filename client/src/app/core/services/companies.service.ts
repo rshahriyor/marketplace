@@ -54,4 +54,12 @@ export class CompaniesService {
     getCompanyDetail(company_id: number): Observable<ICompany> {
         return this.http.get<ICompany>(`${API_URL}/${company_id}`);
     }
+
+    getOwnCompanies(): Observable<ICompany[]> {
+        return this.http.get<ICompany[]>(`${API_URL}/own`);
+    }
+
+    addCompany(companyData: ICompany): Observable<ICompany> {
+        return this.http.post<ICompany>(`${API_URL}`, companyData);
+    }
 }

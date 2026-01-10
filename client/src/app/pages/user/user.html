@@ -1,5 +1,5 @@
 <div class="flex gap-5">
-    <aside class="max-w-70 w-full max-h-162.5 overflow-auto rounded-[18px] z-1000">
+    <aside class="max-w-70 w-full max-h-fit overflow-auto rounded-[18px] z-1000">
         <div class="flex flex-col w-full max-h-162.5 overflow-auto">
             @for (menuItem of menuItems(); track $index) {
             <button [routerLink]="menuItem.route" routerLinkActive="text-white !bg-(--bg-color)" class="group flex items-center gap-2 w-full min-h-12.5

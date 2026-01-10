@@ -17,6 +17,10 @@ export const USER_ROUTES: Routes = [
             {
                 path: 'm-c',
                 loadComponent: () => import('./my-companies/my-companies').then((c) => c.MyCompanies),
+            },
+            {
+                path: 'a-c',
+                loadComponent: () => import('./my-companies/company-form/company-form').then((c) => c.CompanyForm),
             }
         ]
     }
