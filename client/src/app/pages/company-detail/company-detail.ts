@@ -37,7 +37,7 @@ export class CompanyDetail implements OnInit {
       takeUntilDestroyed(this.destroyRef)
     )
     .subscribe((res) => {
-      this.company.set(res);
+      this.company.set(res.data);
     })
   }
 

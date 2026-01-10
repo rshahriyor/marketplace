@@ -32,7 +32,7 @@ export class Home implements OnInit {
       takeUntilDestroyed(this.destroyRef)
     )
     .subscribe((res) => {
-      this.companiesList.set(res);
+      this.companiesList.set(res.data);
     })
   }
 

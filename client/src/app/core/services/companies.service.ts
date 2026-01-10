@@ -4,6 +4,7 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { ICompaniesResponseForMainPage, ICompany } from "../models/company.model";
 import { IFilterRequest } from "../models/filter.model";
+import { IResponse } from "../models/response.model";
 
 const API_URL = `${environment.apiUrl}/companies`;
 
@@ -14,11 +15,11 @@ const API_URL = `${environment.apiUrl}/companies`;
 export class CompaniesService {
     private http = inject(HttpClient);
 
-    getCompaniesForMainPage(): Observable<ICompaniesResponseForMainPage[]> {
-        return this.http.get<ICompaniesResponseForMainPage[]>(`${API_URL}/for_main_page`);
+    getCompaniesForMainPage(): Observable<IResponse<ICompaniesResponseForMainPage[]>> {
+        return this.http.get<IResponse<ICompaniesResponseForMainPage[]>>(`${API_URL}/for_main_page`);
     }
 
-    getCompaniesByFilter(filter: IFilterRequest): Observable<ICompany[]> {
+    getCompaniesByFilter(filter: IFilterRequest): Observable<IResponse<ICompany[]>> {
         let params = new HttpParams();
 
         if (filter.category_ids.length > 0) {
@@ -48,18 +49,18 @@ export class CompaniesService {
                 filter.city_ids.join(',')
             );
         }
-        return this.http.get<ICompany[]>(`${API_URL}/by_filter`, { params });
+        return this.http.get<IResponse<ICompany[]>>(`${API_URL}/by_filter`, { params });
     }
 
-    getCompanyDetail(company_id: number): Observable<ICompany> {
-        return this.http.get<ICompany>(`${API_URL}/${company_id}`);
+    getCompanyDetail(company_id: number): Observable<IResponse<ICompany>> {
+        return this.http.get<IResponse<ICompany>>(`${API_URL}/${company_id}`);
     }
 
-    getOwnCompanies(): Observable<ICompany[]> {
-        return this.http.get<ICompany[]>(`${API_URL}/own`);
+    getOwnCompanies(): Observable<IResponse<ICompany[]>> {
+        return this.http.get<IResponse<ICompany[]>>(`${API_URL}/own`);
     }
 
-    addCompany(companyData: ICompany): Observable<ICompany> {
-        return this.http.post<ICompany>(`${API_URL}`, companyData);
+    addCompany(companyData: ICompany): Observable<IResponse<ICompany>> {
+        return this.http.post<IResponse<ICompany>>(`${API_URL}`, companyData);
     }
 }

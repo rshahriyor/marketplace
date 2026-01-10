@@ -177,7 +177,7 @@ export class CompanyForm implements OnInit {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe((res) => {
-        this.regionOptions.set(res);
+        this.regionOptions.set(res.data);
       });
   }
 
@@ -187,7 +187,7 @@ export class CompanyForm implements OnInit {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe((res) => {
-        this.cityOptions.set(res);
+        this.cityOptions.set(res.data);
       });
   }
 
@@ -197,7 +197,7 @@ export class CompanyForm implements OnInit {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe((res) => {
-        this.categoryOptions.set(res);
+        this.categoryOptions.set(res.data);
       });
   }
 
@@ -207,8 +207,8 @@ export class CompanyForm implements OnInit {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe((res) => {
-        this.tagOptions = res;
-        this.tagOptionsClone = res.slice();
+        this.tagOptions = res.data;
+        this.tagOptionsClone = res.data.slice();
       });
   }
 

@@ -28,7 +28,7 @@ export class Menu implements OnInit {
       takeUntilDestroyed(this.destroyRef)
     )
     .subscribe((res) => {
-      this.categories.set(res);
+      this.categories.set(res.data);
     })
   }
 

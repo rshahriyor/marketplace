@@ -3,6 +3,7 @@ import { environment } from "../../../environments/environment";
 import { HttpClient } from "@angular/common/http";
 import { BehaviorSubject, Observable } from "rxjs";
 import { IFilter, IFilterRequest } from "../models/filter.model";
+import { IResponse } from "../models/response.model";
 
 const API_URL = `${environment.apiUrl}`;
 
@@ -19,19 +20,19 @@ export class FilterService {
     });
     private http = inject(HttpClient);
 
-    getCategories(): Observable<IFilter[]> {
-        return this.http.get<IFilter[]>(`${API_URL}/categories`);
+    getCategories(): Observable<IResponse<IFilter[]>> {
+        return this.http.get<IResponse<IFilter[]>>(`${API_URL}/categories`);
     }
 
-    getTags(): Observable<IFilter[]> {
-        return this.http.get<IFilter[]>(`${API_URL}/tags`);
+    getTags(): Observable<IResponse<IFilter[]>> {
+        return this.http.get<IResponse<IFilter[]>>(`${API_URL}/tags`);
     }
 
-    getRegions(): Observable<IFilter[]> {
-        return this.http.get<IFilter[]>(`${API_URL}/regions`);
+    getRegions(): Observable<IResponse<IFilter[]>> {
+        return this.http.get<IResponse<IFilter[]>>(`${API_URL}/regions`);
     }
 
-    getCities(): Observable<IFilter[]> {
-        return this.http.get<IFilter[]>(`${API_URL}/cities`);
+    getCities(): Observable<IResponse<IFilter[]>> {
+        return this.http.get<IResponse<IFilter[]>>(`${API_URL}/cities`);
     }
 }

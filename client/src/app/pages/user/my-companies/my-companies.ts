@@ -28,7 +28,7 @@ export class MyCompanies implements OnInit {
       takeUntilDestroyed(this.destroyRef)
     )
     .subscribe((res) => {
-      this.companiesList.set(res);
+      this.companiesList.set(res.data);
     });
   }
 

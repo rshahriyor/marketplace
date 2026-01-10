@@ -57,7 +57,7 @@ export class CompanyFilter implements OnInit {
       takeUntilDestroyed(this.destroyRef)
     )
     .subscribe((res) => {
-      this.companiesList.set(res);
+      this.companiesList.set(res.data);
     })
   }
 
@@ -67,7 +67,7 @@ export class CompanyFilter implements OnInit {
       takeUntilDestroyed(this.destroyRef)
     )
     .subscribe((res) => {
-      this.categories.set(res)
+      this.categories.set(res.data);
     })
   }
 
@@ -77,7 +77,7 @@ export class CompanyFilter implements OnInit {
       takeUntilDestroyed(this.destroyRef)
     )
     .subscribe((res) => {
-      this.tags.set(res);
+      this.tags.set(res.data);
     })
   }
 
@@ -87,7 +87,7 @@ export class CompanyFilter implements OnInit {
       takeUntilDestroyed(this.destroyRef)
     )
     .subscribe((res) => {
-      this.regions.set(res);
+      this.regions.set(res.data);
     })
   }
 
@@ -97,7 +97,7 @@ export class CompanyFilter implements OnInit {
       takeUntilDestroyed(this.destroyRef)
     )
     .subscribe((res) => {
-      this.cities.set(res);
+      this.cities.set(res.data);
     })
   }
 

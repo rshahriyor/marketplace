@@ -43,11 +43,11 @@ export class Login implements OnInit {
         finalize(() => this.loading.set(false))
       )
       .subscribe((res) => {
-        if (res.code === StatusCodeEnum.SUCCESS) {
+        if (res.status.code === StatusCodeEnum.SUCCESS) {
           this.router.navigate(['/u']);
-          localStorage.setItem('token', res.token);
+          localStorage.setItem('token', res.data.token);
         }
-        if (res.code === StatusCodeEnum.WRONG_CREDENTIALS_ERROR) {
+        if (res.status.code === StatusCodeEnum.WRONG_CREDENTIALS_ERROR) {
           this.isWrongCredentials = true;
         }
       });
