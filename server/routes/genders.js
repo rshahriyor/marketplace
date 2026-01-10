@@ -1,4 +1,5 @@
-const {getGenders, getGender, addGender} = require('../controllers/genders');
+const { getGenders, getGender, addGender } = require('../controllers/genders');
+const { responseSchema } = require('../utils/response');
 
 const genderSchema = {
     type: 'object',
@@ -11,10 +12,10 @@ const genderSchema = {
 const getGendersOpts = {
     schema: {
         response: {
-            200: {
+            200: responseSchema({
                 type: 'array',
                 items: genderSchema
-            }
+            })
         }
     },
     handler: getGenders
@@ -30,7 +31,7 @@ const getGenderOpts = {
             required: ['id']
         },
         response: {
-            200: genderSchema
+            200: responseSchema(genderSchema)
         }
     },
     handler: getGender
@@ -46,7 +47,7 @@ const postGenderOpts = {
             required: ['name']
         },
         response: {
-            201: genderSchema
+            201: responseSchema(genderSchema)
         }
     },
     handler: addGender

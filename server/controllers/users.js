@@ -1,10 +1,11 @@
 const db = require('../data/db');
+const { sendResponse } = require('../utils/response');
 
 const getUsers = (req, reply) => {
     const users = db.prepare(
         'SELECT * FROM users'
     ).all();
-    reply.send(users);
+    return sendResponse(reply, 200, 0, 'OK', users);
 };
 
 
@@ -15,11 +16,9 @@ const getUser = (req, reply) => {
         'SELECT * FROM users WHERE id = ?'
     ).get(id);
 
-    if (!item) {
-        return reply.status(404).send({ message: 'Item not found' });
-    }
+    if (!item) return sendResponse(reply, 404, -2, 'NOT_FOUND', null, 'User not found');
 
-    reply.send(item);
+    return sendResponse(reply, 200, 0, 'OK', item);
 };
 
 
@@ -30,17 +29,13 @@ const addUser = (req, reply) => {
         .prepare('SELECT 1 FROM genders WHERE id = ?')
         .get(gender_id);
 
-    if (!genderExists) {
-        return reply.code(400).send({
-            message: 'Invalid gender_id'
-        });
-    }
+        if (!genderExists) return sendResponse(reply, 400, -1, 'BAD_REQUEST', null, 'Invalid gender_id');
 
     const result = db
         .prepare('INSERT INTO users (username, password, first_name, last_name, phone_number, gender_id) VALUES (?, ?, ?, ?, ?, ?)')
         .run(username, password, first_name, last_name, phone_number, gender_id);
     
-    reply.code(201).send({
+    return sendResponse(reply, 201, 0, 'CREATED', {
         user_id: result.lastInsertRowid,
         username,
         first_name,

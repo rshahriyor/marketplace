@@ -1,10 +1,11 @@
 const db = require('../data/db');
+const { sendResponse } = require('../utils/response');
 
 const getCities = (req, reply) => {
     const cities = db.prepare(
         'SELECT * FROM cities'
     ).all();
-    reply.send(cities);
+    return sendResponse(reply, 200, 0, 'OK', cities);
 };
 
 
@@ -16,10 +17,10 @@ const getCity = (req, reply) => {
     ).get(id);
 
     if (!item) {
-        return reply.status(404).send({ message: 'Item not found' });
+        return sendResponse(reply, 404, -2, 'NOT_FOUND', null, 'City not found');
     }
 
-    reply.send(item);
+    return sendResponse(reply, 200, 0, 'OK', item);
 };
 
 
@@ -34,7 +35,7 @@ const getCitiesByRegion = (req, reply) => {
             'SELECT * FROM cities'
         ).all();
 
-    reply.send(cities);
+    return sendResponse(reply, 200, 0, 'OK', cities);
 }
 
 
@@ -44,12 +45,8 @@ const addCity = (req, reply) => {
     const result = db
         .prepare('INSERT INTO cities (name, region_id) VALUES (?, ?)')
         .run(name, region_id);
-    
-    reply.code(201).send({
-        id: result.lastInsertRowid,
-        name,
-        region_id
-    });
+
+    return sendResponse( reply, 201, 0, 'CREATED', { id: result.lastInsertRowid, name, region_id });
 };
 
-module.exports = {getCities, getCity, getCitiesByRegion, addCity};
+module.exports = { getCities, getCity, getCitiesByRegion, addCity };

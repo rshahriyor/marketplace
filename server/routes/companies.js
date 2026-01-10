@@ -1,4 +1,5 @@
 const { getCompanies, getCompaniesByFilter, getCompaniesForMainPage, getCompany, getOwnCompanies, addCompany } = require('../controllers/companies');
+const { responseSchema } = require('../utils/response');
 
 const companySchema = {
     type: 'object',
@@ -32,10 +33,10 @@ const companySchema = {
 const getCompaniesOpts = {
     schema: {
         response: {
-            200: {
+            200: responseSchema({
                 type: 'array',
                 items: companySchema
-            }
+            })
         }
     },
     handler: getCompanies
@@ -53,10 +54,10 @@ const getCompaniesByFilterOpts = {
             }
         },
         response: {
-            200: {
+            200: responseSchema({
                 type: 'array',
                 items: companySchema
-            }
+            })
         }
     },
     handler: getCompaniesByFilter
@@ -65,7 +66,7 @@ const getCompaniesByFilterOpts = {
 const getCompaniesForMainPageOpts = {
     schema: {
         response: {
-            200: {
+            200: responseSchema({
                 type: 'array',
                 items: {
                     type: 'object',
@@ -78,11 +79,11 @@ const getCompaniesForMainPageOpts = {
                         }
                     }
                 }
-            }
+            })
         }
     },
     handler: getCompaniesForMainPage
-}
+};
 
 const getCompanyOpts = {
     schema: {
@@ -94,7 +95,7 @@ const getCompanyOpts = {
             required: ['id']
         },
         response: {
-            200: companySchema
+            200: responseSchema(companySchema)
         }
     },
     handler: getCompany
@@ -108,14 +109,14 @@ const getOwnCompaniesOpts = {
             }
         ],
         response: {
-            200: {
+            200: responseSchema({
                 type: 'array',
                 items: companySchema
-            }
+            })
         }
     },
     handler: getOwnCompanies
-}
+};
 
 const postCompanyOpts = {
     schema: {
@@ -145,7 +146,7 @@ const postCompanyOpts = {
             required: ['name', 'category_id', 'tag_id', 'region_id', 'city_id', 'desc', 'phone_number', 'latitude', 'longitude', 'address']
         },
         response: {
-            201: companySchema
+            201: responseSchema(companySchema)
         }
     },
     handler: addCompany

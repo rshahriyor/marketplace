@@ -1,4 +1,5 @@
 const { login } = require('../controllers/login');
+const { responseSchema } = require('../utils/response');
 
 const loginSchema = {
     type: 'object',
@@ -20,7 +21,7 @@ const loginOpts = {
             required: ['username', 'password']
         },
         response: {
-            201: loginSchema
+            201: responseSchema(loginSchema)
         }
     },
     handler: login

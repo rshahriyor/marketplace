@@ -1,4 +1,5 @@
 const {getTags, getTag, getTagsByCategory, addTag} = require('../controllers/tags');
+const { responseSchema } = require('../utils/response');
 
 const tagSchema = {
     type: 'object',
@@ -12,10 +13,10 @@ const tagSchema = {
 const getTagsOpts = {
     schema: {
         response: {
-            200: {
+            200: responseSchema({
                 type: 'array',
                 items: tagSchema
-            }
+            })
         }
     },
     handler: getTags
@@ -31,7 +32,7 @@ const getTagOpts = {
             required: ['id']
         },
         response: {
-            200: tagSchema
+            200: responseSchema(tagSchema)
         }
     },
     handler: getTag
@@ -46,10 +47,10 @@ const getTagsByCategoryOpts = {
             }
         },
         response: {
-            200: {
+            200: responseSchema({
                 type: 'array',
                 items: tagSchema
-            }
+            })
         }
     },
     handler: getTagsByCategory
@@ -66,7 +67,7 @@ const postTagOpts = {
             required: ['name', 'category_id']
         },
         response: {
-            201: tagSchema
+            201: responseSchema(tagSchema)
         }
     },
     handler: addTag

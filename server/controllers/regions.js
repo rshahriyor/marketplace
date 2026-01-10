@@ -1,10 +1,11 @@
 const db = require('../data/db');
+const { sendResponse } = require('../utils/response');
 
 const getRegions = (req, reply) => {
     const regions = db.prepare(
         'SELECT * FROM regions'
     ).all();
-    reply.send(regions);
+    return sendResponse(reply, 200, 0, 'OK', regions);
 };
 
 
@@ -15,11 +16,9 @@ const getRegion = (req, reply) => {
         'SELECT * FROM regions WHERE id = ?'
     ).get(id);
 
-    if (!item) {
-        return reply.status(404).send({ message: 'Item not found' });
-    }
+    if (!item) return sendResponse(reply, 404, -2, 'NOT_FOUND', null, 'Region not found');
 
-    reply.send(item);
+    return sendResponse(reply, 200, 0, 'OK', item);
 };
 
 
@@ -30,10 +29,7 @@ const addRegion = (req, reply) => {
         .prepare('INSERT INTO regions (name) VALUES (?)')
         .run(name);
     
-    reply.code(201).send({
-        id: result.lastInsertRowid,
-        name
-    });
+        return sendResponse(reply, 201, 0, 'CREATED', { id: result.lastInsertRowid, name });
 };
 
 module.exports = {getRegions, getRegion, addRegion};

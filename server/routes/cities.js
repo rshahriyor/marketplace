@@ -1,4 +1,5 @@
 const {getCities, getCity, getCitiesByRegion, addCity} = require('../controllers/cities');
+const { responseSchema } = require('../utils/response');
 
 const citySchema = {
     type: 'object',
@@ -12,10 +13,10 @@ const citySchema = {
 const getCitiesOpts = {
     schema: {
         response: {
-            200: {
+            200: responseSchema({
                 type: 'array',
                 items: citySchema
-            }
+            })
         }
     },
     handler: getCities
@@ -31,7 +32,7 @@ const getCityOpts = {
             required: ['id']
         },
         response: {
-            200: citySchema
+            200: responseSchema(citySchema)
         }
     },
     handler: getCity
@@ -46,14 +47,14 @@ const getCitiesByRegionOpts = {
             }
         },
         response: {
-            200: {
+            200: responseSchema({
                 type: 'array',
                 items: citySchema
-            }
+            })
         }
     },
     handler: getCitiesByRegion
-}
+};
 
 const postCityOpts = {
     schema: {
@@ -66,7 +67,7 @@ const postCityOpts = {
             required: ['name', 'region_id']
         },
         response: {
-            201: citySchema
+            201: responseSchema(citySchema)
         }
     },
     handler: addCity

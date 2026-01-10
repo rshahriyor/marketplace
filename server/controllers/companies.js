@@ -1,4 +1,6 @@
 const db = require('../data/db');
+const { sendResponse } = require('../utils/response');
+
 const BASE_COMPANY_QUERY = `
     SELECT
         c.id AS company_id,
@@ -65,7 +67,7 @@ const getCompanies = (req, reply) => {
         ORDER BY c.id
     `).all();
 
-    reply.send(mapCompanies(rows));
+    return sendResponse(reply, 200, 0, 'OK', mapCompanies(rows));
 };
 
 
@@ -109,7 +111,7 @@ const getCompaniesByFilter = (req, reply) => {
     }
 
     const rows = db.prepare(sql).all(...params);
-    reply.send(mapCompanies(rows));
+    return sendResponse(reply, 200, 0, 'OK', mapCompanies(rows));
 };
 
 
@@ -131,7 +133,7 @@ const getCompaniesForMainPage = (req, reply) => {
         grouped[item.category_id].companies.push(item);
     }
 
-    reply.send(Object.values(grouped));
+    return sendResponse(reply, 200, 0, 'OK', Object.values(grouped));
 };
 
 
@@ -144,10 +146,10 @@ const getCompany = (req, reply) => {
     `).all(id);
 
     if (!rows.length) {
-        return reply.status(404).send({ message: 'Item not found' });
+        return sendResponse(reply, 404, -2, 'NOT_FOUND', null, 'Company not found');
     }
 
-    reply.send(mapCompanies(rows)[0]);
+    return sendResponse(reply, 200, 0, 'OK', mapCompanies(rows)[0]);
 };
 
 
@@ -159,7 +161,7 @@ const getOwnCompanies = (req, reply) => {
         WHERE c.created_by_user_id = ?
     `).all(userId);
 
-    reply.send(mapCompanies(rows));
+    return sendResponse(reply, 200, 0, 'OK', mapCompanies(rows));
 };
 
 
@@ -192,7 +194,7 @@ const addCompany = (req, reply) => {
         WHERE c.id = ?
     `).all(companyId);
 
-    reply.code(201).send(mapCompanies(rows)[0]);
+    return sendResponse(reply, 201, 0, 'CREATED', mapCompanies(rows)[0]);
 };
 
 

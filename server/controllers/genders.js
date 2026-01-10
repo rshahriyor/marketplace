@@ -1,10 +1,11 @@
 const db = require('../data/db');
+const { sendResponse } = require('../utils/response');
 
 const getGenders = (req, reply) => {
     const genders = db.prepare(
         'SELECT * FROM genders'
     ).all();
-    reply.send(genders);
+    return sendResponse(reply, 200, 0, 'OK', genders);
 };
 
 
@@ -15,11 +16,9 @@ const getGender = (req, reply) => {
         'SELECT * FROM genders WHERE id = ?'
     ).get(id);
 
-    if (!item) {
-        return reply.status(404).send({ message: 'Item not found' });
-    }
+    if (!item) return sendResponse(reply, 404, -2, 'NOT_FOUND', null, 'Gender not found');
 
-    reply.send(item);
+    return sendResponse(reply, 200, 0, 'OK', item);
 };
 
 
@@ -30,10 +29,7 @@ const addGender = (req, reply) => {
         .prepare('INSERT INTO genders (name) VALUES (?)')
         .run(name);
     
-    reply.code(201).send({
-        id: result.lastInsertRowid,
-        name
-    });
+        return sendResponse(reply, 201, 0, 'CREATED', { id: result.lastInsertRowid, name });
 };
 
 module.exports = {getGenders, getGender, addGender};

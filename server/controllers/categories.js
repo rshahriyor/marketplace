@@ -1,10 +1,11 @@
 const db = require('../data/db');
+const { sendResponse } = require('../utils/response');
 
 const getCategories = (req, reply) => {
     const categories = db.prepare(
         'SELECT * FROM categories'
     ).all();
-    reply.send(categories);
+    return sendResponse(reply, 200, 0, 'OK', categories);
 };
 
 /**
@@ -18,10 +19,10 @@ const getCategory = (req, reply) => {
     ).get(id);
 
     if (!item) {
-        return reply.status(404).send({ message: 'Item not found' });
+        return sendResponse(reply, 404, -2, 'NOT_FOUND', null, 'Category not found');
     }
 
-    reply.send(item);
+    return sendResponse(reply, 200, 0, 'OK', item);
 };
 
 /**
@@ -33,12 +34,8 @@ const addCategory = (req, reply) => {
     const result = db
         .prepare('INSERT INTO categories (name, icon) VALUES (?, ?)')
         .run(name, icon);
-    
-    reply.code(201).send({
-        id: result.lastInsertRowid,
-        name,
-        icon
-    });
+
+    return sendResponse(reply, 201, 0, 'CREATED', { id: result.lastInsertRowid, name, icon });
 };
 
-module.exports = {getCategories, getCategory, addCategory};
+module.exports = { getCategories, getCategory, addCategory };

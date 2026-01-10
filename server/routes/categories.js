@@ -1,4 +1,5 @@
 const {getCategories, getCategory, addCategory} = require('../controllers/categories');
+const { responseSchema } = require('../utils/response');
 
 const categorySchema = {
     type: 'object',
@@ -12,10 +13,10 @@ const categorySchema = {
 const getCategoriesOpts = {
     schema: {
         response: {
-            200: {
+            200: responseSchema({
                 type: 'array',
                 items: categorySchema
-            }
+            })
         }
     },
     handler: getCategories
@@ -31,7 +32,7 @@ const getCategoryOpts = {
             required: ['id']
         },
         response: {
-            200: categorySchema
+            200: responseSchema(categorySchema)
         }
     },
     handler: getCategory
@@ -48,7 +49,7 @@ const postCategoryOpts = {
             required: ['name', 'icon']
         },
         response: {
-            201: categorySchema
+            201: responseSchema(categorySchema)
         }
     },
     handler: addCategory

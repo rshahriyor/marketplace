@@ -1,10 +1,11 @@
 const db = require('../data/db');
+const { sendResponse } = require('../utils/response');
 
 const getTags = (req, reply) => {
     const tags = db.prepare(
         'SELECT * FROM tags'
     ).all();
-    reply.send(tags);
+    return sendResponse(reply, 200, 0, 'OK', tags);
 };
 
 /**
@@ -17,11 +18,9 @@ const getTag = (req, reply) => {
         'SELECT * FROM tags WHERE id = ?'
     ).get(id);
 
-    if (!item) {
-        return reply.status(404).send({ message: 'Item not found' });
-    }
+    if (!item) return sendResponse(reply, 404, -2, 'NOT_FOUND', null, 'Tag not found');
 
-    reply.send(item);
+    return sendResponse(reply, 200, 0, 'OK', item);
 };
 
 const getTagsByCategory = (req, reply) => {
@@ -35,7 +34,7 @@ const getTagsByCategory = (req, reply) => {
             'SELECT * FROM tags'
         ).all();
 
-    reply.send(tags);
+    return sendResponse(reply, 200, 0, 'OK', tags);
 }
 
 /**
@@ -47,12 +46,8 @@ const addTag = (req, reply) => {
     const result = db
         .prepare('INSERT INTO tags (name, category_id) VALUES (?, ?)')
         .run(name, category_id);
-    
-    reply.code(201).send({
-        id: result.lastInsertRowid,
-        name,
-        category_id
-    });
+
+    return sendResponse(reply, 201, 0, 'CREATED', { id: result.lastInsertRowid, name, category_id });
 };
 
-module.exports = {getTags, getTag, getTagsByCategory, addTag};
+module.exports = { getTags, getTag, getTagsByCategory, addTag };

@@ -1,4 +1,5 @@
 const {getRegions, getRegion, addRegion} = require('../controllers/regions');
+const { responseSchema } = require('../utils/response');
 
 const regionSchema = {
     type: 'object',
@@ -11,10 +12,10 @@ const regionSchema = {
 const getRegionsOpts = {
     schema: {
         response: {
-            200: {
+            200: responseSchema({
                 type: 'array',
                 items: regionSchema
-            }
+            })
         }
     },
     handler: getRegions
@@ -30,7 +31,7 @@ const getRegionOpts = {
             required: ['id']
         },
         response: {
-            200: regionSchema
+            200: responseSchema(regionSchema)
         }
     },
     handler: getRegion
@@ -46,7 +47,7 @@ const postRegionOpts = {
             required: ['name']
         },
         response: {
-            201: regionSchema
+            201: responseSchema(regionSchema)
         }
     },
     handler: addRegion

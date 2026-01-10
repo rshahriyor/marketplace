@@ -1,4 +1,5 @@
 const {getUsers, getUser, addUser} = require('../controllers/users');
+const { responseSchema } = require('../utils/response');
 
 const userSchema = {
     type: 'object',
@@ -16,10 +17,10 @@ const userSchema = {
 const getUsersOpts = {
     schema: {
         response: {
-            200: {
+            200: responseSchema({
                 type: 'array',
                 items: userSchema
-            }
+            })
         }
     },
     handler: getUsers
@@ -35,7 +36,7 @@ const getUserOpts = {
             required: ['id']
         },
         response: {
-            200: userSchema
+            200: responseSchema(userSchema)
         }
     },
     handler: getUser
@@ -56,7 +57,7 @@ const postUserOpts = {
             required: ['username', 'password', 'first_name', 'last_name', 'phone_number', 'gender_id']
         },
         response: {
-            201: userSchema
+            201: responseSchema(userSchema)
         }
     },
     handler: addUser
