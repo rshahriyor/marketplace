@@ -15,4 +15,8 @@ export class AuthService {
     login(username: string, password: string): Observable<{ code: number, token: string, message: string }> {
         return this.http.post<{ code: number, token: string, message: string }>(API_URL, { username, password });
     }
+
+    get accessToken(): string {
+        return localStorage.getItem('token');
+    }
 }

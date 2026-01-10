@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs';
+import { StatusCodeEnum } from '../../../core/enums/status-code.enum';
 
 @Component({
   selector: 'mk-login',
@@ -42,10 +43,11 @@ export class Login implements OnInit {
         finalize(() => this.loading.set(false))
       )
       .subscribe((res) => {
-        if (res.code === 0) {
+        if (res.code === StatusCodeEnum.SUCCESS) {
           this.router.navigate(['/']);
+          localStorage.setItem('token', res.token);
         }
-        if (res.code === 401) {
+        if (res.code === StatusCodeEnum.WRONG_CREDENTIALS_ERROR) {
           this.isWrongCredentials = true;
         }
       });
