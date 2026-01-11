@@ -17,7 +17,14 @@ export interface ICompany {
     region_id?: number,
     region_name?: string,
     city_id?: number,
-    city_name?: string
+    city_name?: string,
+    schedules?: {
+        day_of_week?: number,
+        start_at?: string,
+        end_at?: string,
+        lunch_start_at?: string,
+        lunch_end_at?: string
+    }[]
 }
 
 export interface ICompaniesResponseForMainPage {

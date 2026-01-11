@@ -88,9 +88,8 @@
                 <p class="text-[27px] text-(--text-color) font-semibold my-0">Контакты:</p>
 
                 <div class="flex flex-wrap gap-6.25 justify-center mt-3">
-                    <a class="flex items-center justify-center gap-3
-                       bg-[#5B42FF] text-white font-semibold text-[19px]
-                       h-12 max-w-65.5 w-full rounded-lg">
+                    <a [href]="'tel:+992' + company()?.phone_number" 
+                        class="flex items-center justify-center gap-3 bg-[#5B42FF] text-white font-semibold text-[19px] h-12 max-w-65.5 w-full rounded-lg">
                         <i class="pi pi-phone"></i>
                         +992 {{ company()?.phone_number | formatPhone }}
                     </a>
@@ -109,14 +108,43 @@
 
                 <div class="relative mt-4">
                     <img src="/assets/map.svg" class="w-full max-w-137.5">
-                    <a [href]="'https://www.google.com/maps?q=' + company()?.latitude + ',' + company()?.longitude" target="_blank" 
-                        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+                    <a [href]="'https://www.google.com/maps?q=' + company()?.latitude + ',' + company()?.longitude"
+                        target="_blank" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
                                 bg-[#5B42FF] hover:bg-[#4f34fc]
                                 text-white text-[19px] font-semibold
                                 rounded-lg w-full max-w-52.5
                                 py-3 shadow transition text-center">
                         Показать на карте
                     </a>
+                </div>
+            </div>
+
+            <div class="bg-white p-3.75 rounded-[18px] mt-4">
+                <p class="text-[27px] text-[#525261] font-semibold my-0">
+                    График работы:
+                </p>
+
+                <div class="flex flex-wrap gap-[14px_35px] mt-4.5">
+                    @for (schedule of company()?.schedules; track $index) {
+                    <div class="flex justify-between items-center max-w-64.25 w-full">
+                        <span>{{schedule?.day_of_week | dayOfWeek}}</span>
+                        <div
+                            class="bg-[#F3F3F3] rounded-md h-11 w-full max-w-32.5 flex items-center justify-center text-[15px]">
+                            {{schedule?.start_at}} - {{schedule?.end_at}}
+                        </div>
+                    </div>
+                    }
+                    @if (company()?.schedules?.length) {
+                    <div class="flex justify-between items-center max-w-64.25 w-full">
+                        <span>Обед:</span>
+                        <div class="bg-[#F3F3F3] rounded-md h-11 w-full max-w-32.5
+                                      flex items-center justify-center text-[15px]">
+                            {{company()?.schedules?.[0]?.lunch_start_at}}
+                            -
+                            {{company()?.schedules?.[0]?.lunch_end_at}}
+                        </div>
+                    </div>
+                    }
                 </div>
             </div>
 

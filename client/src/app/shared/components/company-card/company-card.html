@@ -2,8 +2,8 @@
          max-sm:flex-row max-sm:max-h-36 max-sm:px-2.5 max-sm:py-2.75" [routerLink]="'/m/' + cardId()">
     <div class="relative h-44.75 w-full max-sm:max-w-46.25 max-sm:h-full">
         <!-- @if (cardImage()) { -->
-        <img class="h-44.75 w-full rounded-2xl border border-[#D0D0D0] object-cover" loading="lazy"
-            [src]="cardImage()" [alt]="cardTitle()" />
+        <img class="h-44.75 w-full rounded-2xl border border-[#D0D0D0] object-cover" loading="lazy" [src]="cardImage()"
+            [alt]="cardTitle()" />
 
         <!-- @if (imageLoading()) {
         <div class="absolute inset-0 z-[1001]">
@@ -15,19 +15,15 @@
             [src]="imageBaseUrl + '/assets/card.jpg'" [alt]="cardTitle()" />
         } -->
 
-        @if (!myCompaniesCard()) {
+        @if (!cardOwn()) {
         <div class="absolute left-2 top-2 flex h-6 w-6 items-center justify-center rounded-full"
-            (click)="scheduleClick($event)" [ngClass]="{
-          'bg-[#00D7AC]': isWorking(),
-          'bg-[#FFDC3F]': atLunch(),
-          'bg-[#FF8282]': isClosed()
-        }">
+            (click)="scheduleClick($event)" [ngClass]="{ 'bg-[#00D7AC]': isWorking(), 'bg-[#FFDC3F]': atLunch(), 'bg-[#FF8282]': isClosed() }" 
+            [mkTooltip]="workingStatusLabel">
             <i class="pi pi-clock text-white text-sm"></i>
         </div>
         } @else {
         <div class="absolute right-2 top-2">
-            <div class="relative flex cursor-pointer justify-end"
-                (click)="eventsClick($event)">
+            <div class="relative flex cursor-pointer justify-end" (click)="eventsClick($event)">
                 <i class="pi pi-ellipsis-v hover:bg-(--text-color)/10 p-1.5 rounded-full duration-200"></i>
 
                 <ul class="absolute right-0 top-7.5 z-100 flex w-max flex-col rounded-[5px] bg-white shadow-md"
@@ -66,9 +62,11 @@
                 {{ cardTitle() }}
             </h3>
 
-            <div class="flex flex-wrap gap-1.5 overflow-hidden" [ngClass]="cardTitle()?.length <= 12 ? 'max-h-14' : cardTitle()?.length <= 15 ? 'max-h-14' : 'max-h-6.25'">
-                @for (tag of cardTags(); track tag.id) {
-                <div class="max-h-6.25 flex justify-center items-center rounded-xl bg-[#F0F0F0CC] px-2.5 py-1.25 text-[13px]">
+            <div class="flex flex-wrap gap-1.5 overflow-hidden"
+                [ngClass]="cardTitle()?.length <= 12 ? 'max-h-14' : cardTitle()?.length <= 15 ? 'max-h-14' : 'max-h-6.25'">
+                @for (tag of cardTags(); track $index) {
+                <div
+                    class="max-h-6.25 flex justify-center items-center rounded-xl bg-[#F0F0F0CC] px-2.5 py-1.25 text-[13px]">
                     <span class="line-clamp-1">
                         {{ tag.tag_name }}
                     </span>
@@ -79,8 +77,7 @@
 
         <div class="flex justify-between">
             @if (favoritesCount() >= 0) {
-            <div class="flex items-center gap-1.25"
-                (click)="eventsClick($event)">
+            <div class="flex items-center gap-1.25" (click)="eventsClick($event)">
                 <i class="pi pi-heart text-[#FF7676] text-xl"></i>
                 <span class="text-[18px] text-[#FF7676]">
                     {{ favoritesCount() }}

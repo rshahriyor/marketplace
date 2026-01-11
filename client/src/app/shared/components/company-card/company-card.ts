@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, inject, Input, input, signal, WritableSignal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TooltipDirective } from '../../../core/directives/tooltip.directive';
 
 
 interface ISchedule {
@@ -14,7 +15,7 @@ interface ISchedule {
 
 @Component({
   selector: 'mk-company-card',
-  imports: [RouterLink, CommonModule],
+  imports: [RouterLink, CommonModule, TooltipDirective],
   templateUrl: './company-card.html',
   styleUrl: './company-card.css',
 })
@@ -29,7 +30,7 @@ export class CompanyCard {
   cardDiscount = input<{}>();
 
   onUpdateStatus = input<(id: number) => void>();
-  myCompaniesCard = input<boolean>();
+  cardOwn = input<boolean>();
 
   isShowEditMenu = input<boolean>();
   isActive = input<boolean>();

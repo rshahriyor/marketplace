@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, inject, OnInit, signal, WritableSignal } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from "@angular/router";
+import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from "@angular/router";
 import { Dropdown } from '../../../../shared/components/dropdown/dropdown';
 import { FilterService } from '../../../../core/services/filter.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CompaniesService } from '../../../../core/services/companies.service';
+import { DAYS_OFF_STATUS, WEEK_DAYS } from '../../../../core/utils/constants';
+import { getTimeSlots } from '../../../../core/utils/helper';
 
 @Component({
   selector: 'mk-company-form',
@@ -29,9 +31,14 @@ export class CompanyForm implements OnInit {
     category: [],
     tags: []
   };
+  timeSlots = getTimeSlots();
+
 
   isAllSelectedTag = false;
   tagOptions = [];
+  weekDays = WEEK_DAYS;
+  scheduleStartTimeSlots = [{ name: 'Выходной', value: 'Выходной' }, { name: 'Круглосуточно', value: 'Круглосуточно' }, ...this.timeSlots];
+  lunchTimeSlots = [{ name: 'Без перерыва', value: 'Без перерыва' }, ...this.timeSlots];
 
   private tagOptionsClone = [];
 
@@ -39,6 +46,7 @@ export class CompanyForm implements OnInit {
   private companyService = inject(CompaniesService);
   private filterService = inject(FilterService);
   private destroyRef = inject(DestroyRef);
+  private router = inject(Router);
 
   ngOnInit(): void {
     this.createForm();
@@ -46,6 +54,10 @@ export class CompanyForm implements OnInit {
     this.getCityOptions();
     this.getRegionOptions();
     this.getTagOptions();
+  }
+
+  get scheduleArray(): FormArray {
+    return this.form.get('schedules') as FormArray;
   }
 
   toggleDropdown(type: string): void {
@@ -153,22 +165,39 @@ export class CompanyForm implements OnInit {
   }
 
   addCompany(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
+    // if (this.form.invalid) {
+    //   this.form.markAllAsTouched();
+    //   return;
+    // }
 
-    const formData = this.form.value;
+    const rawValue = this.form.getRawValue();
+    const { schedules, lunch_start_at, lunch_end_at, ...rest } = rawValue;
 
-    this.companyService.addCompany(formData)
+    const company_schedule = schedules.map((value, index) => {
+      const without_interruption = lunch_start_at === DAYS_OFF_STATUS[2];
+
+      return {
+        day_of_week: index + 1,
+        start_at: value.start_at,
+        end_at: value.end_at,
+        lunch_start_at: without_interruption ? null : lunch_start_at,
+        lunch_end_at: without_interruption ? null : lunch_end_at
+      };
+    });
+
+    const payload = {
+      ...rest,
+      schedules: company_schedule
+    };
+
+    this.companyService.addCompany(payload)
       .pipe(
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe((res) => {
         console.log('Company added successfully:', res);
+        this.router.navigate(['/u/m-c']);
       });
-
-    console.log('Form Data:', formData);
   }
 
   private getRegionOptions(): void {
@@ -226,9 +255,17 @@ export class CompanyForm implements OnInit {
       address: new FormControl('', [Validators.required]),
       longitude: new FormControl(null, [Validators.required]),
       latitude: new FormControl(null, [Validators.required]),
-      desc: new FormControl('', [Validators.required])
-      // lunch_start_at: new FormControl('12:00'),
-      // lunch_end_at: new FormControl('13:00'),
+      desc: new FormControl('', [Validators.required]),
+      schedules: this.fb.array(this.weekDays.map((_, index) => {
+        return this.fb.group({
+          start_at: new FormControl('08:00'),
+          end_at: new FormControl('17:00'),
+          lunch_start_at: new FormControl(),
+          lunch_end_at: new FormControl()
+        })
+      })),
+      lunch_start_at: new FormControl('12:00'),
+      lunch_end_at: new FormControl('13:00'),
       // schedule: this.fb.array(this.weekDays.map((_, index) => {
       //   return this.fb.group({
       //     start_at: new FormControl('08:00'),

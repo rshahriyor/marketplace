@@ -103,51 +103,49 @@
       </div>
       } -->
 
-        <!-- <label class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
+      <div class="flex flex-col relative gap-1 font-semibold text-(--text-color) mb-0 w-full">
         <span class="w-fit relative text-lg mb-0.75 required">Укажите график работы</span>
-      </label>
-      <div formArrayName="schedule">
-        @for (form of scheduleArray.controls; track $index) {
-        <div class="schedule">
-          <span class="day-of-the-week">{{weekDays[$index]}}:</span>
-          <div class="schedule__time" [formGroupName]="$index">
-            <mk-dropdown formControlName="start_at" optionLabel="name"
-              labelStyle="text-align: center; padding-left: 0; width: 100%; font-size: 20px"
-              iconStyle="width: 19px; height: 11px" style="width: 100%; margin-bottom: 0;" optionValue="value"
-              optionIcon="/assets/icons/clock.svg" [options]="scheduleStartTimeSlots">
-            </mk-dropdown>
-            @if(!['Круглосуточно', 'Выходной'].includes(scheduleArray.controls[$index].get('start_at').value)) {
-            -
-            <mk-dropdown formControlName="end_at" optionLabel="name"
-              labelStyle="text-align: center; padding-left: 0; width: 100%; font-size: 20px"
-              iconStyle="width: 19px; height: 11px" style="width: 100%; margin-bottom: 0; text-align: center"
-              optionValue="value" optionIcon="/assets/icons/clock.svg" [options]="timeSlots">
-            </mk-dropdown>
-            }
-  
+        <div formArrayName="schedules">
+          @for (form of scheduleArray.controls; track $index) {
+          <div class="flex items-center gap-12.5 justify-between mb-2.5">
+            <span class="text-lg">{{weekDays[$index]}}:</span>
+            <div class="flex items-center gap-0.75 max-w-93.75 w-full" [formGroupName]="$index">
+              <mk-dropdown formControlName="start_at" optionLabel="name"
+                labelStyle="text-align: center; padding-left: 0; width: 100%; font-size: 20px"
+                iconStyle="width: 19px; height: 11px" style="width: 100%; margin-bottom: 0;" optionValue="value" [options]="scheduleStartTimeSlots">
+              </mk-dropdown>
+              @if(!['Круглосуточно', 'Выходной'].includes(scheduleArray.controls[$index].get('start_at').value)) {
+              -
+              <mk-dropdown formControlName="end_at" optionLabel="name"
+                labelStyle="text-align: center; padding-left: 0; width: 100%; font-size: 20px"
+                iconStyle="width: 19px; height: 11px" style="width: 100%; margin-bottom: 0; text-align: center"
+                optionValue="value" [options]="timeSlots">
+              </mk-dropdown>
+              }
+            </div>
           </div>
-        </div>
-        }
-      </div> -->
-
-        <!-- <div class="schedule">
-        <span class="day-of-the-week">Обед:</span>
-        <div class="schedule__time">
-          <mk-dropdown style="width: 100%; margin-bottom: 0;" formControlName="lunch_start_at" [options]="lunchTimeSlots"
-            labelStyle="text-align: center; padding-left: 0; width: 100%; font-size: 20px"
-            iconStyle="width: 19px; height: 11px" optionIcon="/assets/icons/clock.svg" optionLabel="name"
-            optionValue="value">
-          </mk-dropdown>
-          @if(formGroup.get('lunch_start_at').value !== 'Без перерыва') {
-          -
-          <mk-dropdown style="width: 100%; margin-bottom: 0;" formControlName="lunch_end_at" [options]="timeSlots"
-            labelStyle="text-align: center; padding-left: 0; width: 100%; font-size: 20px"
-            iconStyle="width: 19px; height: 11px" optionIcon="/assets/icons/clock.svg" optionLabel="name"
-            optionValue="value">
-          </mk-dropdown>
           }
         </div>
-      </div> -->
+        <div class="flex items-center gap-12.5 justify-between mb-2.5">
+          <span class="text-lg">Обед:</span>
+          <div class="flex items-center gap-0.75 max-w-93.75 w-full">
+            <mk-dropdown style="width: 100%; margin-bottom: 0;" formControlName="lunch_start_at" [options]="lunchTimeSlots"
+              labelStyle="text-align: center; padding-left: 0; width: 100%; font-size: 20px"
+              iconStyle="width: 19px; height: 11px" optionIcon="/assets/icons/clock.svg" optionLabel="name"
+              optionValue="value">
+            </mk-dropdown>
+            @if(form.get('lunch_start_at').value !== 'Без перерыва') {
+            -
+            <mk-dropdown style="width: 100%; margin-bottom: 0;" formControlName="lunch_end_at" [options]="timeSlots"
+              labelStyle="text-align: center; padding-left: 0; width: 100%; font-size: 20px"
+              iconStyle="width: 19px; height: 11px" optionIcon="/assets/icons/clock.svg" optionLabel="name"
+              optionValue="value">
+            </mk-dropdown>
+            }
+          </div>
+        </div>
+      </div>
+
 
         <div class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
             <span class="w-fit relative text-lg mb-0.75 required">Регион / Район</span>
@@ -208,7 +206,7 @@
 
     <div class="flex gap-5">
         <button class="h-12 border-0 rounded-lg font-semibold text-[18px] px-4.25 bg-[#5B42FF] text-white w-full text-center cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-1.25"
-            (click)="addCompany()" [disabled]="form.invalid" [style.opacity]="form.invalid ? 0.6 : 1">
+            (click)="addCompany()" >
             Добавить
         </button>
         <button routerLink="/u" class="h-12 w-full border-0 rounded-lg font-semibold text-[18px] px-4.25 text-(--text-color) bg-white text-center cursor-pointer flex items-center justify-center gap-1.25">

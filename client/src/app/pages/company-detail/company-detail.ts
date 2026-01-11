@@ -6,10 +6,11 @@ import { ActivatedRoute } from '@angular/router';
 import { ICompany } from '../../core/models/company.model';
 import { Menu } from "../../shared/components/menu/menu";
 import { FormatPhonePipe } from "../../core/pipes/format-phone";
+import { DayOfWeekPipe } from "../../core/pipes/day-of-week";
 
 @Component({
   selector: 'mk-company-detail',
-  imports: [CommonModule, Menu, FormatPhonePipe],
+  imports: [CommonModule, Menu, FormatPhonePipe, DayOfWeekPipe],
   templateUrl: './company-detail.html',
   styleUrl: './company-detail.css',
 })

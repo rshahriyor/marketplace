@@ -21,7 +21,7 @@
     <div class="flex flex-wrap gap-5 mt-2">
         @for (company of company.companies; track $index) {
         <div class="max-w-70 w-full">
-            <mk-company-card [cardTitle]="company.name" [cardId]="company.id" [cardTags]="company.tags" [cardFavoritesCount]="1"></mk-company-card>
+            <mk-company-card [cardTitle]="company.name" [cardId]="company.id" [cardTags]="company.tags" [cardFavoritesCount]="1" [schedule]="company.schedules[0]"></mk-company-card>
         </div>
         }
     </div>
