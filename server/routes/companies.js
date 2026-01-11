@@ -155,7 +155,7 @@ const postCompanyOpts = {
                 latitude: { type: 'number' },
                 longitude: { type: 'number' },
                 address: { type: 'string' },
-                schedule: {
+                schedules: {
                     type: 'array',
                     items: {
                         type: 'object',
@@ -170,7 +170,7 @@ const postCompanyOpts = {
                     minItems: 1
                 }
             },
-            required: ['name', 'category_id', 'tag_id', 'region_id', 'city_id', 'desc', 'phone_number', 'latitude', 'longitude', 'address', 'schedule']
+            required: ['name', 'category_id', 'tag_id', 'region_id', 'city_id', 'desc', 'phone_number', 'latitude', 'longitude', 'address', 'schedules']
         },
         response: {
             201: responseSchema(companySchema)

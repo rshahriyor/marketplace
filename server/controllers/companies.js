@@ -200,7 +200,7 @@ const getOwnCompanies = (req, reply) => {
 
 
 const addCompany = (req, reply) => {
-    const { name, category_id, tag_id, region_id, city_id, desc, phone_number, longitude, latitude, address, schedule } = req.body;
+    const { name, category_id, tag_id, region_id, city_id, desc, phone_number, longitude, latitude, address, schedules } = req.body;
     const userId = req.user.userId;
 
     const transaction = db.transaction(() => {
@@ -218,12 +218,12 @@ const addCompany = (req, reply) => {
             stmtTag.run(companyId, tag);
         }
 
-        if (Array.isArray(schedule)) {
+        if (Array.isArray(schedules)) {
             const stmtSchedule = db.prepare(
                 'INSERT INTO schedules (company_id, day_of_week, start_at, end_at, lunch_start_at, lunch_end_at) VALUES (?, ?, ?, ?, ?, ?)'
             );
 
-            for (const sch of schedule) {
+            for (const sch of schedules) {
                 stmtSchedule.run(
                     companyId,
                     sch.day_of_week,
