@@ -26,7 +26,20 @@ const companySchema = {
         phone_number: { type: 'number' },
         latitude: { type: 'number' },
         longitude: { type: 'number' },
-        address: { type: 'string' }
+        address: { type: 'string' },
+        schedules: {
+            type: 'array',
+            items: {
+                type: 'object',
+                properties: {
+                    day_of_week: { type: 'number' },
+                    start_at: { type: 'string' },
+                    end_at: { type: 'string' },
+                    lunch_start_at: { type: 'string' },
+                    lunch_end_at: { type: 'string' }
+                }
+            }
+        }
     }
 };
 
@@ -141,9 +154,23 @@ const postCompanyOpts = {
                 phone_number: { type: 'number' },
                 latitude: { type: 'number' },
                 longitude: { type: 'number' },
-                address: { type: 'string' }
+                address: { type: 'string' },
+                schedule: {
+                    type: 'array',
+                    items: {
+                        type: 'object',
+                        properties: {
+                            day_of_week: { type: 'number' },
+                            start_at: { type: 'string' },
+                            end_at: { type: 'string' },
+                            lunch_start_at: { type: 'string' },
+                            lunch_end_at: { type: 'string' }
+                        }
+                    },
+                    minItems: 1
+                }
             },
-            required: ['name', 'category_id', 'tag_id', 'region_id', 'city_id', 'desc', 'phone_number', 'latitude', 'longitude', 'address']
+            required: ['name', 'category_id', 'tag_id', 'region_id', 'city_id', 'desc', 'phone_number', 'latitude', 'longitude', 'address', 'schedule']
         },
         response: {
             201: responseSchema(companySchema)

@@ -2,6 +2,8 @@ const Database = require('better-sqlite3');
 
 const db = new Database('db.sqlite');
 
+// db.prepare(`DROP TABLE IF EXISTS schedules`).run();
+// db.prepare(`DROP TABLE IF EXISTS company_tags`).run();
 // db.prepare(`DROP TABLE IF EXISTS companies`).run();
 // db.prepare(`DROP TABLE IF EXISTS categories`).run();
 
@@ -86,4 +88,19 @@ db.prepare(`
     name TEXT NOT NULL
   )
 `).run();
+
+// schedules
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS schedules (
+    company_id INTEGER NOT NULL,
+    day_of_week INTEGER NOT NULL,
+    start_at TEXT NOT NULL,
+    end_at TEXT NOT NULL,
+    lunch_start_at TEXT,
+    lunch_end_at TEXT,
+    PRIMARY KEY (company_id, day_of_week),
+    FOREIGN KEY (company_id) REFERENCES companies(id)
+  )
+`).run();
+
 module.exports = db;

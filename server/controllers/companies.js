@@ -18,13 +18,19 @@ const BASE_COMPANY_QUERY = `
         r.id as region_id,
         r.name as region_name,
         ci.id as city_id,
-        ci.name as city_name
+        ci.name as city_name,
+        s.day_of_week AS schedule_day_of_week,
+        s.start_at AS schedule_start_at,
+        s.end_at AS schedule_end_at,
+        s.lunch_start_at AS schedule_lunch_start_at,
+        s.lunch_end_at AS schedule_lunch_end_at
     FROM companies c
     JOIN categories cat ON cat.id = c.category_id
     LEFT JOIN company_tags ct ON ct.company_id = c.id
     LEFT JOIN tags t ON t.id = ct.tag_id
     LEFT JOIN regions r ON r.id = c.region_id
     LEFT JOIN cities ci ON ci.id = c.city_id
+    LEFT JOIN schedules s ON s.company_id = c.id
 `;
 const mapCompanies = (rows) => {
     const map = new Map();
@@ -37,6 +43,7 @@ const mapCompanies = (rows) => {
                 category_id: row.category_id,
                 category_name: row.category_name,
                 tags: [],
+                schedules: [],
                 region_id: row.region_id,
                 region_name: row.region_name,
                 city_id: row.city_id,
@@ -49,11 +56,32 @@ const mapCompanies = (rows) => {
             });
         }
 
-        if (row.tag_id) {
-            map.get(row.company_id).tags.push({
+        const company = map.get(row.company_id);
+
+        if (row.tag_id && !company.tags.some(tag => tag.tag_id === row.tag_id)) {
+            company.tags.push({
                 tag_id: row.tag_id,
                 tag_name: row.tag_name
             });
+        }
+
+        if (row.schedule_day_of_week !== null) {
+            const scheduleExists = company.schedules.some(sch =>
+                sch.day_of_week === row.schedule_day_of_week &&
+                sch.start_at === row.schedule_start_at &&
+                sch.end_at === row.schedule_end_at &&
+                sch.lunch_start_at === row.schedule_lunch_start_at &&
+                sch.lunch_end_at === row.schedule_lunch_end_at
+            );
+            if (!scheduleExists) {
+                company.schedules.push({
+                    day_of_week: row.schedule_day_of_week,
+                    start_at: row.schedule_start_at,
+                    end_at: row.schedule_end_at,
+                    lunch_start_at: row.schedule_lunch_start_at,
+                    lunch_end_at: row.schedule_lunch_end_at
+                });
+            }
         }
     }
 
@@ -119,6 +147,9 @@ const getCompaniesForMainPage = (req, reply) => {
     const rows = db.prepare(BASE_COMPANY_QUERY).all();
     const companies = mapCompanies(rows);
 
+    const day = new Date().getDay();
+    const currentDayOfWeek = day === 0 ? 7 : day;
+
     const grouped = {};
 
     for (const item of companies) {
@@ -130,7 +161,10 @@ const getCompaniesForMainPage = (req, reply) => {
             };
         }
 
-        grouped[item.category_id].companies.push(item);
+        const filteredSchedules = item.schedules.filter(sch => sch.day_of_week === currentDayOfWeek);
+        const companyWithFilteredSchedules = { ...item, schedules: filteredSchedules };
+
+        grouped[item.category_id].companies.push(companyWithFilteredSchedules);
     }
 
     return sendResponse(reply, 200, 0, 'OK', Object.values(grouped));
@@ -166,7 +200,7 @@ const getOwnCompanies = (req, reply) => {
 
 
 const addCompany = (req, reply) => {
-    const { name, category_id, tag_id, region_id, city_id, desc, phone_number, longitude, latitude, address } = req.body;
+    const { name, category_id, tag_id, region_id, city_id, desc, phone_number, longitude, latitude, address, schedule } = req.body;
     const userId = req.user.userId;
 
     const transaction = db.transaction(() => {
@@ -176,12 +210,29 @@ const addCompany = (req, reply) => {
 
         const companyId = result.lastInsertRowid;
 
-        const stmt = db.prepare(
+        const stmtTag = db.prepare(
             'INSERT OR IGNORE INTO company_tags (company_id, tag_id) VALUES (?, ?)'
         );
 
         for (const tag of tag_id) {
-            stmt.run(companyId, tag);
+            stmtTag.run(companyId, tag);
+        }
+
+        if (Array.isArray(schedule)) {
+            const stmtSchedule = db.prepare(
+                'INSERT INTO schedules (company_id, day_of_week, start_at, end_at, lunch_start_at, lunch_end_at) VALUES (?, ?, ?, ?, ?, ?)'
+            );
+
+            for (const sch of schedule) {
+                stmtSchedule.run(
+                    companyId,
+                    sch.day_of_week,
+                    sch.start_at,
+                    sch.end_at,
+                    sch.lunch_start_at,
+                    sch.lunch_end_at
+                );
+            }
         }
 
         return companyId;
