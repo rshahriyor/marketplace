@@ -4,13 +4,15 @@ import { RouterLink } from '@angular/router';
 import { TooltipDirective } from '../../../core/directives/tooltip.directive';
 
 
-interface ISchedule {
-  is_work_day: number
-  start_at: string;
-  end_at: string;
-  lunch_start_at: string;
-  lunch_end_at: string;
-  is_day_and_night: number;
+export interface ISchedule {
+  day_of_week?: number,
+  start_at?: string,
+  end_at?: string,
+  lunch_start_at?: string,
+  lunch_end_at?: string,
+  is_working_day?: boolean,
+  is_day_and_night?: boolean,
+  without_breaks?: boolean
 }
 
 @Component({
@@ -126,29 +128,29 @@ export class CompanyCard {
   private calculateWorkingDay(): void {
     const realTime = new Date();
     if (Array.isArray(this.schedule)) {
-      this.schedule = this.schedule.find(schedule => schedule.day_id === realTime.getDay());
+      this.schedule = this.schedule.find(schedule => schedule.day_of_week === realTime.getDay());
     }
-    if (this.schedule.is_work_day) {
+    if (this.schedule.is_working_day) {
       const companyStartWork = new Date();
       const companyFinishWork = new Date();
       const lunchStartTime = new Date();
       const lunchEndTime = new Date();
       const realTime = new Date();
 
-      let [hour, min, sec] = this.schedule.start_at.split(':');
-      companyStartWork.setHours(+hour, +min, +sec);
+      let [hour, min] = this.schedule.start_at.split(':');
+      companyStartWork.setHours(+hour, +min);
 
-      [hour, min, sec] = this.schedule.end_at.split(':');
-      companyFinishWork.setHours(+hour, +min, +sec);
+      [hour, min] = this.schedule.end_at.split(':');
+      companyFinishWork.setHours(+hour, +min);
 
-      if (this.schedule.lunch_start_at !== null) {
-        const [h, m, s] = this.schedule.lunch_start_at.split(':');
-        lunchStartTime.setHours(+h, +m, +s);
+      if (this.schedule.lunch_start_at !== '') {
+        const [h, m] = this.schedule.lunch_start_at.split(':');
+        lunchStartTime.setHours(+h, +m);
       }
 
-      if (this.schedule.lunch_end_at !== null) {
-        const [h, m, s] = this.schedule.lunch_end_at.split(':');
-        lunchEndTime.setHours(+h, +m, +s);
+      if (this.schedule.lunch_end_at !== '') {
+        const [h, m] = this.schedule.lunch_end_at.split(':');
+        lunchEndTime.setHours(+h, +m);
       }
 
       if (realTime.getHours() > 4 && companyFinishWork.getHours() < 4) {

@@ -23,25 +23,19 @@
                     (click)="expandImageToView(mainImagePath())" (wheel)="onMainImageScroll($event)" ngSwipe
                     (swipeEnd)="onSwipeEnd($event)" class="cursor-pointer border border-[#D0D0D0] bg-[#F3F3F3]
                      object-cover max-w-[580px] w-full h-[330px] rounded-[15px]"> -->
-                <img
-                    class="cursor-pointer border border-[#D0D0D0] bg-[#F3F3F3] object-cover max-w-145 w-full h-82.5 rounded-[15px]">
+                <img class="cursor-pointer border border-[#D0D0D0] bg-[#F3F3F3] object-cover max-w-145 w-full h-82.5 rounded-[15px]">
 
                 <div class="absolute top-3 w-full px-2.5 flex justify-between items-center">
-
-                    <!-- STATUS -->
-                    <!-- <div class="flex items-center gap-[5px] h-[31px] px-[12px] rounded-full" [ngClass]="{
-                  'bg-[#00D7AC]': workSchedule.is_work_day && companyIsWorking,
-                  'bg-[#FFDC3F]': companyAtLunch,
-                  'bg-[#FF8282]': !companyIsWorking
-                }"> -->
-                    <div class="flex items-center gap-1.25 h-7.75 px-3 rounded-full">
-                        <!-- <img src="/assets/icons/card-schedule.svg" width="17" height="17"> -->
-                        <i class="pi pi-clock text-lg"></i>
-                        <span class="text-[17px] text-white leading-none">
-                            <!-- {{ workSchedule.is_work_day && companyIsWorking ? 'Открыто' :
-                            companyAtLunch ? 'Обед' : 'Закрыто' }} -->
-                            Закрыто
-                        </span>
+                    <div class="flex items-center gap-1">
+                        <div class="flex h-6 w-6 items-center justify-center rounded-full"
+                            [ngClass]="{ 'bg-[#00D7AC]': isWorking(), 'bg-[#FFDC3F]': atLunch(), 'bg-[#FF8282]': isClosed() }">
+                            <i class="pi pi-clock text-white text-sm"></i>
+                        </div>
+                        <div class="flex items-center gap-1.25 h-7.75 rounded-full">
+                            <span class="text-[17px] text-black leading-none">
+                                {{workingStatusLabel}}
+                            </span>
+                        </div>
                     </div>
 
                     <!-- EXPAND -->
@@ -88,7 +82,7 @@
                 <p class="text-[27px] text-(--text-color) font-semibold my-0">Контакты:</p>
 
                 <div class="flex flex-wrap gap-6.25 justify-center mt-3">
-                    <a [href]="'tel:+992' + company()?.phone_number" 
+                    <a [href]="'tel:+992' + company()?.phone_number"
                         class="flex items-center justify-center gap-3 bg-[#5B42FF] text-white font-semibold text-[19px] h-12 max-w-65.5 w-full rounded-lg">
                         <i class="pi pi-phone"></i>
                         +992 {{ company()?.phone_number | formatPhone }}
@@ -128,21 +122,40 @@
                     @for (schedule of company()?.schedules; track $index) {
                     <div class="flex justify-between items-center max-w-64.25 w-full">
                         <span>{{schedule?.day_of_week | dayOfWeek}}</span>
+                        @if (schedule?.is_day_and_night) {
+                        <div
+                            class="bg-[#F3F3F3] rounded-md h-11 w-full max-w-32.5 flex items-center justify-center text-[15px]">
+                            Круглосуточно
+                        </div>
+                        } @else if (!schedule?.is_working_day) {
+                        <div
+                            class="bg-[#F3F3F3] rounded-md h-11 w-full max-w-32.5 flex items-center justify-center text-[15px]">
+                            Выходной
+                        </div>
+                        } @else {
                         <div
                             class="bg-[#F3F3F3] rounded-md h-11 w-full max-w-32.5 flex items-center justify-center text-[15px]">
                             {{schedule?.start_at}} - {{schedule?.end_at}}
                         </div>
+                        }
                     </div>
                     }
                     @if (company()?.schedules?.length) {
                     <div class="flex justify-between items-center max-w-64.25 w-full">
                         <span>Обед:</span>
+                        @if (company()?.schedules[0]?.without_breaks) {
                         <div class="bg-[#F3F3F3] rounded-md h-11 w-full max-w-32.5
-                                      flex items-center justify-center text-[15px]">
-                            {{company()?.schedules?.[0]?.lunch_start_at}}
-                            -
-                            {{company()?.schedules?.[0]?.lunch_end_at}}
+                                          flex items-center justify-center text-[15px]">
+                            Без перерыва
                         </div>
+                        } @else {
+                        <div class="bg-[#F3F3F3] rounded-md h-11 w-full max-w-32.5
+                                flex items-center justify-center text-[15px]">
+                            {{company()?.schedules[0]?.lunch_start_at}}
+                            -
+                            {{company()?.schedules[0]?.lunch_end_at}}
+                        </div>
+                        }
                     </div>
                     }
                 </div>
@@ -157,4 +170,3 @@
             </div>
         </div>
     </div>
-</div>

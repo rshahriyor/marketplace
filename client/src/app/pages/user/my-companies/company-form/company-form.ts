@@ -174,14 +174,28 @@ export class CompanyForm implements OnInit {
     const { schedules, lunch_start_at, lunch_end_at, ...rest } = rawValue;
 
     const company_schedule = schedules.map((value, index) => {
-      const without_interruption = lunch_start_at === DAYS_OFF_STATUS[2];
-
+      const is_working_day = value.start_at !== DAYS_OFF_STATUS[0]; // не "Выходной"
+      const is_day_and_night = value.start_at === DAYS_OFF_STATUS[1]; // "Круглосуточно"
+      const without_breaks = lunch_start_at === DAYS_OFF_STATUS[2]; // "Без перерыва"
+    
+      let start_at = value.start_at;
+      let end_at = value.end_at;
+    
+      // если выходной или круглосуточно
+      if (!is_working_day || is_day_and_night) {
+        start_at = '00:00';
+        end_at = '23:59';
+      }
+    
       return {
         day_of_week: index + 1,
-        start_at: value.start_at,
-        end_at: value.end_at,
-        lunch_start_at: without_interruption ? null : lunch_start_at,
-        lunch_end_at: without_interruption ? null : lunch_end_at
+        start_at,
+        end_at,
+        is_working_day,
+        is_day_and_night,
+        without_breaks,
+        lunch_start_at: without_breaks ? null : lunch_start_at,
+        lunch_end_at: without_breaks ? null : lunch_end_at
       };
     });
 
@@ -261,7 +275,10 @@ export class CompanyForm implements OnInit {
           start_at: new FormControl('08:00'),
           end_at: new FormControl('17:00'),
           lunch_start_at: new FormControl(),
-          lunch_end_at: new FormControl()
+          lunch_end_at: new FormControl(),
+          is_working_day: new FormControl(),
+          is_day_and_night: new FormControl(),
+          without_breaks: new FormControl()
         })
       })),
       lunch_start_at: new FormControl('12:00'),
