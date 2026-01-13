@@ -98,6 +98,9 @@ db.prepare(`
     end_at TEXT NOT NULL,
     lunch_start_at TEXT,
     lunch_end_at TEXT,
+    is_working_day BOOLEAN NOT NULL,
+    is_day_and_night BOOLEAN NOT NULL,
+    without_breaks BOOLEAN NOT NULL,
     PRIMARY KEY (company_id, day_of_week),
     FOREIGN KEY (company_id) REFERENCES companies(id)
   )

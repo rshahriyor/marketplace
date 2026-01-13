@@ -23,7 +23,10 @@ const BASE_COMPANY_QUERY = `
         s.start_at AS schedule_start_at,
         s.end_at AS schedule_end_at,
         s.lunch_start_at AS schedule_lunch_start_at,
-        s.lunch_end_at AS schedule_lunch_end_at
+        s.lunch_end_at AS schedule_lunch_end_at,
+        s.is_working_day AS schedule_is_working_day,
+        s.is_day_and_night AS schedule_is_day_and_night,
+        s.without_breaks AS schedule_without_breaks
     FROM companies c
     JOIN categories cat ON cat.id = c.category_id
     LEFT JOIN company_tags ct ON ct.company_id = c.id
@@ -71,7 +74,10 @@ const mapCompanies = (rows) => {
                 sch.start_at === row.schedule_start_at &&
                 sch.end_at === row.schedule_end_at &&
                 sch.lunch_start_at === row.schedule_lunch_start_at &&
-                sch.lunch_end_at === row.schedule_lunch_end_at
+                sch.lunch_end_at === row.schedule_lunch_end_at &&
+                sch.is_working_day === row.schedule_is_working_day &&
+                sch.is_day_and_night === row.schedule_is_day_and_night &&
+                sch.without_breaks === row.schedule_without_breaks
             );
             if (!scheduleExists) {
                 company.schedules.push({
@@ -79,7 +85,10 @@ const mapCompanies = (rows) => {
                     start_at: row.schedule_start_at,
                     end_at: row.schedule_end_at,
                     lunch_start_at: row.schedule_lunch_start_at,
-                    lunch_end_at: row.schedule_lunch_end_at
+                    lunch_end_at: row.schedule_lunch_end_at,
+                    is_working_day: row.schedule_is_working_day,
+                    is_day_and_night: row.schedule_is_day_and_night,
+                    without_breaks: row.schedule_without_breaks
                 });
             }
         }
@@ -220,7 +229,7 @@ const addCompany = (req, reply) => {
 
         if (Array.isArray(schedules)) {
             const stmtSchedule = db.prepare(
-                'INSERT INTO schedules (company_id, day_of_week, start_at, end_at, lunch_start_at, lunch_end_at) VALUES (?, ?, ?, ?, ?, ?)'
+                'INSERT INTO schedules (company_id, day_of_week, start_at, end_at, lunch_start_at, lunch_end_at, is_working_day, is_day_and_night, without_breaks) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
             );
 
             for (const sch of schedules) {
@@ -229,8 +238,11 @@ const addCompany = (req, reply) => {
                     sch.day_of_week,
                     sch.start_at,
                     sch.end_at,
-                    sch.lunch_start_at,
-                    sch.lunch_end_at
+                    sch.lunch_start_at ?? null,
+                    sch.lunch_end_at ?? null,
+                    sch.is_working_day ? 1 : 0,
+                    sch.is_day_and_night ? 1 : 0,
+                    sch.without_breaks ? 1 : 0
                 );
             }
         }

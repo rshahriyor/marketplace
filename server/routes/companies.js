@@ -36,7 +36,10 @@ const companySchema = {
                     start_at: { type: 'string' },
                     end_at: { type: 'string' },
                     lunch_start_at: { type: 'string' },
-                    lunch_end_at: { type: 'string' }
+                    lunch_end_at: { type: 'string' },
+                    is_working_day: { type: 'boolean' },
+                    is_day_and_night: { type: 'boolean' },
+                    without_breaks: { type: 'boolean' }
                 }
             }
         }
@@ -164,7 +167,10 @@ const postCompanyOpts = {
                             start_at: { type: 'string' },
                             end_at: { type: 'string' },
                             lunch_start_at: { type: 'string' },
-                            lunch_end_at: { type: 'string' }
+                            lunch_end_at: { type: 'string' },
+                            is_working_day: { type: 'boolean' },
+                            is_day_and_night: { type: 'boolean' },
+                            without_breaks: { type: 'boolean' }
                         }
                     },
                     minItems: 1
