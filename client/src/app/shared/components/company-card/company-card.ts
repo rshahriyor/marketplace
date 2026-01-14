@@ -2,6 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, inject, Input, input, signal, WritableSignal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TooltipDirective } from '../../../core/directives/tooltip.directive';
+import { CompaniesService } from '../../../core/services/companies.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { StatusCodeEnum } from '../../../core/enums/status-code.enum';
+import { AuthService } from '../../../core/services/auth.service';
 
 
 export interface ISchedule {
@@ -23,16 +27,16 @@ export interface ISchedule {
 })
 export class CompanyCard {
 
+  cardId = input.required<number>();
   cardTitle = input.required<string>();
+  cardIsFavorited = input.required<boolean>();
+  cardFavoritesCount = input.required<number>();
+  cardOwn = input<boolean>();
+  
   cardTags = input<any[]>();
   cardImage = input<any[]>();
-  cardId = input.required<number>();
-  cardFavoritesCount = input<number>();
-  cardIsFavorited = input<boolean>();
-  cardDiscount = input<{}>();
 
   onUpdateStatus = input<(id: number) => void>();
-  cardOwn = input<boolean>();
 
   isShowEditMenu = input<boolean>();
   isActive = input<boolean>();
@@ -59,6 +63,8 @@ export class CompanyCard {
   readonly imageLoading: WritableSignal<boolean> = signal(true);
 
   private destroyRef = inject(DestroyRef);
+  private companyService = inject(CompaniesService);
+  private authService = inject(AuthService);
   private _value = signal<Partial<ISchedule>>({});
 
   get workingStatusLabel(): string {
@@ -85,25 +91,24 @@ export class CompanyCard {
     event.preventDefault();
   }
 
-  // likeCard(): void {
-  //   if (!this.authService.accessToken) {
-  //     this.registerService.showModal();
-  //     return;
-  //   }
-  //   this.addToFavoriteLoading.set(true);
-  //   this.userActionsService.likeCompany({company_id: this.cardId()})
-  //   .pipe(
-  //     takeUntilDestroyed(this.destroyRef)
-  //   )
-  //   .subscribe((res) => {
-  //     this.addToFavoriteLoading.set(false);
-  //     if (res.status.code === StatusCodeEnum.SUCCESS) {
-  //       this.isFavorite.set(true);
-  //       this.favoritesCount.update(prev => prev += 1);
-  //     }
-  //     this.cdr.markForCheck();
-  //   })
-  // }
+  toggleFavoriteCard(): void {
+    if (!this.authService.accessToken) {
+      alert('Пожалуйста, войдите в систему, чтобы добавить в избранное.');
+      return;
+    }
+    this.addToFavoriteLoading.set(true);
+    this.companyService.toggleFavoriteCompany(this.cardId())
+    .pipe(
+      takeUntilDestroyed(this.destroyRef)
+    )
+    .subscribe((res) => {
+      this.addToFavoriteLoading.set(false);
+      if (res.status.code === StatusCodeEnum.SUCCESS) {
+        this.isFavorite.set(!this.isFavorite());
+        this.favoritesCount.update(prev => this.isFavorite() ? prev += 1 : prev -= 1);
+      }
+    })
+  }
 
   // unLikeCard(): void {
   //   if (!this.authService.accessToken) {

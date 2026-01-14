@@ -6,7 +6,7 @@ export interface ICompany {
         tag_id: number,
         tag_name: string
     }[],
-    is_favorited?: boolean,
+    is_favorite?: boolean,
     favorites_count?: number,
     categories?: string[],
     desc?: string,

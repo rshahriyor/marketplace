@@ -11,7 +11,7 @@
             @for (company of companiesList(); track $index) {
             <div class="max-w-70 w-full">
                 <mk-company-card [cardTitle]="company.name" [cardId]="company.id" [cardTags]="company.tags"
-                    [cardFavoritesCount]="1" [cardOwn]="true"></mk-company-card>
+                    [cardFavoritesCount]="company.favorites_count" [cardIsFavorited]="company.is_favorite" [cardOwn]="true"></mk-company-card>
             </div>
             }
         </div>

@@ -74,8 +74,8 @@
     <div class="flex flex-wrap gap-5">
       @for (company of companiesList(); track $index) {
       <div class="max-w-70 w-full">
-        <mk-company-card [cardTitle]="company.name" [cardId]="company.id" [cardTags]="company.tags"
-          [cardFavoritesCount]="1"></mk-company-card>
+        <mk-company-card [cardTitle]="company.name" [cardId]="company.id" [cardTags]="company.tags" [cardIsFavorited]="company.is_favorite"
+          [cardFavoritesCount]="company.favorites_count"></mk-company-card>
       </div>
       } @empty {
       <p class="text-[26px] font-medium m-0 text-[#52526190]">К сожалению нет данных</p>

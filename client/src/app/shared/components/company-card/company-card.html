@@ -77,23 +77,13 @@
 
         <div class="flex justify-between">
             @if (favoritesCount() >= 0) {
-            <div class="flex items-center gap-1.25" (click)="eventsClick($event)">
-                <i class="pi pi-heart text-[#FF7676] text-xl"></i>
+            <div class="flex items-center gap-1.25" (click)="eventsClick($event); toggleFavoriteCard()">
+                <i [class]="isFavorite() ? 'pi pi-heart-fill' : 'pi pi-heart'" class="text-[#FF7676] text-xl"></i>
                 <span class="text-[18px] text-[#FF7676]">
                     {{ favoritesCount() }}
                 </span>
             </div>
             }
-
-            <!-- @if (cardDiscount() !== undefined) {
-            <div class="flex items-center gap-[5px] rounded-full bg-[#FF5050] px-[6px] py-[5px]">
-                <img src="/assets/icons/discount.svg" alt="discount_icon" />
-                <span class="font-semibold text-white">
-                    -{{ cardDiscount()?.value.substring(0, 2) }}
-                    {{ cardDiscount()?.is_percent ? '%' : 'c' }}
-                </span>
-            </div>
-            } -->
         </div>
     </div>
 </a>
