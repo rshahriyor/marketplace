@@ -5,7 +5,7 @@ const db = new Database('db.sqlite');
 // db.prepare(`DROP TABLE IF EXISTS schedules`).run();
 // db.prepare(`DROP TABLE IF EXISTS company_tags`).run();
 // db.prepare(`DROP TABLE IF EXISTS companies`).run();
-// db.prepare(`DROP TABLE IF EXISTS categories`).run();
+// db.prepare(`DROP TABLE IF EXISTS social_media_accounts`).run();
 
 // companies
 db.prepare(`
@@ -103,6 +103,26 @@ db.prepare(`
     without_breaks BOOLEAN NOT NULL,
     PRIMARY KEY (company_id, day_of_week),
     FOREIGN KEY (company_id) REFERENCES companies(id)
+  )
+`).run();
+
+// social_media
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS social_media (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL
+  )
+`).run();
+
+// social_media_accounts
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS social_media_accounts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    company_id INTEGER NOT NULL,
+    social_media_id INTEGER NOT NULL,
+    account_url TEXT NOT NULL,
+    FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE,
+    FOREIGN KEY (social_media_id) REFERENCES social_media(id)
   )
 `).run();
 

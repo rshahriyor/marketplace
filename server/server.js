@@ -51,6 +51,7 @@ fastify.register(require('./routes/cities.js'));
 fastify.register(require('./routes/users.js'));
 fastify.register(require('./routes/genders.js'));
 fastify.register(require('./routes/login.js'));
+fastify.register(require('./routes/social-media.js'));
 
 const start = async () => {
     try {

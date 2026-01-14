@@ -20,7 +20,6 @@ const responseSchema = (dataSchema) => ({
             },
             required: ['code', 'message']
         },
-        message: { type: 'string' },
         data: dataSchema
     },
     required: ['status', 'data']

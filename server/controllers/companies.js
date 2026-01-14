@@ -26,7 +26,10 @@ const BASE_COMPANY_QUERY = `
         s.lunch_end_at AS schedule_lunch_end_at,
         s.is_working_day AS schedule_is_working_day,
         s.is_day_and_night AS schedule_is_day_and_night,
-        s.without_breaks AS schedule_without_breaks
+        s.without_breaks AS schedule_without_breaks,
+        sm.id AS social_media_id,
+        sm.name AS social_media_name,
+        sma.account_url AS social_media_account_url
     FROM companies c
     JOIN categories cat ON cat.id = c.category_id
     LEFT JOIN company_tags ct ON ct.company_id = c.id
@@ -34,6 +37,8 @@ const BASE_COMPANY_QUERY = `
     LEFT JOIN regions r ON r.id = c.region_id
     LEFT JOIN cities ci ON ci.id = c.city_id
     LEFT JOIN schedules s ON s.company_id = c.id
+    LEFT JOIN social_media_accounts sma ON sma.company_id = c.id
+    LEFT JOIN social_media sm ON sm.id = sma.social_media_id
 `;
 const mapCompanies = (rows) => {
     const map = new Map();
@@ -47,6 +52,7 @@ const mapCompanies = (rows) => {
                 category_name: row.category_name,
                 tags: [],
                 schedules: [],
+                social_media: [],
                 region_id: row.region_id,
                 region_name: row.region_name,
                 city_id: row.city_id,
@@ -91,6 +97,14 @@ const mapCompanies = (rows) => {
                     without_breaks: row.schedule_without_breaks
                 });
             }
+        }
+
+        if (row.social_media_id && !company.social_media.some(sm => sm.social_media_id === row.social_media_id)) {
+            company.social_media.push({
+                social_media_id: row.social_media_id,
+                social_media_name: row.social_media_name,
+                account_url: row.social_media_account_url
+            });
         }
     }
 
@@ -209,7 +223,7 @@ const getOwnCompanies = (req, reply) => {
 
 
 const addCompany = (req, reply) => {
-    const { name, category_id, tag_id, region_id, city_id, desc, phone_number, longitude, latitude, address, schedules } = req.body;
+    const { name, category_id, tag_id, region_id, city_id, desc, phone_number, longitude, latitude, address, schedules, social_media } = req.body;
     const userId = req.user.userId;
 
     const transaction = db.transaction(() => {
@@ -244,6 +258,16 @@ const addCompany = (req, reply) => {
                     sch.is_day_and_night ? 1 : 0,
                     sch.without_breaks ? 1 : 0
                 );
+            }
+        }
+
+        if (Array.isArray(social_media)) {
+            const stmtSocial = db.prepare(
+                `INSERT INTO social_media_accounts (company_id, social_media_id, account_url) VALUES (?, ?, ?)`
+            );
+
+            for (const sm of social_media) {
+                stmtSocial.run(companyId, sm.social_media_id, sm.account_url);
             }
         }
 

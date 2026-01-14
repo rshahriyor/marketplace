@@ -42,6 +42,17 @@ const companySchema = {
                     without_breaks: { type: 'boolean' }
                 }
             }
+        },
+        social_media: {
+            type: 'array',
+            items: {
+                type: 'object',
+                properties: {
+                    social_media_id: { type: 'number' },
+                    social_media_name: { type: 'string' },
+                    account_url: { type: 'string' }
+                }
+            }
         }
     }
 };
@@ -174,9 +185,19 @@ const postCompanyOpts = {
                         }
                     },
                     minItems: 1
+                },
+                social_media: {
+                    type: 'array',
+                    items: {
+                        type: 'object',
+                        properties: {
+                            social_media_id: { type: 'number' },
+                            account_url: { type: 'string' }
+                        }
+                    }
                 }
             },
-            required: ['name', 'category_id', 'tag_id', 'region_id', 'city_id', 'desc', 'phone_number', 'latitude', 'longitude', 'address', 'schedules']
+            required: ['name', 'category_id', 'tag_id', 'region_id', 'city_id', 'desc', 'phone_number', 'latitude', 'longitude', 'address', 'schedules', 'social_media']
         },
         response: {
             201: responseSchema(companySchema)
