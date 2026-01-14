@@ -39,7 +39,7 @@ export class Dropdown implements OnInit {
   @Input() labelStyle?: string;
   @Input() iconStyle?: string;
   @Input() dropdownStyle?: string;
-  @Input() optionIcon?: string;
+  @Input() optionIcon?: boolean;
 
   dropdownOptions: DropdownType[] = [];
   searchFormControl = new FormControl();

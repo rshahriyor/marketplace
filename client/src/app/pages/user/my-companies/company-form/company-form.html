@@ -1,78 +1,80 @@
 <section class="w-full max-w-145 flex flex-col gap-5">
-    <div class="flex items-center gap-3">
-        <i class="pi pi-building text-[28px] text-(--text-color)"></i>
-        <p class="my-0 text-(--text-color) text-[28px] font-semibold">Добавлении заведения</p>
+  <div class="flex items-center gap-3">
+    <i class="pi pi-building text-[28px] text-(--text-color)"></i>
+    <p class="my-0 text-(--text-color) text-[28px] font-semibold">Добавлении заведения</p>
+  </div>
+  <form [formGroup]="form" class="flex flex-col gap-3">
+    <label class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
+      <span class="w-fit relative text-lg mb-0.75 required">Введите название</span>
+      <input type="text" class="liquid-glass-input" formControlName="name" />
+    </label>
+
+    <div class="categories">
+      <label class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
+        <span class="w-fit relative text-lg mb-0.75 required">Категории</span>
+      </label>
+      <mk-dropdown [options]="categoryOptions()" formControlName="category_id" [showFilter]="true" [required]="true"
+        [optionLabel]="'name'" [optionValue]="'id'">
+      </mk-dropdown>
     </div>
-    <form [formGroup]="form" class="flex flex-col gap-3">
-        <label class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
-            <span class="w-fit relative text-lg mb-0.75 required">Введите название</span>
-            <input type="text"
-                class="liquid-glass-input"
-                formControlName="name" />
-        </label>
 
-        <div class="categories">
-            <label class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
-                <span class="w-fit relative text-lg mb-0.75 required">Категории</span>
-            </label>
-            <mk-dropdown [options]="categoryOptions()" formControlName="category_id" [showFilter]="true" [required]="true"
-                [optionLabel]="'name'" [optionValue]="'id'">
-            </mk-dropdown>
+    @if(form.get('category_id').value) {
+    <div class="tags">
+      <label class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
+        <span class="w-fit relative text-lg mb-0.75 required">Теги</span>
+      </label>
+      <div class="relative h-12.5" (mkClickOutside)="dropdownMenuState.tagsMenuVisible= false">
+        <div class="cursor-pointer h-12.5 w-full bg-white flex relative justify-between items-center rounded-[5px]"
+          (click)="toggleDropdown('tags'); $event.preventDefault()"
+          [ngClass]="{'invalid': !dropdownSelectedLabelMap['tags'].length}">
+          <span
+            class="pl-2.5 text-(--text-color) font-medium whitespace-nowrap overflow-hidden overflow-ellipsis max-w-125">{{dropdownSelectedLabelMap['tags'].join(',')}}</span>
+          <i class="pi pi-angle-down text-2xl absolute right-2.5 duration-300"
+            [ngClass]="{ 'rotate-180' : dropdownMenuState.tagsMenuVisible }"></i>
         </div>
+        @if (dropdownMenuState.tagsMenuVisible) {
+        <div class="dropdown-menu absolute w-full bg-white z-10 shadow-lg">
+          <div class="flex items-center relative gap-3.75 py-2 px-4.5">
+            <input type="checkbox" [checked]="isAllSelectedTag" (change)="toggleSelectAll($event)"
+              class="custom-checkbox" />
+            <div class="relative w-full">
+              <input type="text" class="w-full bg-[#ECEDF3] outline-none h-12 px-5 rounded-md"
+                (input)="handleTagSearchOptions($event.target.value)" />
+              <i class="pi pi-search absolute right-2.5 top-1/2 transform -translate-y-1/2"></i>
+            </div>
+          </div>
 
-        @if(form.get('category_id').value) {
-        <div class="tags">
-            <label class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
-                <span class="w-fit relative text-lg mb-0.75 required">Теги</span>
-            </label>
-            <div class="relative h-12.5" (mkClickOutside)="dropdownMenuState.tagsMenuVisible= false">
-                <div class="cursor-pointer h-12.5 w-full bg-white flex relative justify-between items-center rounded-[5px]" (click)="toggleDropdown('tags'); $event.preventDefault()"
-                    [ngClass]="{'invalid': !dropdownSelectedLabelMap['tags'].length}">
-                    <span class="pl-2.5 text-(--text-color) font-medium whitespace-nowrap overflow-hidden overflow-ellipsis max-w-125">{{dropdownSelectedLabelMap['tags'].join(', ')}}</span>
-                    <i class="pi pi-angle-down text-2xl absolute right-2.5 duration-300" [ngClass]="{ 'rotate-180' : dropdownMenuState.tagsMenuVisible }"></i>
-                </div>
-                @if (dropdownMenuState.tagsMenuVisible) {
-                <div class="dropdown-menu absolute w-full bg-white z-10 shadow-lg">
-                    <div class="flex items-center relative gap-3.75 py-2 px-4.5">
-                        <input type="checkbox" [checked]="isAllSelectedTag" (change)="toggleSelectAll($event)"
-                            class="custom-checkbox" />
-                        <div class="relative w-full">
-                            <input type="text" class="w-full bg-[#ECEDF3] outline-none h-12 px-5 rounded-md"
-                                (input)="handleTagSearchOptions($event.target.value)" />
-                            <i class="pi pi-search absolute right-2.5 top-1/2 transform -translate-y-1/2"></i>
-                        </div>
-                    </div>
-
-                    @for (tag of tagOptions; track $index) {
-                    <!-- @if (tag.tags?.length) {
+          @for (tag of tagOptions; track $index) {
+          <!-- @if (tag.tags?.length) {
                     <div class="group-label">
                         <img src="/assets/icons/categories.svg" width="22"
                             height="22" />{{tag.company_category_name}}
                     </div>
                     }
                     @for (tag of tag.tags; track $index) { -->
-                    <label class="flex items-center gap-3 px-3 py-1.5 pl-13.75 text-[#525261] font-medium cursor-pointer hover:bg-[#ECEDF3] duration-300" (click)="handleCheckBoxChange(tag); $event.preventDefault()">
-                        <input class="custom-checkbox" type="checkbox"
-                            [checked]="dropdownSelectedLabelMap['tags'].includes(tag.name)" />{{tag.name}}
-                    </label>
-                    <!-- } -->
-                    }
-                </div>
-                }
-            </div>
+          <label class="flex items-center gap-3 px-3 py-1.5 pl-13.75 text-[#525261] font-medium cursor-pointer hover:bg-[#ECEDF3] duration-300"
+            (click)="handleCheckBoxChange(tag); $event.preventDefault()">
+            <input class="custom-checkbox" type="checkbox"
+              [checked]="dropdownSelectedLabelMap['tags'].includes(tag.name)" />{{tag.name}}
+          </label>
+          <!-- } -->
+          }
         </div>
         }
+      </div>
+    </div>
+    }
 
-        <label class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
-            <span class="w-fit relative text-lg mb-0.75 required">Укажите номера телефонов</span>
-            <div class="flex gap-5 w-full">
-                <div class="flex justify-center items-center bg-white rounded-md px-3 text-[20px]">+992</div>
-                <input type="text" class="h-12.5 text-[20px] border-0 outline-none bg-white rounded-md text-(--text-color) pl-5 w-full"
-                    mkPhoneMask placeholder="(XX) XXX-XX-XX" formControlName="phone_number" (keypress)="allowOnlyNumbers($event)" />
-            </div>
-        </label>
+    <label class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
+      <span class="w-fit relative text-lg mb-0.75 required">Укажите номера телефонов</span>
+      <div class="flex gap-5 w-full">
+        <div class="flex justify-center items-center bg-white rounded-md px-3 text-[20px]">+992</div>
+        <input type="text" class="h-12.5 text-[20px] border-0 outline-none bg-white rounded-md text-(--text-color) pl-5 w-full"
+          mkPhoneMask placeholder="(XX) XXX-XX-XX" formControlName="phone_number" (keypress)="allowOnlyNumbers($event)" />
+      </div>
+    </label>
 
-        <!-- <label class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
+    <!-- <label class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
         <span class="w-fit relative text-lg mb-0.75 required">Загрузите фотографии</span>
       </label>
       <div class="upload__container">
@@ -103,114 +105,120 @@
       </div>
       } -->
 
-      <div class="flex flex-col relative gap-1 font-semibold text-(--text-color) mb-0 w-full">
-        <span class="w-fit relative text-lg mb-0.75 required">Укажите график работы</span>
-        <div formArrayName="schedules">
-          @for (form of scheduleArray.controls; track $index) {
-          <div class="flex items-center gap-12.5 justify-between mb-2.5">
-            <span class="text-lg">{{weekDays[$index]}}:</span>
-            <div class="flex items-center gap-0.75 max-w-93.75 w-full" [formGroupName]="$index">
-              <mk-dropdown formControlName="start_at" optionLabel="name"
-                labelStyle="text-align: center; padding-left: 0; width: 100%; font-size: 20px"
-                iconStyle="width: 19px; height: 11px" style="width: 100%; margin-bottom: 0;" optionValue="value" [options]="scheduleStartTimeSlots">
-              </mk-dropdown>
-              @if(!['Круглосуточно', 'Выходной'].includes(scheduleArray.controls[$index].get('start_at').value)) {
-              -
-              <mk-dropdown formControlName="end_at" optionLabel="name"
-                labelStyle="text-align: center; padding-left: 0; width: 100%; font-size: 20px"
-                iconStyle="width: 19px; height: 11px" style="width: 100%; margin-bottom: 0; text-align: center"
-                optionValue="value" [options]="timeSlots">
-              </mk-dropdown>
-              }
-            </div>
-          </div>
-          }
-        </div>
+    <div class="flex flex-col relative gap-1 font-semibold text-(--text-color) mb-0 w-full">
+      <span class="w-fit relative text-lg mb-0.75 required">Укажите график работы</span>
+      <div formArrayName="schedules">
+        @for (form of scheduleArray.controls; track $index) {
         <div class="flex items-center gap-12.5 justify-between mb-2.5">
-          <span class="text-lg">Обед:</span>
-          <div class="flex items-center gap-0.75 max-w-93.75 w-full">
-            <mk-dropdown style="width: 100%; margin-bottom: 0;" formControlName="lunch_start_at" [options]="lunchTimeSlots"
+          <span class="text-lg">{{weekDays[$index]}}:</span>
+          <div class="flex items-center gap-0.75 max-w-93.75 w-full" [formGroupName]="$index">
+            <mk-dropdown formControlName="start_at" optionLabel="name"
               labelStyle="text-align: center; padding-left: 0; width: 100%; font-size: 20px"
-              iconStyle="width: 19px; height: 11px" optionIcon="/assets/icons/clock.svg" optionLabel="name"
-              optionValue="value">
+              iconStyle="width: 19px; height: 11px" style="width: 100%; margin-bottom: 0;" optionValue="value"
+              [options]="scheduleStartTimeSlots" [optionIcon]="true">
             </mk-dropdown>
-            @if(form.get('lunch_start_at').value !== 'Без перерыва') {
+            @if(!['Круглосуточно', 'Выходной'].includes(scheduleArray.controls[$index].get('start_at').value)) {
             -
-            <mk-dropdown style="width: 100%; margin-bottom: 0;" formControlName="lunch_end_at" [options]="timeSlots"
+            <mk-dropdown formControlName="end_at" optionLabel="name"
               labelStyle="text-align: center; padding-left: 0; width: 100%; font-size: 20px"
-              iconStyle="width: 19px; height: 11px" optionIcon="/assets/icons/clock.svg" optionLabel="name"
-              optionValue="value">
+              iconStyle="width: 19px; height: 11px" style="width: 100%; margin-bottom: 0; text-align: center"
+              optionValue="value" [options]="timeSlots" [optionIcon]="true">
             </mk-dropdown>
             }
           </div>
         </div>
+        }
       </div>
-
-
-        <div class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
-            <span class="w-fit relative text-lg mb-0.75 required">Регион / Район</span>
-            <mk-dropdown formControlName="region_id" [options]="regionOptions()" [required]="true"
-                [optionLabel]="'name'" [optionValue]="'id'" [showFilter]="true"></mk-dropdown>
-        </div>
-
-        @if(form.get('region_id').value) {
-        <div class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
-            <span class="w-fit relative text-lg mb-0.75 required">Город / Посёлок</span>
-            <mk-dropdown [options]="cityOptions()" formControlName="city_id" [showFilter]="true" [required]="true"
-                [optionLabel]="'name'" [optionValue]="'id'">
-            </mk-dropdown>
-        </div>
-        }
-
-        <label class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
-            <span class="w-fit relative text-lg mb-0.75 required">Адрес</span>
-            <input type="text"
-                class="h-12.5 text-[20px] border-0 outline-none bg-white rounded-[5px] text-(--text-color) pl-5"
-                formControlName="address" />
-        </label>
-
-        <label class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
-            <span class="w-fit relative text-lg mb-0.75 required">Долгота</span>
-            <input type="text"
-                class="h-12.5 text-[20px] border-0 outline-none bg-white rounded-[5px] text-(--text-color) pl-5"
-                formControlName="longitude" />
-        </label>
-        <label class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
-            <span class="w-fit relative text-lg mb-0.75 required">Широта</span>
-            <input type="text"
-                class="h-12.5 text-[20px] border-0 outline-none bg-white rounded-[5px] text-(--text-color) pl-5"
-                formControlName="latitude" />
-        </label>
-        <!-- <label class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
-        <span class="w-fit relative text-lg mb-0.75">Социальные сети и мессенджеры</span>
-      </label>
-      <div formArrayName="social_media_address">
-        @for (item of socialMediaAddress.controls; track $index) {
-        <div class="social__container" [formGroupName]="$index">
-          <mk-dropdown formControlName="name" style="width: 100%;" [options]="socialMediaOptions" optionValue="value"
-            optionLabel="name">
+      <div class="flex items-center gap-12.5 justify-between mb-2.5">
+        <span class="text-lg">Обед:</span>
+        <div class="flex items-center gap-0.75 max-w-93.75 w-full">
+          <mk-dropdown style="width: 100%; margin-bottom: 0;" formControlName="lunch_start_at"
+            [options]="lunchTimeSlots" labelStyle="text-align: center; padding-left: 0; width: 100%; font-size: 20px"
+            iconStyle="width: 19px; height: 11px" [optionIcon]="true" optionLabel="name"
+            optionValue="value">
           </mk-dropdown>
-          <input type="text" class="h-12.5 text-[20px] border-0 outline-none bg-white rounded-[5px] text-(--text-color) pl-5 social-media" formControlName="address"
-            (input)="onChangeSocialMediaAddress($event, $index)" />
+          @if(form.get('lunch_start_at').value !== 'Без перерыва') {
+          -
+          <mk-dropdown style="width: 100%; margin-bottom: 0;" formControlName="lunch_end_at" [options]="timeSlots"
+            labelStyle="text-align: center; padding-left: 0; width: 100%; font-size: 20px"
+            iconStyle="width: 19px; height: 11px" [optionIcon]="true" optionLabel="name"
+            optionValue="value">
+          </mk-dropdown>
+          }
+        </div>
+      </div>
+    </div>
+
+
+    <div class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
+      <span class="w-fit relative text-lg mb-0.75 required">Регион / Район</span>
+      <mk-dropdown formControlName="region_id" [options]="regionOptions()" [required]="true" [optionLabel]="'name'"
+        [optionValue]="'id'" [showFilter]="true"></mk-dropdown>
+    </div>
+
+    @if(form.get('region_id').value) {
+    <div class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
+      <span class="w-fit relative text-lg mb-0.75 required">Город / Посёлок</span>
+      <mk-dropdown [options]="cityOptions()" formControlName="city_id" [showFilter]="true" [required]="true"
+        [optionLabel]="'name'" [optionValue]="'id'">
+      </mk-dropdown>
+    </div>
+    }
+
+    <label class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
+      <span class="w-fit relative text-lg mb-0.75 required">Адрес</span>
+      <input type="text"
+        class="h-12.5 text-[20px] border-0 outline-none bg-white rounded-[5px] text-(--text-color) pl-5"
+        formControlName="address" />
+    </label>
+
+    <label class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
+      <span class="w-fit relative text-lg mb-0.75 required">Долгота</span>
+      <input type="text"
+        class="h-12.5 text-[20px] border-0 outline-none bg-white rounded-[5px] text-(--text-color) pl-5"
+        formControlName="longitude" />
+    </label>
+
+    <label class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
+      <span class="w-fit relative text-lg mb-0.75 required">Широта</span>
+      <input type="text"
+        class="h-12.5 text-[20px] border-0 outline-none bg-white rounded-[5px] text-(--text-color) pl-5"
+        formControlName="latitude" />
+    </label>
+
+    <div class="flex flex-col relative gap-1 font-semibold text-(--text-color) mb-0 w-full">
+      <span class="w-fit relative text-lg mb-0.75">Социальные сети и мессенджеры</span>
+      <div formArrayName="social_media" class="flex flex-col gap-3">
+        @for (item of socialMediaAddress.controls; track $index) {
+        <div class="flex gap-5" [formGroupName]="$index">
+          <mk-dropdown formControlName="social_media_id" style="width: 100%;" [options]="socialMediaOptions"
+            optionValue="value" optionLabel="name">
+          </mk-dropdown>
+          <input type="text"
+            class="h-12.5 text-sm border-0 outline-none bg-white rounded-[5px] text-(--text-color) px-5 w-full"
+            formControlName="account_url" />
         </div>
         }
-      </div> -->
-
-        <label class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
-            <span class="w-fit relative text-lg mb-0.75 required">Описание</span>
-            <textarea type="text"
-                class="h-37.5 text-[20px] border-0 outline-none bg-white rounded-[5px] pl-2.5 pt-2.5 text-(--text-color) resize-y"
-                formControlName="desc"></textarea>
-        </label>
-    </form>
-
-    <div class="flex gap-5">
-        <button class="h-12 border-0 rounded-lg font-semibold text-[18px] px-4.25 bg-[#5B42FF] text-white w-full text-center cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-1.25"
-            (click)="addCompany()" >
-            Добавить
-        </button>
-        <button routerLink="/u" class="h-12 w-full border-0 rounded-lg font-semibold text-[18px] px-4.25 text-(--text-color) bg-white text-center cursor-pointer flex items-center justify-center gap-1.25">
-            Отмена
-        </button>
+      </div>
     </div>
+
+    <label class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
+      <span class="w-fit relative text-lg mb-0.75 required">Описание</span>
+      <textarea type="text"
+        class="h-37.5 text-[20px] border-0 outline-none bg-white rounded-[5px] pl-2.5 pt-2.5 text-(--text-color) resize-y"
+        formControlName="desc"></textarea>
+    </label>
+  </form>
+
+  <div class="flex gap-5">
+    <button
+      class="h-12 border-0 rounded-lg font-semibold text-[18px] px-4.25 bg-[#5B42FF] text-white w-full text-center cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-1.25"
+      (click)="addCompany()">
+      Добавить
+    </button>
+    <button routerLink="/u"
+      class="h-12 w-full border-0 rounded-lg font-semibold text-[18px] px-4.25 text-(--text-color) bg-white text-center cursor-pointer flex items-center justify-center gap-1.25">
+      Отмена
+    </button>
+  </div>
 </section>

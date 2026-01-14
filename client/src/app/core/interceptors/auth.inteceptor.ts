@@ -25,7 +25,7 @@ export const authTokenInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, n
       const code = error?.error?.code;
 
       if ([StatusCodeEnum.TOKEN_EXPIRED_ERROR, StatusCodeEnum.AUTHENTICATION_ERROR].includes(code)) {
-        router.navigate(['/']);
+        router.navigate(['/login']);
         localStorage.clear();
       }
 

@@ -27,6 +27,12 @@ export interface ICompany {
         is_working_day?: boolean,
         is_day_and_night?: boolean,
         without_breaks?: boolean
+    }[],
+    social_media?: {
+        social_media_id?: number,
+        social_media_name?: string,
+        account_url?: string,
+        icon?: string
     }[]
 }
 

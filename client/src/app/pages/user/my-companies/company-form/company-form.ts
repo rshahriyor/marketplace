@@ -39,6 +39,25 @@ export class CompanyForm implements OnInit {
   weekDays = WEEK_DAYS;
   scheduleStartTimeSlots = [{ name: 'Выходной', value: 'Выходной' }, { name: 'Круглосуточно', value: 'Круглосуточно' }, ...this.timeSlots];
   lunchTimeSlots = [{ name: 'Без перерыва', value: 'Без перерыва' }, ...this.timeSlots];
+  socialMediaList = [
+    {
+      id: 1,
+      name: 'Instagram'
+    },
+    {
+      id: 2,
+      name: 'Facebook'
+    },
+    {
+      id: 3,
+      name: 'Telegram'
+    },
+    {
+      id: 4,
+      name: 'WhatsApp'
+    }
+  ];
+  socialMediaOptions = this.socialMediaList.map((sm) => ({value: sm.id, name: sm.name}));
 
   private tagOptionsClone = [];
 
@@ -58,6 +77,10 @@ export class CompanyForm implements OnInit {
 
   get scheduleArray(): FormArray {
     return this.form.get('schedules') as FormArray;
+  }
+
+  get socialMediaAddress(): FormArray {
+    return this.form.get('social_media') as FormArray;
   }
 
   toggleDropdown(type: string): void {
@@ -173,15 +196,18 @@ export class CompanyForm implements OnInit {
     const rawValue = this.form.getRawValue();
     const { schedules, lunch_start_at, lunch_end_at, ...rest } = rawValue;
 
+    const social_media = (rawValue.social_media || []).filter(
+      sm => sm.social_media_id && sm.account_url
+    );
+
     const company_schedule = schedules.map((value, index) => {
-      const is_working_day = value.start_at !== DAYS_OFF_STATUS[0]; // не "Выходной"
-      const is_day_and_night = value.start_at === DAYS_OFF_STATUS[1]; // "Круглосуточно"
-      const without_breaks = lunch_start_at === DAYS_OFF_STATUS[2]; // "Без перерыва"
+      const is_working_day = value.start_at !== DAYS_OFF_STATUS[0];
+      const is_day_and_night = value.start_at === DAYS_OFF_STATUS[1];
+      const without_breaks = lunch_start_at === DAYS_OFF_STATUS[2]; 
     
       let start_at = value.start_at;
       let end_at = value.end_at;
     
-      // если выходной или круглосуточно
       if (!is_working_day || is_day_and_night) {
         start_at = '00:00';
         end_at = '23:59';
@@ -201,7 +227,8 @@ export class CompanyForm implements OnInit {
 
     const payload = {
       ...rest,
-      schedules: company_schedule
+      schedules: company_schedule,
+      social_media
     };
 
     this.companyService.addCompany(payload)
@@ -262,8 +289,6 @@ export class CompanyForm implements OnInit {
       tag_id: new FormControl([]),
       phone_number: new FormControl(null),
       // image_paths: new FormControl(),
-      // working_days: new FormControl(),
-      // day_break: new FormControl(),
       region_id: new FormControl(null, [Validators.required]),
       city_id: new FormControl(null, [Validators.required]),
       address: new FormControl('', [Validators.required]),
@@ -283,25 +308,14 @@ export class CompanyForm implements OnInit {
       })),
       lunch_start_at: new FormControl('12:00'),
       lunch_end_at: new FormControl('13:00'),
-      // schedule: this.fb.array(this.weekDays.map((_, index) => {
-      //   return this.fb.group({
-      //     start_at: new FormControl('08:00'),
-      //     end_at: new FormControl('17:00'),
-      //     lunch_start_at: new FormControl(),
-      //     lunch_end_at: new FormControl(),
-      //     is_day_and_night: new FormControl(),
-      //     is_work_day: new FormControl(),
-      //     without_interruption: new FormControl()
-      //   })
-      // })),
-      // social_media_address: this.fb.array(
-      //   this.socialMediaList.map(() => {
-      //     return this.fb.group({
-      //       name: new FormControl(),
-      //       address: new FormControl()
-      //     })
-      //   })
-      // ),
+      social_media: this.fb.array(
+        this.socialMediaList.map(() => {
+          return this.fb.group({
+            social_media_id: new FormControl(),
+            account_url: new FormControl()
+          })
+        })
+      ),
     });
   }
 

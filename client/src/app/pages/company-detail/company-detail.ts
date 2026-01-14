@@ -9,6 +9,13 @@ import { FormatPhonePipe } from "../../core/pipes/format-phone";
 import { DayOfWeekPipe } from "../../core/pipes/day-of-week";
 import { TooltipDirective } from '../../core/directives/tooltip.directive';
 
+const socialMediaIconsById: Record<number, string> = {
+  1: '/assets/social/instagram.svg',
+  2: '/assets/social/telegram.svg',
+  3: '/assets/social/whatsapp.svg',
+  4: '/assets/social/facebook.svg'
+};
+
 @Component({
   selector: 'mk-company-detail',
   imports: [CommonModule, Menu, FormatPhonePipe, DayOfWeekPipe],
@@ -46,10 +53,21 @@ export class CompanyDetail implements OnInit {
       takeUntilDestroyed(this.destroyRef)
     )
     .subscribe((res) => {
-      this.company.set(res.data);
-      this.schedule = res.data.schedules;
+      const company = {
+        ...res.data,
+        social_media: this.mapSocialMediaWithIcons(res.data.social_media)
+      };
+      this.company.set(company);
+      this.schedule = company.schedules;
       this.calculateWorkingDay();
     })
+  }
+
+  private mapSocialMediaWithIcons(socialMedia: any[] = []): any[] {
+    return socialMedia.map(sm => ({
+      ...sm,
+      icon: socialMediaIconsById[sm.social_media_id]
+    }));
   }
 
   private calculateWorkingDay(): void {

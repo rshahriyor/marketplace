@@ -19,9 +19,7 @@
             <div #itemsList class="flex items-center pt-2.5 pb-2 pr-1.25 pl-5 cursor-pointer gap-1.75 border-b border-[#ECEDF3] wrap-break-word transition duration-300 first:pt-3 last:border-b-0 hover:bg-[#ECEDF3]/60"
                 [ngClass]="{'bg-[#ECEDF3]': value?.[optionValue] === option?.[optionValue]}"
                 (click)="handleChangeValue(option)">
-                <!-- <img [src]="optionIcon" alt="option_icon" [ngStyle]="{ display: optionIcon ? 'flex' : 'none' }"
-                    width="16" height="16"> -->
-                    <i class="pi pi-clock"></i>
+                <i class="pi pi-clock" [ngStyle]="{ display: optionIcon ? 'flex' : 'none' }"></i>
                 <li class="text-(--text-color) font-medium">{{option[optionLabel]}}</li>
             </div>
             }

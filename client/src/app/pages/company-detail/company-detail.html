@@ -6,9 +6,8 @@
         <mk-menu [currentPage]="{name: 'Информация', icon: 'pi pi-exclamation-circle'}"></mk-menu>
     </div>
     <div class="max-w-145 w-full">
-        <div class="flex flex-col">
+        <div class="flex flex-col gap-4">
 
-            <!-- HEADER -->
             <div class="flex items-center gap-1.25 h-12.5 pl-2.5">
                 <i class="pi pi-exclamation-circle text-[27px]"></i>
                 <h1 class="text-[28px] text-(--text-color) font-semibold m-0">
@@ -26,16 +25,14 @@
                 <img class="cursor-pointer border border-[#D0D0D0] bg-[#F3F3F3] object-cover max-w-145 w-full h-82.5 rounded-[15px]">
 
                 <div class="absolute top-3 w-full px-2.5 flex justify-between items-center">
-                    <div class="flex items-center gap-1">
-                        <div class="flex h-6 w-6 items-center justify-center rounded-full"
-                            [ngClass]="{ 'bg-[#00D7AC]': isWorking(), 'bg-[#FFDC3F]': atLunch(), 'bg-[#FF8282]': isClosed() }">
+                    <div class="flex items-center gap-1 rounded-full p-1.5"
+                        [ngClass]="{ 'bg-[#00D7AC]': isWorking(), 'bg-[#FFDC3F]': atLunch(), 'bg-[#FF8282]': isClosed() }">
+                        <div class="flex items-center justify-center">
                             <i class="pi pi-clock text-white text-sm"></i>
                         </div>
-                        <div class="flex items-center gap-1.25 h-7.75 rounded-full">
-                            <span class="text-[17px] text-black leading-none">
-                                {{workingStatusLabel}}
-                            </span>
-                        </div>
+                        <span class="text-[17px] text-white leading-none">
+                            {{workingStatusLabel}}
+                        </span>
                     </div>
 
                     <!-- EXPAND -->
@@ -52,7 +49,7 @@
             } -->
 
             <!-- REST IMAGES -->
-            <div class="flex gap-6 mt-4 overflow-x-auto"> <!-- (wheel)="onMouseWheel($event)">-->
+            <div class="flex gap-6 overflow-x-auto"> <!-- (wheel)="onMouseWheel($event)">-->
                 <!-- @for (image of companyData().images; track $index) { -->
                 <img [src]="''" class="cursor-pointer border border-[#D0D0D0] bg-[#F3F3F3]
                      object-cover min-w-45 max-w-45 h-25.25
@@ -63,8 +60,7 @@
                 } -->
             </div>
 
-            <!-- TAGS -->
-            <div class="bg-white p-3.75 rounded-[18px] mt-4">
+            <div class="bg-white p-3.75 rounded-[18px]">
                 <p class="text-[27px] text-(--text-color) font-semibold my-0">Теги:</p>
                 <div class="flex flex-wrap gap-[10px_8px] mt-2.5">
                     @for (tag of company()?.tags; track $index) {
@@ -77,8 +73,7 @@
                 </div>
             </div>
 
-            <!-- CONTACTS -->
-            <div class="bg-white p-3.75 rounded-[18px] mt-4">
+            <div class="bg-white p-3.75 rounded-[18px]">
                 <p class="text-[27px] text-(--text-color) font-semibold my-0">Контакты:</p>
 
                 <div class="flex flex-wrap gap-6.25 justify-center mt-3">
@@ -90,8 +85,7 @@
                 </div>
             </div>
 
-            <!-- ADDRESS -->
-            <div class="bg-white p-3.75 rounded-[18px] mt-4">
+            <div class="bg-white p-3.75 rounded-[18px]">
                 <p class="text-[27px] text-(--text-color) font-semibold my-0">Адрес:</p>
 
                 <div class="bg-[#F3F3F3] rounded-lg mt-4 text-[18px]">
@@ -113,7 +107,7 @@
                 </div>
             </div>
 
-            <div class="bg-white p-3.75 rounded-[18px] mt-4">
+            <div class="bg-white p-3.75 rounded-[18px]">
                 <p class="text-[27px] text-[#525261] font-semibold my-0">
                     График работы:
                 </p>
@@ -161,8 +155,21 @@
                 </div>
             </div>
 
-            <!-- DESCRIPTION -->
-            <div class="bg-white p-3.75 rounded-[18px] mt-4 flex flex-col gap-5.25">
+            <div class="bg-white p-3.75 rounded-[18px] flex flex-col gap-4">
+                <p class="text-[27px] text-(--text-color) font-semibold my-0">Социальные сети:</p>
+                <div class="flex flex-wrap justify-between gap-5">
+                    @for (sm of company()?.social_media; track $index) {
+                    <a [href]="sm.account_url" target="_blank" class="flex items-center cursor-pointer gap-3 border border-[#ECEDF3] rounded-[18px] p-[12px_16px] max-w-65.25 w-full min-h-11 transition hover:bg-[#ECEDF3]">
+                        <img [src]="sm.icon" [alt]="sm.social_media_name" width="19" height="19">
+                        <span class="text-black/60 font-medium">
+                            {{sm.social_media_name}}
+                        </span>
+                    </a>
+                    }
+                </div>
+            </div>
+
+            <div class="bg-white p-3.75 rounded-[18px] flex flex-col gap-5.25">
                 <p class="text-[27px] text-(--text-color) font-semibold my-0">Описание:</p>
                 <span class="text-[22px] wrap-break-word">
                     {{company()?.desc}}
