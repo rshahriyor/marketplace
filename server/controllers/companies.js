@@ -29,7 +29,13 @@ const BASE_COMPANY_QUERY = `
         s.without_breaks AS schedule_without_breaks,
         sm.id AS social_media_id,
         sm.name AS social_media_name,
-        sma.account_url AS social_media_account_url
+        sma.account_url AS social_media_account_url,
+        CASE WHEN f.id IS NOT NULL THEN 1 ELSE 0 END AS is_favorite,
+        (
+            SELECT COUNT(1)
+            FROM favorites fav
+            WHERE fav.company_id = c.id
+        ) AS favorites_count
     FROM companies c
     JOIN categories cat ON cat.id = c.category_id
     LEFT JOIN company_tags ct ON ct.company_id = c.id
@@ -39,6 +45,7 @@ const BASE_COMPANY_QUERY = `
     LEFT JOIN schedules s ON s.company_id = c.id
     LEFT JOIN social_media_accounts sma ON sma.company_id = c.id
     LEFT JOIN social_media sm ON sm.id = sma.social_media_id
+    LEFT JOIN favorites f ON f.company_id = c.id AND f.user_id = ?
 `;
 const mapCompanies = (rows) => {
     const map = new Map();
@@ -61,7 +68,9 @@ const mapCompanies = (rows) => {
                 phone_number: row.company_phone_number,
                 latitude: row.company_latitude,
                 longitude: row.company_longitude,
-                address: row.company_address
+                address: row.company_address,
+                is_favorite: row.is_favorite,
+                favorites_count: row.favorites_count
             });
         }
 
@@ -113,10 +122,11 @@ const mapCompanies = (rows) => {
 
 
 const getCompanies = (req, reply) => {
+    const userId = req.user?.userId ?? null;
     const rows = db.prepare(`
         ${BASE_COMPANY_QUERY}
         ORDER BY c.id
-    `).all();
+    `).all(userId);
 
     return sendResponse(reply, 200, 0, 'OK', mapCompanies(rows));
 };
@@ -124,6 +134,7 @@ const getCompanies = (req, reply) => {
 
 const getCompaniesByFilter = (req, reply) => {
     const { category_ids, tag_ids, region_ids, city_ids } = req.query;
+    const userId = req.user?.userId ?? null;
 
     let sql = BASE_COMPANY_QUERY + ' WHERE 1=1 ';
     const params = [];
@@ -161,13 +172,14 @@ const getCompaniesByFilter = (req, reply) => {
         params.push(...ids);
     }
 
-    const rows = db.prepare(sql).all(...params);
+    const rows = db.prepare(sql).all(...params, userId);
     return sendResponse(reply, 200, 0, 'OK', mapCompanies(rows));
 };
 
 
 const getCompaniesForMainPage = (req, reply) => {
-    const rows = db.prepare(BASE_COMPANY_QUERY).all();
+    const userId = req.user?.userId ?? null;
+    const rows = db.prepare(BASE_COMPANY_QUERY).all(userId);
     const companies = mapCompanies(rows);
 
     const day = new Date().getDay();
@@ -196,11 +208,12 @@ const getCompaniesForMainPage = (req, reply) => {
 
 const getCompany = (req, reply) => {
     const { id } = req.params;
+    const userId = req.user?.userId ?? null;
 
     const rows = db.prepare(`
         ${BASE_COMPANY_QUERY}
         WHERE c.id = ?
-    `).all(id);
+    `).all(userId, id);
 
     if (!rows.length) {
         return sendResponse(reply, 404, -2, 'NOT_FOUND', null, 'Company not found');
@@ -216,7 +229,7 @@ const getOwnCompanies = (req, reply) => {
     const rows = db.prepare(`
         ${BASE_COMPANY_QUERY}
         WHERE c.created_by_user_id = ?
-    `).all(userId);
+    `).all(userId, userId);
 
     return sendResponse(reply, 200, 0, 'OK', mapCompanies(rows));
 };
@@ -279,10 +292,36 @@ const addCompany = (req, reply) => {
     const rows = db.prepare(`
         ${BASE_COMPANY_QUERY}
         WHERE c.id = ?
-    `).all(companyId);
+    `).all(userId, companyId);
 
     return sendResponse(reply, 201, 0, 'CREATED', mapCompanies(rows)[0]);
 };
+
+const toggleFavorite = (req, reply) => {
+    const userId = req.user.userId;
+    const companyId = req.params.id;
+  
+    const exists = db.prepare(`
+      SELECT 1 FROM favorites
+      WHERE user_id = ? AND company_id = ?
+    `).get(userId, companyId);
+  
+    if (exists) {
+      db.prepare(`
+        DELETE FROM favorites
+        WHERE user_id = ? AND company_id = ?
+      `).run(userId, companyId);
+  
+      return sendResponse(reply, 200, 0, 'REMOVED_FROM_FAVORITES');
+    }
+  
+    db.prepare(`
+      INSERT INTO favorites (user_id, company_id)
+      VALUES (?, ?)
+    `).run(userId, companyId);
+  
+    return sendResponse(reply, 200, 0, 'ADDED_TO_FAVORITES');
+  };
 
 
 module.exports = {
@@ -291,5 +330,6 @@ module.exports = {
     getCompaniesForMainPage,
     getCompany,
     getOwnCompanies,
-    addCompany
+    addCompany,
+    toggleFavorite
 };

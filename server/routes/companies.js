@@ -1,4 +1,4 @@
-const { getCompanies, getCompaniesByFilter, getCompaniesForMainPage, getCompany, getOwnCompanies, addCompany } = require('../controllers/companies');
+const { getCompanies, getCompaniesByFilter, getCompaniesForMainPage, getCompany, getOwnCompanies, addCompany, toggleFavorite } = require('../controllers/companies');
 const { responseSchema } = require('../utils/response');
 
 const companySchema = {
@@ -53,7 +53,9 @@ const companySchema = {
                     account_url: { type: 'string' }
                 }
             }
-        }
+        },
+        is_favorite: { type: 'boolean' },
+        favorites_count: { type: 'number' }
     }
 };
 
@@ -206,19 +208,45 @@ const postCompanyOpts = {
     handler: addCompany
 };
 
+const postToggleFavoriteOpts = {
+    schema: {
+        security: [
+            {
+                BearerAuth: []
+            }
+        ],
+        params: {
+            type: 'object',
+            properties: {
+                id: { type: 'string' }
+            },
+            required: ['id']
+        },
+        response: {
+            200: responseSchema({
+                type: 'object',
+                properties: {
+                    message: { type: 'string' }
+                }
+            })
+        }
+    },
+    handler: toggleFavorite
+}
+
 function itemRoutes(fastify, options, done) {
+    fastify.addHook('preValidation', async (req, reply) => {
+        if (req.headers.authorization) {
+            await fastify.authenticate(req, reply);
+        }
+    });
     fastify.get('/companies', getCompaniesOpts);
     fastify.get('/companies/by_filter', getCompaniesByFilterOpts);
     fastify.get('/companies/for_main_page', getCompaniesForMainPageOpts);
     fastify.get('/companies/:id', getCompanyOpts);
-    fastify.get('/companies/own', {
-        ...getOwnCompaniesOpts,
-        preValidation: [fastify.authenticate]
-    });
-    fastify.post('/companies', {
-        ...postCompanyOpts,
-        preValidation: [fastify.authenticate]
-    });
+    fastify.get('/companies/own', getOwnCompaniesOpts);
+    fastify.post('/companies', postCompanyOpts);
+    fastify.post('/companies/toggle_favorite/:id', postToggleFavoriteOpts);
     done();
 };
 

@@ -12,7 +12,7 @@ function login(req, reply) {
 
     const token = this.jwt.sign(
         { userId: user.user_id },
-        { expiresIn: '1h' }
+        { expiresIn: '3d' }
     );
 
     return sendResponse(reply, 201, 0, 'OK', { token });
