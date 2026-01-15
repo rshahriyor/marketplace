@@ -1,6 +1,5 @@
-import { Component, inject, input } from '@angular/core';
-import { FilterService } from '../../../core/services/filter.service';
-import { IFilterRequest } from '../../../core/models/filter.model';
+import { Component, inject, input, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'mk-filter',
@@ -8,7 +7,7 @@ import { IFilterRequest } from '../../../core/models/filter.model';
   templateUrl: './filter.html',
   styleUrl: './filter.css',
 })
-export class Filter {
+export class Filter implements OnInit {
 
   id = input.required<number>();
   label = input.required<string>();
@@ -16,20 +15,36 @@ export class Filter {
 
   checked: boolean = false;
 
-  private filterService = inject(FilterService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      const key = this.filterRequestType();
+      const values = params[key] ? params[key].split(',').map(Number) : [];
+      this.checked = values.includes(this.id());
+    });
+  }
 
   sendFilter(): void {
-    this.checked = !this.checked;
+    const queryParams = { ...this.route.snapshot.queryParams };
 
-    const currentFilter = this.filterService.filter.value;
+    const key = this.filterRequestType();
+    const currentValues = queryParams[key] ? queryParams[key].split(',').map(Number) : [];
 
-    const updatedFilter: IFilterRequest = {
-      ...currentFilter,
-      [this.filterRequestType()]: this.checked
-        ? [...currentFilter[this.filterRequestType()], this.id()]
-        : currentFilter[this.filterRequestType()].filter(v => v !== this.id())
-    };
+    const isChecked = currentValues.includes(this.id());
 
-    this.filterService.filter.next(updatedFilter);
+    const updatedValues = isChecked ? currentValues.filter(v => v !== this.id()) : [...currentValues, this.id()];
+
+    if (updatedValues.length > 0) {
+      queryParams[key] = updatedValues.join(',');
+    } else {
+      delete queryParams[key];
+    }
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams
+    });
   }
 }

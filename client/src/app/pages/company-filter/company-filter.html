@@ -70,7 +70,7 @@
     </div>
   </aside>
   <div class="w-full flex flex-col gap-5">
-    <p class="text-[32px] font-semibold m-0 text-(--text-color)">{{isFavoriteRoute() ? 'Избранные' : 'Результаты поиска'}}</p>
+    <p class="text-[32px] font-semibold m-0 text-(--text-color)">{{filterRequest.is_favorite ? 'Избранные' : 'Результаты поиска'}}</p>
     <div class="flex flex-wrap gap-5">
       @for (company of companiesList(); track $index) {
       <div class="max-w-70 w-full">

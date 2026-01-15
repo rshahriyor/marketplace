@@ -14,7 +14,7 @@ import { ActivatedRoute } from '@angular/router';
   templateUrl: './company-filter.html',
   styleUrl: './company-filter.css',
 })
-export class CompanyFilter implements OnInit, OnDestroy {
+export class CompanyFilter implements OnInit {
 
   companiesList: WritableSignal<ICompany[]> = signal([]);
   categories: WritableSignal<IFilter[]> = signal([]);
@@ -30,9 +30,6 @@ export class CompanyFilter implements OnInit, OnDestroy {
     is_favorite: false
   }
 
-  isFavoriteRoute: WritableSignal<boolean> = signal(false);
-
-  private isDestoyed: boolean = false;
   private companyService = inject(CompaniesService);
   private filterService = inject(FilterService);
   private destroyRef = inject(DestroyRef);
@@ -40,14 +37,19 @@ export class CompanyFilter implements OnInit, OnDestroy {
 
   constructor() {
     this.activatedRoute.queryParams
-    .pipe(
-      takeUntilDestroyed(this.destroyRef)
-    )
-    .subscribe((params) => {
-      const is_favorite = params['is_favorite'];
-      this.isFavoriteRoute.set(is_favorite);
-      this.getFilteredCompanies();
-    });
+      .pipe(
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((params) => {
+        this.filterRequest = {
+          category_ids: params['category_ids'] ? params['category_ids'].split(',').map(Number) : [],
+          tag_ids: params['tag_ids'] ? params['tag_ids'].split(',').map(Number) : [],
+          region_ids: params['region_ids'] ? params['region_ids'].split(',').map(Number) : [],
+          city_ids: params['city_ids'] ? params['city_ids'].split(',').map(Number) : [],
+          is_favorite: params['is_favorite']
+        }
+        this.getCompanies();
+      });
   }
 
   ngOnInit(): void {
@@ -57,80 +59,54 @@ export class CompanyFilter implements OnInit, OnDestroy {
     this.getCities();
   }
 
-  ngOnDestroy(): void {
-    this.isDestoyed = true;
-    this.filterService.filter.next({
-      category_ids: [],
-      tag_ids: [],
-      region_ids: [],
-      city_ids: [],
-      is_favorite: false
-    });
-  }
-
-  private getFilteredCompanies(): void {
-    this.filterService.filter
-    .pipe(
-      takeUntilDestroyed(this.destroyRef)
-    )
-    .subscribe((res) => {
-      if (this.isDestoyed) return;
-      this.filterRequest = res;
-      if (this.isFavoriteRoute()) {
-        this.filterRequest.is_favorite = true;
-      }
-      this.getCompanies();
-    })
-  }
-
   private getCompanies(): void {
     this.companyService.getCompaniesByFilter(this.filterRequest)
-    .pipe(
-      takeUntilDestroyed(this.destroyRef)
-    )
-    .subscribe((res) => {
-      this.companiesList.set(res.data);
-    })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((res) => {
+        this.companiesList.set(res.data);
+      })
   }
 
   private getCategories(): void {
     this.filterService.getCategories()
-    .pipe(
-      takeUntilDestroyed(this.destroyRef)
-    )
-    .subscribe((res) => {
-      this.categories.set(res.data);
-    })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((res) => {
+        this.categories.set(res.data);
+      })
   }
 
   private getTags(): void {
     this.filterService.getTags()
-    .pipe(
-      takeUntilDestroyed(this.destroyRef)
-    )
-    .subscribe((res) => {
-      this.tags.set(res.data);
-    })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((res) => {
+        this.tags.set(res.data);
+      })
   }
 
   private getRegions(): void {
     this.filterService.getRegions()
-    .pipe(
-      takeUntilDestroyed(this.destroyRef)
-    )
-    .subscribe((res) => {
-      this.regions.set(res.data);
-    })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((res) => {
+        this.regions.set(res.data);
+      })
   }
 
   private getCities(): void {
     this.filterService.getCities()
-    .pipe(
-      takeUntilDestroyed(this.destroyRef)
-    )
-    .subscribe((res) => {
-      this.cities.set(res.data);
-    })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((res) => {
+        this.cities.set(res.data);
+      })
   }
 
 }
