@@ -25,7 +25,9 @@ fastify.register(require('@fastify/swagger-ui'), {
 });
 
 fastify.register(require('@fastify/cors'), {
-    origin: 'http://localhost:4200'
+    origin: 'http://localhost:4200',
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 });
 
 fastify.register(require('@fastify/jwt'), {

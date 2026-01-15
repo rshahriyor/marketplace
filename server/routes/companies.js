@@ -1,4 +1,4 @@
-const { getCompanies, getCompaniesByFilter, getCompaniesForMainPage, getCompany, getOwnCompanies, addCompany, toggleFavorite } = require('../controllers/companies');
+const { getCompanies, getCompaniesByFilter, getCompaniesForMainPage, getCompany, getOwnCompanies, addCompany, toggleFavorite, updateCompany } = require('../controllers/companies');
 const { responseSchema } = require('../utils/response');
 
 const companySchema = {
@@ -234,6 +234,74 @@ const postToggleFavoriteOpts = {
     handler: toggleFavorite
 }
 
+const putCompanyOpts = {
+    schema: {
+        security: [
+            {
+                BearerAuth: []
+            }
+        ],
+        params: {
+            type: 'object',
+            properties: {
+                id: { type: 'string' }
+            },
+            required: ['id']
+        },
+        body: {
+            type: 'object',
+            properties: {
+                name: { type: 'string' },
+                category_id: { type: 'number' },
+                tag_id: {
+                    type: 'array',
+                    items: { type: 'number' },
+                    minItems: 1
+                },
+                region_id: { type: 'number' },
+                city_id: { type: 'number' },
+                desc: { type: 'string' },
+                phone_number: { type: 'number' },
+                latitude: { type: 'number' },
+                longitude: { type: 'number' },
+                address: { type: 'string' },
+                schedules: {
+                    type: 'array',
+                    items: {
+                        type: 'object',
+                        properties: {
+                            day_of_week: { type: 'number' },
+                            start_at: { type: 'string' },
+                            end_at: { type: 'string' },
+                            lunch_start_at: { type: 'string' },
+                            lunch_end_at: { type: 'string' },
+                            is_working_day: { type: 'boolean' },
+                            is_day_and_night: { type: 'boolean' },
+                            without_breaks: { type: 'boolean' }
+                        }
+                    },
+                    minItems: 1
+                },
+                social_media: {
+                    type: 'array',
+                    items: {
+                        type: 'object',
+                        properties: {
+                            social_media_id: { type: 'number' },
+                            account_url: { type: 'string' }
+                        }
+                    }
+                }
+            },
+            required: ['name', 'category_id', 'tag_id', 'region_id', 'city_id', 'desc', 'phone_number', 'latitude', 'longitude', 'address', 'schedules', 'social_media']
+        },
+        response: {
+            200: responseSchema(companySchema)
+        }
+    },
+    handler: updateCompany
+}
+
 function itemRoutes(fastify, options, done) {
     fastify.addHook('preValidation', async (req, reply) => {
         if (req.headers.authorization) {
@@ -247,6 +315,7 @@ function itemRoutes(fastify, options, done) {
     fastify.get('/companies/own', getOwnCompaniesOpts);
     fastify.post('/companies', postCompanyOpts);
     fastify.post('/companies/toggle_favorite/:id', postToggleFavoriteOpts);
+    fastify.put('/companies/:id', putCompanyOpts);
     done();
 };
 

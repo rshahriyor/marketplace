@@ -297,6 +297,83 @@ const addCompany = (req, reply) => {
     return sendResponse(reply, 201, 0, 'CREATED', mapCompanies(rows)[0]);
 };
 
+const updateCompany = (req, reply) => {
+    const { id } = req.params;
+    const { name, category_id, tag_id, region_id, city_id, desc, phone_number, longitude, latitude, address, schedules, social_media } = req.body;
+    const userId = req.user.userId;
+
+    const companyCheck = db.prepare('SELECT created_by_user_id FROM companies WHERE id = ?').get(id);
+    if (!companyCheck) {
+        return sendResponse(reply, 404, -2, 'NOT_FOUND', null, 'Company not found');
+    }
+    if (companyCheck.created_by_user_id !== userId) {
+        return sendResponse(reply, 403, -3, 'FORBIDDEN', null, 'You do not have permission to update this company');
+    }
+
+    const transaction = db.transaction(() => {
+        db.prepare(`
+            UPDATE companies SET
+                name = ?,
+                category_id = ?,
+                region_id = ?,
+                city_id = ?,
+                desc = ?,
+                phone_number = ?,
+                longitude = ?,
+                latitude = ?,
+                address = ?
+            WHERE id = ?
+        `).run(name, category_id, region_id, city_id, desc, phone_number, longitude, latitude, address, id);
+
+        db.prepare('DELETE FROM company_tags WHERE company_id = ?').run(id);
+        if (Array.isArray(tag_id)) {
+            const stmtTag = db.prepare('INSERT OR IGNORE INTO company_tags (company_id, tag_id) VALUES (?, ?)');
+            for (const tag of tag_id) {
+                stmtTag.run(id, tag);
+            }
+        }
+
+        db.prepare('DELETE FROM schedules WHERE company_id = ?').run(id);
+        if (Array.isArray(schedules)) {
+            const stmtSchedule = db.prepare(
+                'INSERT INTO schedules (company_id, day_of_week, start_at, end_at, lunch_start_at, lunch_end_at, is_working_day, is_day_and_night, without_breaks) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+            );
+            for (const sch of schedules) {
+                stmtSchedule.run(
+                    id,
+                    sch.day_of_week,
+                    sch.start_at,
+                    sch.end_at,
+                    sch.lunch_start_at ?? null,
+                    sch.lunch_end_at ?? null,
+                    sch.is_working_day ? 1 : 0,
+                    sch.is_day_and_night ? 1 : 0,
+                    sch.without_breaks ? 1 : 0
+                );
+            }
+        }
+
+        db.prepare('DELETE FROM social_media_accounts WHERE company_id = ?').run(id);
+        if (Array.isArray(social_media)) {
+            const stmtSocial = db.prepare(
+                'INSERT INTO social_media_accounts (company_id, social_media_id, account_url) VALUES (?, ?, ?)'
+            );
+            for (const sm of social_media) {
+                stmtSocial.run(id, sm.social_media_id, sm.account_url);
+            }
+        }
+    });
+
+    transaction();
+
+    const rows = db.prepare(`
+        ${BASE_COMPANY_QUERY}
+        WHERE c.id = ?
+    `).all(userId, id);
+
+    return sendResponse(reply, 200, 0, 'UPDATED', mapCompanies(rows)[0]);
+};
+
 const toggleFavorite = (req, reply) => {
     const userId = req.user.userId;
     const companyId = req.params.id;
@@ -331,5 +408,6 @@ module.exports = {
     getCompany,
     getOwnCompanies,
     addCompany,
+    updateCompany,
     toggleFavorite
 };
