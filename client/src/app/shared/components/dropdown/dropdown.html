@@ -8,7 +8,7 @@
         @if (showFilter) {
         <div class="flex py-3.75 px-5 gap-3.75 border-b border-[#f1efef]">
             <div class="relative w-full">
-                <input type="text" class="dropdown-search-input w-full bg-[#ECEDF3] outline-none h-12 px-5 rounded-md" [formControl]="searchFormControl" />
+                <input type="text" class="dropdown-search-input w-full bg-(--body-bg-color) outline-none h-12 px-5 rounded-md" [formControl]="searchFormControl" />
                 <i class="pi pi-search absolute right-2.5 top-1/2 transform -translate-y-1/2"></i>
             </div>
         </div>
@@ -16,8 +16,8 @@
 
         <ul class="list-none text-left p-0 m-0 max-h-65 overflow-y-auto">
             @for (option of dropdownOptions; track $index) {
-            <div #itemsList class="flex items-center pt-2.5 pb-2 pr-1.25 pl-5 cursor-pointer gap-1.75 border-b border-[#ECEDF3] wrap-break-word transition duration-300 first:pt-3 last:border-b-0 hover:bg-[#ECEDF3]/60"
-                [ngClass]="{'bg-[#ECEDF3]': value?.[optionValue] === option?.[optionValue]}"
+            <div #itemsList class="flex items-center pt-2.5 pb-2 pr-1.25 pl-5 cursor-pointer gap-1.75 border-b border-(--body-bg-color) wrap-break-word transition duration-300 first:pt-3 last:border-b-0 hover:bg-(--body-bg-color)/60"
+                [ngClass]="{'bg-(--body-bg-color)': value?.[optionValue] === option?.[optionValue]}"
                 (click)="handleChangeValue(option)">
                 <i class="pi pi-clock" [ngStyle]="{ display: optionIcon ? 'flex' : 'none' }"></i>
                 <li class="text-(--text-color) font-medium">{{option[optionLabel]}}</li>

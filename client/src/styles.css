@@ -4,6 +4,7 @@
 :root {
     --text-color: #525261;
     --bg-color: #6153FF;
+    --body-bg-color: #ECEDF3;
 }
 
 * {

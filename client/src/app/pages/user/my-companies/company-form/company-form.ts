@@ -8,10 +8,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CompaniesService } from '../../../../core/services/companies.service';
 import { DAYS_OFF_STATUS, WEEK_DAYS } from '../../../../core/utils/constants';
 import { getTimeSlots } from '../../../../core/utils/helper';
+import { PhoneMaskDirective } from "../../../../core/directives/phone-mask.directive";
 
 @Component({
   selector: 'mk-company-form',
-  imports: [ReactiveFormsModule, CommonModule, RouterLink, Dropdown],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink, Dropdown, PhoneMaskDirective],
   templateUrl: './company-form.html',
   styleUrl: './company-form.css',
 })

@@ -28,18 +28,18 @@
 
                 <ul class="absolute right-0 top-7.5 z-100 flex w-max flex-col rounded-[5px] bg-white shadow-md"
                     [class.hidden]="!showMenu()">
-                    <li class="cursor-pointer border-y border-[#F0F0F0] px-3.25 py-2.5 font-semibold text-[#525261]
+                    <li class="cursor-pointer border-y border-[#F0F0F0] px-3.25 py-2.5 font-semibold text-(--text-color)
                      hover:rounded-[5px] hover:bg-[#F0F0F0]" [routerLink]="'/m/' + cardId()"
                         (click)="eventsClick($event)">
                         Просмотр
                     </li>
 
-                    <li class="cursor-pointer border-y border-[#F0F0F0] px-3.25 py-2.5 font-semibold text-[#525261]
+                    <li class="cursor-pointer border-y border-[#F0F0F0] px-3.25 py-2.5 font-semibold text-(--text-color)
                      hover:rounded-[5px] hover:bg-[#F0F0F0]" [routerLink]="`/u/a-c/${cardId()}`" (click)="eventsClick($event)">
                         Редактирование
                     </li>
 
-                    <li class="cursor-pointer border-y border-[#F0F0F0] px-3.25 py-2.5 font-semibold text-[#525261]
+                    <li class="cursor-pointer border-y border-[#F0F0F0] px-3.25 py-2.5 font-semibold text-(--text-color)
                      hover:rounded-[5px] hover:bg-[#F0F0F0]" (click)="onUpdateStatus()(cardId()); eventsClick($event)">
                         {{ isActive() ? 'Скрыть' : 'Показать' }}
                     </li>
@@ -52,7 +52,7 @@
 
     <div class="flex h-full w-full flex-col justify-between gap-3 max-sm:gap-1.5">
         <div class="flex flex-col gap-1.5">
-            <h3 class="line-clamp-2 text-[24px] font-bold text-[#6153FF] max-sm:text-[20px]">
+            <h3 class="line-clamp-2 text-[24px] font-bold text-(--bg-color) max-sm:text-[20px]">
                 {{ cardTitle() }}
             </h3>
 

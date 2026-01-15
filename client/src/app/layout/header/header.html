@@ -33,7 +33,7 @@
                 </div>
                 <ul class="list-none my-0">
                     @for (company of searchData(); track $index) {
-                    <li (click)="showSearchDropdown.set(false)" [routerLink]="`/m/${company.id}`" class="flex items-center py-1.5 px-13.75 gap-[.5px] cursor-pointer duration-300 hover:bg-[#ECEDF3]">
+                    <li (click)="showSearchDropdown.set(false)" [routerLink]="`/m/${company.id}`" class="flex items-center py-1.5 px-13.75 gap-[.5px] cursor-pointer duration-300 hover:bg-(--body-bg-color)">
                         <label class="text-(--text-color) font-medium w-full cursor-pointer">{{company.name}}</label>
                     </li>
                     }

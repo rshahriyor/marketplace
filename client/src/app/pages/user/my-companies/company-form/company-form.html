@@ -38,7 +38,7 @@
             <input type="checkbox" [checked]="isAllSelectedTag" (change)="toggleSelectAll($event)"
               class="custom-checkbox" />
             <div class="relative w-full">
-              <input type="text" class="w-full bg-[#ECEDF3] outline-none h-12 px-5 rounded-md"
+              <input type="text" class="w-full bg-(--body-bg-color) outline-none h-12 px-5 rounded-md"
                 (input)="handleTagSearchOptions($event.target.value)" />
               <i class="pi pi-search absolute right-2.5 top-1/2 transform -translate-y-1/2"></i>
             </div>
@@ -52,7 +52,7 @@
                     </div>
                     }
                     @for (tag of tag.tags; track $index) { -->
-          <label class="flex items-center gap-3 px-3 py-1.5 pl-13.75 text-[#525261] font-medium cursor-pointer hover:bg-[#ECEDF3] duration-300"
+          <label class="flex items-center gap-3 px-3 py-1.5 pl-13.75 text-(--text-color) font-medium cursor-pointer hover:bg-(--body-bg-color) duration-300"
             (click)="handleCheckBoxChange(tag); $event.preventDefault()">
             <input class="custom-checkbox" type="checkbox"
               [checked]="dropdownSelectedLabelMap['tags'].includes(tag.name)" />{{tag.name}}

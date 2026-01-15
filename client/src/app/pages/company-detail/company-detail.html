@@ -108,7 +108,7 @@
             </div>
 
             <div class="bg-white p-3.75 rounded-[18px]">
-                <p class="text-[27px] text-[#525261] font-semibold my-0">
+                <p class="text-[27px] text-(--text-color) font-semibold my-0">
                     График работы:
                 </p>
 
@@ -159,7 +159,7 @@
                 <p class="text-[27px] text-(--text-color) font-semibold my-0">Социальные сети:</p>
                 <div class="flex flex-wrap justify-between gap-5">
                     @for (sm of company()?.social_media; track $index) {
-                    <a [href]="sm.account_url" target="_blank" class="flex items-center cursor-pointer gap-3 border border-[#ECEDF3] rounded-[18px] p-[12px_16px] max-w-65.25 w-full min-h-11 transition hover:bg-[#ECEDF3]">
+                    <a [href]="sm.account_url" target="_blank" class="flex items-center cursor-pointer gap-3 border border-(--body-bg-color) rounded-[18px] p-[12px_16px] max-w-65.25 w-full min-h-11 transition hover:bg-(--body-bg-color)">
                         <img [src]="sm.icon" [alt]="sm.social_media_name" width="19" height="19">
                         <span class="text-black/60 font-medium">
                             {{sm.social_media_name}}
