@@ -12,6 +12,7 @@ db.prepare(`
   CREATE TABLE IF NOT EXISTS companies (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
+    search_name TEXT NOT NULL, -- used for case-insensitive Cyrillic search
     category_id NUMBER NOT NULL,
     region_id NUMBER NOT NULL,
     city_id NUMBER NOT NULL,

@@ -1,4 +1,4 @@
-const { getCompanies, getCompaniesByFilter, getCompaniesForMainPage, getCompany, getOwnCompanies, addCompany, toggleFavorite, updateCompany } = require('../controllers/companies');
+const { getCompanies, getCompaniesByFilter, getCompaniesForMainPage, getCompany, getOwnCompanies, addCompany, toggleFavorite, updateCompany, searchCompanies } = require('../controllers/companies');
 const { responseSchema } = require('../utils/response');
 
 const companySchema = {
@@ -302,6 +302,25 @@ const putCompanyOpts = {
     handler: updateCompany
 }
 
+const searchCompaniesOpts = {
+    schema: {
+        querystring: {
+            type: 'object',
+            properties: {
+                q: { type: 'string' }
+            },
+            required: ['q']
+        },
+        response: {
+            200: responseSchema({
+                type: 'array',
+                items: companySchema
+            })
+        }
+    },
+    handler: searchCompanies
+}
+
 function itemRoutes(fastify, options, done) {
     fastify.addHook('preValidation', async (req, reply) => {
         if (req.headers.authorization) {
@@ -316,6 +335,7 @@ function itemRoutes(fastify, options, done) {
     fastify.post('/companies', postCompanyOpts);
     fastify.post('/companies/toggle_favorite/:id', postToggleFavoriteOpts);
     fastify.put('/companies/:id', putCompanyOpts);
+    fastify.get('/companies/search', searchCompaniesOpts);
     done();
 };
 

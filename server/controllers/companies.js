@@ -177,6 +177,27 @@ const getCompaniesByFilter = (req, reply) => {
 };
 
 
+const searchCompanies = (req, reply) => {
+    const { q } = req.query;
+    const userId = req.user?.userId ?? null;
+
+    if (!q || !q.trim()) {
+        return sendResponse(reply, 200, 0, 'OK', []);
+    }
+
+    const search = `%${q.trim().toLocaleLowerCase('ru-RU')}%`;
+
+    const rows = db.prepare(`
+        ${BASE_COMPANY_QUERY}
+        WHERE
+            c.search_name LIKE ?
+        ORDER BY c.id
+    `).all(userId, search);
+
+    return sendResponse(reply, 200, 0, 'OK', mapCompanies(rows));
+};
+
+
 const getCompaniesForMainPage = (req, reply) => {
     const userId = req.user?.userId ?? null;
     const rows = db.prepare(BASE_COMPANY_QUERY).all(userId);
@@ -239,10 +260,12 @@ const addCompany = (req, reply) => {
     const { name, category_id, tag_id, region_id, city_id, desc, phone_number, longitude, latitude, address, schedules, social_media } = req.body;
     const userId = req.user.userId;
 
+    const search_name = name.toLocaleLowerCase('ru-RU');
+
     const transaction = db.transaction(() => {
         const result = db
-            .prepare('INSERT INTO companies (name, category_id, region_id, city_id, desc, phone_number, longitude, latitude, address, created_by_user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-            .run(name, category_id, region_id, city_id, desc, phone_number, longitude, latitude, address, userId);
+            .prepare('INSERT INTO companies (name, search_name, category_id, region_id, city_id, desc, phone_number, longitude, latitude, address, created_by_user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+            .run(name, search_name, category_id, region_id, city_id, desc, phone_number, longitude, latitude, address, userId);
 
         const companyId = result.lastInsertRowid;
 
@@ -310,10 +333,13 @@ const updateCompany = (req, reply) => {
         return sendResponse(reply, 403, -3, 'FORBIDDEN', null, 'You do not have permission to update this company');
     }
 
+    const search_name = name.toLocaleLowerCase('ru-RU');
+
     const transaction = db.transaction(() => {
         db.prepare(`
             UPDATE companies SET
                 name = ?,
+                search_name = ?,
                 category_id = ?,
                 region_id = ?,
                 city_id = ?,
@@ -323,7 +349,7 @@ const updateCompany = (req, reply) => {
                 latitude = ?,
                 address = ?
             WHERE id = ?
-        `).run(name, category_id, region_id, city_id, desc, phone_number, longitude, latitude, address, id);
+        `).run(name, search_name, category_id, region_id, city_id, desc, phone_number, longitude, latitude, address, id);
 
         db.prepare('DELETE FROM company_tags WHERE company_id = ?').run(id);
         if (Array.isArray(tag_id)) {
@@ -377,28 +403,28 @@ const updateCompany = (req, reply) => {
 const toggleFavorite = (req, reply) => {
     const userId = req.user.userId;
     const companyId = req.params.id;
-  
+
     const exists = db.prepare(`
       SELECT 1 FROM favorites
       WHERE user_id = ? AND company_id = ?
     `).get(userId, companyId);
-  
+
     if (exists) {
-      db.prepare(`
+        db.prepare(`
         DELETE FROM favorites
         WHERE user_id = ? AND company_id = ?
       `).run(userId, companyId);
-  
-      return sendResponse(reply, 200, 0, 'REMOVED_FROM_FAVORITES');
+
+        return sendResponse(reply, 200, 0, 'REMOVED_FROM_FAVORITES');
     }
-  
+
     db.prepare(`
       INSERT INTO favorites (user_id, company_id)
       VALUES (?, ?)
     `).run(userId, companyId);
-  
+
     return sendResponse(reply, 200, 0, 'ADDED_TO_FAVORITES');
-  };
+};
 
 
 module.exports = {
@@ -409,5 +435,6 @@ module.exports = {
     getOwnCompanies,
     addCompany,
     updateCompany,
-    toggleFavorite
+    toggleFavorite,
+    searchCompanies
 };
