@@ -7,7 +7,7 @@ import { FilterService } from '../../../../core/services/filter.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CompaniesService } from '../../../../core/services/companies.service';
 import { DAYS_OFF_STATUS, WEEK_DAYS } from '../../../../core/utils/constants';
-import { getTimeSlots } from '../../../../core/utils/helper';
+import { formatPhone, getTimeSlots } from '../../../../core/utils/helper';
 import { PhoneMaskDirective } from "../../../../core/directives/phone-mask.directive";
 
 @Component({
@@ -238,10 +238,13 @@ export class CompanyForm implements OnInit {
       };
     });
 
+    const phone_number = rawValue.phone_number ? rawValue.phone_number.replace(/\D/g, '') : null;
+
     const payload = {
       ...rest,
       schedules: company_schedule,
-      social_media
+      social_media,
+      phone_number
     };
 
     if (this.companyId() !== null) {
@@ -317,7 +320,7 @@ export class CompanyForm implements OnInit {
         this.form.patchValue({
           name: company.name,
           category_id: company.category_id,
-          phone_number: company.phone_number,
+          phone_number: formatPhone(company.phone_number.toString()),
           region_id: company.region_id,
           city_id: company.city_id,
           address: company.address,
