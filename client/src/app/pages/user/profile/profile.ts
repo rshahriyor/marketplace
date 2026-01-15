@@ -39,56 +39,55 @@ export class Profile implements OnInit {
   }
 
   save(): void {
-    // this.addLoading.set(true);
+    const value = { ...this.profileForm.value };
+    const phone = value.phone_number.replace(/[()\-\s]/g, '').substring(0, 9)
+    value.phone_number = Number(phone);
 
-    // const value = { ...this.profileForm.value };
-    // value.gender = Boolean(value.gender);
-    // const phone = '992' + value.phone_number.replace(/[()\-\s]/g, '').substring(0, 9)
-    // value.phone_number = Number(phone);
+    console.log(value);
+    
 
-    // this.service.updateProfile(value)
-    //   .pipe(
-    //     finalize(() => this.addLoading.set(false)),
-    //     takeUntilDestroyed(this.destroyRef)
-    //   )
-    //   .subscribe((res) => {
-    //     if (res.status.code === StatusCodeEnum.SUCCESS) {
-    //       this.toastService.showToast('success', 'Вы успешно обновили свой профиль');
-    //       this.editing.set(false);
-    //       this.profileForm.get('gender')?.disable();
-    //     }
-    //     if (res.status.code === StatusCodeEnum.UNKNOWN_ERROR) {
-    //       this.toastService.showToast('error', res.status.message);
-    //     }
-    //     if (res.status.code === StatusCodeEnum.PHONE_NUMBER_ERROR) {
-    //       this.toastService.showToast('error', res.status.message);
-    //     }
-    //   })
+    this.userService.updateProfile(value)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((res) => {
+        if (res.status.code === StatusCodeEnum.SUCCESS) {
+          alert('Вы успешно обновили свой профиль');
+          this.editing.set(false);
+          this.profileForm.get('gender_id')?.disable();
+        }
+        if (res.status.code === StatusCodeEnum.UNKNOWN_ERROR) {
+          alert(res.status.message);
+        }
+        if (res.status.code === StatusCodeEnum.PHONE_NUMBER_ERROR) {
+          alert(res.status.message);
+        }
+      })
   }
 
   private getProfileData(): void {
     this.userService.getProfile()
-    .pipe(
-      takeUntilDestroyed(this.destroyRef)
-    )
-    .subscribe((res) => {
-      if (res.status.code === StatusCodeEnum.SUCCESS) {
-        this.originalProfileInfo.set(res.data);
+      .pipe(
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((res) => {
+        if (res.status.code === StatusCodeEnum.SUCCESS) {
+          this.originalProfileInfo.set(res.data);
 
-        if (res.data.phone_number) {
-          const phone = res.data.phone_number;
-          res.data.phone_number = formatPhone(phone.toString());
+          if (res.data.phone_number) {
+            const phone = res.data.phone_number;
+            res.data.phone_number = formatPhone(phone.toString());
+          }
+
+          if (!this.editing()) {
+            this.profileForm.get('gender_id')?.disable();
+          } else {
+            this.profileForm.get('gender_id')?.enable();
+          }
+
+          this.profileForm.patchValue(res.data);
         }
-
-        if (!this.editing()) {
-          this.profileForm.get('gender_id')?.disable();
-        } else {
-          this.profileForm.get('gender_id')?.enable();
-        }
-
-        this.profileForm.patchValue(res.data);
-      }
-    })
+      })
   }
 
   private createForm(): void {

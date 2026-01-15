@@ -17,5 +17,9 @@ export class UserService {
     getProfile(): Observable<IResponse<IUser>> {
         return this.http.get<IResponse<IUser>>(`${API_URL}/own`);
     }
+
+    updateProfile(data: IUser): Observable<IResponse<IUser>> {
+        return this.http.put<IResponse<IUser>>(`${API_URL}/own`, data);
+    }
     
 }
