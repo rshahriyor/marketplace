@@ -1,4 +1,4 @@
-const {getUsers, getUser, addUser} = require('../controllers/users');
+const {getUsers, getOwnInfo, addUser} = require('../controllers/users');
 const { responseSchema } = require('../utils/response');
 
 const userSchema = {
@@ -26,20 +26,18 @@ const getUsersOpts = {
     handler: getUsers
 };
 
-const getUserOpts = {
+const getOwnInfoOpts = {
     schema: {
-        params: {
-            type: 'object',
-            properties: {
-                id: { type: 'string' }
-            },
-            required: ['id']
-        },
+        security: [
+            {
+                BearerAuth: []
+            }
+        ],
         response: {
             200: responseSchema(userSchema)
         }
     },
-    handler: getUser
+    handler: getOwnInfo
 };
 
 const postUserOpts = {
@@ -65,6 +63,10 @@ const postUserOpts = {
 
 function itemRoutes(fastify, options, done) {
     fastify.get('/users', getUsersOpts);
+    fastify.get('/users/own', {
+        ...getOwnInfoOpts,
+        preHandler: [fastify.authenticate]
+    });
     fastify.post('/users', postUserOpts)
     done();
 };

@@ -9,11 +9,11 @@ const getUsers = (req, reply) => {
 };
 
 
-const getUser = (req, reply) => {
-    const { id } = req.params;
+const getOwnInfo = (req, reply) => {
+    const id = req.user.userId;
 
     const item = db.prepare(
-        'SELECT * FROM users WHERE id = ?'
+        'SELECT * FROM users WHERE user_id = ?'
     ).get(id);
 
     if (!item) return sendResponse(reply, 404, -2, 'NOT_FOUND', null, 'User not found');
@@ -45,4 +45,4 @@ const addUser = (req, reply) => {
     });
 };
 
-module.exports = {getUsers, getUser, addUser};
+module.exports = {getUsers, getOwnInfo, addUser};
