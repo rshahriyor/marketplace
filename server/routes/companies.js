@@ -79,7 +79,8 @@ const getCompaniesByFilterOpts = {
                 category_ids: { type: 'string' },
                 tag_ids: { type: 'string' },
                 region_ids: { type: 'string' },
-                city_ids: { type: 'string' }
+                city_ids: { type: 'string' },
+                is_favorite: { type: 'boolean' }
             }
         },
         response: {

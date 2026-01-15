@@ -133,21 +133,20 @@ const getCompanies = (req, reply) => {
 
 
 const getCompaniesByFilter = (req, reply) => {
-    const { category_ids, tag_ids, region_ids, city_ids } = req.query;
+    const { category_ids, tag_ids, region_ids, city_ids, is_favorite } = req.query;
     const userId = req.user?.userId ?? null;
 
     let sql = BASE_COMPANY_QUERY + ' WHERE 1=1 ';
-    const params = [];
+    const params = [userId];
 
     if (category_ids) {
-        const ids = category_ids.split(',');
+        const ids = category_ids.split(',').map(Number);
         sql += ` AND c.category_id IN (${ids.map(() => '?').join(',')})`;
         params.push(...ids);
     }
 
     if (tag_ids) {
-        const ids = tag_ids.split(',');
-
+        const ids = tag_ids.split(',').map(Number);
         sql += `
             AND EXISTS (
                 SELECT 1
@@ -156,23 +155,30 @@ const getCompaniesByFilter = (req, reply) => {
                 AND ct2.tag_id IN (${ids.map(() => '?').join(',')})
             )
         `;
-
         params.push(...ids);
     }
 
     if (region_ids) {
-        const ids = region_ids.split(',');
+        const ids = region_ids.split(',').map(Number);
         sql += ` AND c.region_id IN (${ids.map(() => '?').join(',')})`;
         params.push(...ids);
     }
 
     if (city_ids) {
-        const ids = city_ids.split(',');
+        const ids = city_ids.split(',').map(Number);
         sql += ` AND c.city_id IN (${ids.map(() => '?').join(',')})`;
         params.push(...ids);
     }
 
-    const rows = db.prepare(sql).all(...params, userId);
+    if (is_favorite === 'true') {
+        sql += ` AND EXISTS (SELECT 1 FROM favorites f2 WHERE f2.user_id = ? AND f2.company_id = c.id)`;
+        params.push(userId);
+    }
+
+    sql += ' ORDER BY c.id';
+
+    const rows = db.prepare(sql).all(...params);
+
     return sendResponse(reply, 200, 0, 'OK', mapCompanies(rows));
 };
 
