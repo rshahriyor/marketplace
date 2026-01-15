@@ -16,7 +16,8 @@ export class FilterService {
         category_ids: [],
         tag_ids: [],
         region_ids: [],
-        city_ids: []
+        city_ids: [],
+        is_favorite: false
     });
     private http = inject(HttpClient);
 

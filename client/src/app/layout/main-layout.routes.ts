@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 
 export const MAIN_LAYOUT_CHILDREN_ROUTES: Routes = [
     {
-        path: 'm-i/:id',
+        path: 'm-i',
         loadComponent: () => import('../pages/company-filter/company-filter').then(c => c.CompanyFilter)
     },
     {

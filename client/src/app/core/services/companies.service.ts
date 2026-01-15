@@ -49,6 +49,11 @@ export class CompaniesService {
                 filter.city_ids.join(',')
             );
         }
+
+        if (filter.is_favorite) {
+            params = params.set('is_favorite', true);
+        }
+
         return this.http.get<IResponse<ICompany[]>>(`${API_URL}/by_filter`, { params });
     }
 

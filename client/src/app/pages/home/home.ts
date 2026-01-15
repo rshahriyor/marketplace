@@ -3,9 +3,9 @@ import { CompanyCard } from "../../shared/components/company-card/company-card";
 import { CompaniesService } from '../../core/services/companies.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { NgTemplateOutlet } from '@angular/common';
 import { ICompaniesResponseForMainPage } from '../../core/models/company.model';
 import { Menu } from "../../shared/components/menu/menu";
+import { NgTemplateOutlet } from '@angular/common';
 
 
 
