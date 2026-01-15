@@ -1,4 +1,4 @@
-const {getUsers, getOwnInfo, addUser} = require('../controllers/users');
+const {getUsers, getOwnInfo, addUser, editUser} = require('../controllers/users');
 const { responseSchema } = require('../utils/response');
 
 const userSchema = {
@@ -10,7 +10,6 @@ const userSchema = {
         last_name: { type: 'string' },
         phone_number: { type: 'number' },
         gender_id: { type: 'number' },
-        gender_name: { type: 'string' }
     }
 };
 
@@ -61,13 +60,37 @@ const postUserOpts = {
     handler: addUser
 };
 
+const putUserOpts = {
+    schema: {
+        body: {
+            type: 'object',
+            properties: {
+                username: { type: 'string' },
+                first_name: { type: 'string' },
+                last_name: { type: 'string' },
+                phone_number: { type: 'number' },
+                gender_id: { type: 'number' }
+            },
+            required: ['username', 'first_name', 'last_name', 'phone_number', 'gender_id']
+        },
+        response: {
+            200: responseSchema(userSchema)
+        }
+    },
+    handler: editUser
+}
+
 function itemRoutes(fastify, options, done) {
     fastify.get('/users', getUsersOpts);
     fastify.get('/users/own', {
         ...getOwnInfoOpts,
         preHandler: [fastify.authenticate]
     });
-    fastify.post('/users', postUserOpts)
+    fastify.post('/users', postUserOpts);
+    fastify.put('/users/own', {
+        ...putUserOpts,
+        preHandler: [fastify.authenticate]
+    });
     done();
 };
 
