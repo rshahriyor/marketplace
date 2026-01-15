@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from "@angular/router";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { Dropdown } from '../../../../shared/components/dropdown/dropdown';
 import { FilterService } from '../../../../core/services/filter.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -19,6 +19,7 @@ export class CompanyForm implements OnInit {
 
   form: FormGroup;
 
+  companyId: WritableSignal<number> = signal(null);
   regionOptions: WritableSignal<any[]> = signal([]);
   cityOptions: WritableSignal<any[]> = signal([]);
   categoryOptions: WritableSignal<any[]> = signal([]);
@@ -57,15 +58,23 @@ export class CompanyForm implements OnInit {
       name: 'WhatsApp'
     }
   ];
-  socialMediaOptions = this.socialMediaList.map((sm) => ({value: sm.id, name: sm.name}));
+  socialMediaOptions = this.socialMediaList.map((sm) => ({ value: sm.id, name: sm.name }));
 
   private tagOptionsClone = [];
 
   private fb = inject(FormBuilder);
   private companyService = inject(CompaniesService);
+  private activatedRoute = inject(ActivatedRoute);
   private filterService = inject(FilterService);
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);
+
+  constructor() {
+    const { id } = this.activatedRoute.snapshot.params;
+    if (id) {
+      this.companyId.set(id);
+    }
+  }
 
   ngOnInit(): void {
     this.createForm();
@@ -73,6 +82,9 @@ export class CompanyForm implements OnInit {
     this.getCityOptions();
     this.getRegionOptions();
     this.getTagOptions();
+    if (this.companyId()) {
+      this.getCompanyDetail();
+    }
   }
 
   get scheduleArray(): FormArray {
@@ -231,14 +243,25 @@ export class CompanyForm implements OnInit {
       social_media
     };
 
-    this.companyService.addCompany(payload)
-      .pipe(
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe((res) => {
-        console.log('Company added successfully:', res);
-        this.router.navigate(['/u/m-c']);
-      });
+    if (this.companyId() !== null) {
+      this.companyService.updateCompany(this.companyId(), payload)
+        .pipe(
+          takeUntilDestroyed(this.destroyRef)
+        )
+        .subscribe((res) => {
+          console.log('Company updated successfully:', res);
+          this.router.navigate(['/u/m-c']);
+        });
+    } else {
+      this.companyService.addCompany(payload)
+        .pipe(
+          takeUntilDestroyed(this.destroyRef)
+        )
+        .subscribe((res) => {
+          console.log('Company added successfully:', res);
+          this.router.navigate(['/u/m-c']);
+        });
+    }
   }
 
   private getRegionOptions(): void {
@@ -279,6 +302,71 @@ export class CompanyForm implements OnInit {
       .subscribe((res) => {
         this.tagOptions = res.data;
         this.tagOptionsClone = res.data.slice();
+      });
+  }
+
+  private getCompanyDetail(): void {
+    this.companyService.getCompanyDetail(this.companyId())
+      .pipe(
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((res) => {
+        const company = res.data;
+
+        this.form.patchValue({
+          name: company.name,
+          category_id: company.category_id,
+          phone_number: company.phone_number,
+          region_id: company.region_id,
+          city_id: company.city_id,
+          address: company.address,
+          longitude: company.longitude,
+          latitude: company.latitude,
+          desc: company.desc
+        });
+
+        company.tags.forEach((tag) => {
+          this.handleCheckBoxChange({ ...tag, id: tag.tag_id, name: tag.tag_name });
+        })
+
+        const { lunch_start_at, lunch_end_at, without_breaks } = company.schedules[0]
+        const formatTime = (time: string) => time.split(':').slice(0, 2).join(':')
+
+        if (!without_breaks) {
+          this.form.get('lunch_start_at').patchValue(formatTime(lunch_start_at))
+          this.form.get('lunch_end_at').patchValue(formatTime(lunch_end_at))
+        } else {
+          this.form.get('lunch_start_at').patchValue(DAYS_OFF_STATUS[2])
+        }
+
+        if (company.schedules && Array.isArray(company.schedules)) {
+          const schedulesArray = this.scheduleArray;
+          company.schedules.forEach((schedule, index) => {
+            if (schedulesArray.at(index)) {
+              schedulesArray.at(index).patchValue({
+                start_at: schedule.start_at,
+                end_at: schedule.end_at,
+                lunch_start_at: schedule.lunch_start_at,
+                lunch_end_at: schedule.lunch_end_at,
+                is_working_day: schedule.is_working_day,
+                is_day_and_night: schedule.is_day_and_night,
+                without_breaks: schedule.without_breaks
+              });
+            }
+          });
+        }
+
+        if (company.social_media && Array.isArray(company.social_media)) {
+          const socialMediaArray = this.socialMediaAddress;
+          company.social_media.forEach((sm, index) => {
+            if (socialMediaArray.at(index)) {
+              socialMediaArray.at(index).patchValue({
+                social_media_id: sm.social_media_id,
+                account_url: sm.account_url
+              });
+            }
+          });
+        }
       });
   }
 

@@ -24,10 +24,10 @@
         } @else {
         <div class="absolute right-2 top-2">
             <div class="relative flex cursor-pointer justify-end" (click)="eventsClick($event)">
-                <i class="pi pi-ellipsis-v hover:bg-(--text-color)/10 p-1.5 rounded-full duration-200"></i>
+                <i (click)="showMenu.set(!showMenu())" class="pi pi-ellipsis-v hover:bg-(--text-color)/10 p-1.5 rounded-full duration-200"></i>
 
                 <ul class="absolute right-0 top-7.5 z-100 flex w-max flex-col rounded-[5px] bg-white shadow-md"
-                    [class.hidden]="!isShowEditMenu()">
+                    [class.hidden]="!showMenu()">
                     <li class="cursor-pointer border-y border-[#F0F0F0] px-3.25 py-2.5 font-semibold text-[#525261]
                      hover:rounded-[5px] hover:bg-[#F0F0F0]" [routerLink]="'/m/' + cardId()"
                         (click)="eventsClick($event)">
@@ -35,8 +35,7 @@
                     </li>
 
                     <li class="cursor-pointer border-y border-[#F0F0F0] px-3.25 py-2.5 font-semibold text-[#525261]
-                     hover:rounded-[5px] hover:bg-[#F0F0F0]" [routerLink]="'../establishment'"
-                        [queryParams]="{ cardId: cardId() }" (click)="eventsClick($event)">
+                     hover:rounded-[5px] hover:bg-[#F0F0F0]" [routerLink]="`/u/a-c/${cardId()}`" (click)="eventsClick($event)">
                         Редактирование
                     </li>
 
@@ -44,12 +43,7 @@
                      hover:rounded-[5px] hover:bg-[#F0F0F0]" (click)="onUpdateStatus()(cardId()); eventsClick($event)">
                         {{ isActive() ? 'Скрыть' : 'Показать' }}
                     </li>
-
-                    <!-- <li class="cursor-pointer border-y border-[#F0F0F0] px-[13px] py-[10px] font-semibold text-[#525261]
-                     hover:rounded-[5px] hover:bg-[#F0F0F0]" [routerLink]="'../add-post'"
-                        [queryParams]="{ company_id: cardId() }" (click)="eventsClick($event)">
-                        Добавить пост
-                    </li> -->
+                    
                 </ul>
             </div>
         </div>

@@ -64,6 +64,10 @@ export class CompaniesService {
         return this.http.post<IResponse<ICompany>>(`${API_URL}`, companyData);
     }
 
+    updateCompany(company_id: number, companyData: ICompany): Observable<IResponse<ICompany>> {
+        return this.http.put<IResponse<ICompany>>(`${API_URL}/${company_id}`, companyData);
+    }
+
     toggleFavoriteCompany(company_id: number): Observable<IResponse<null>> {
         return this.http.post<IResponse<null>>(`${API_URL}/toggle_favorite/${company_id}`, {});
     }

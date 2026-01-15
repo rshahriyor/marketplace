@@ -21,6 +21,10 @@ export const USER_ROUTES: Routes = [
             {
                 path: 'a-c',
                 loadComponent: () => import('./my-companies/company-form/company-form').then((c) => c.CompanyForm),
+            },
+            {
+                path: 'a-c/:id',
+                loadComponent: () => import('./my-companies/company-form/company-form').then((c) => c.CompanyForm),
             }
         ]
     }

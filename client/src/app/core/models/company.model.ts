@@ -8,7 +8,7 @@ export interface ICompany {
     }[],
     is_favorite?: boolean,
     favorites_count?: number,
-    categories?: string[],
+    category_id?: number,
     desc?: string,
     phone_number?: number,
     address?: string,

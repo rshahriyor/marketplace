@@ -28,7 +28,7 @@
           (click)="toggleDropdown('tags'); $event.preventDefault()"
           [ngClass]="{'invalid': !dropdownSelectedLabelMap['tags'].length}">
           <span
-            class="pl-2.5 text-(--text-color) font-medium whitespace-nowrap overflow-hidden overflow-ellipsis max-w-125">{{dropdownSelectedLabelMap['tags'].join(',')}}</span>
+            class="pl-2.5 text-(--text-color) font-medium whitespace-nowrap overflow-hidden overflow-ellipsis max-w-125">{{dropdownSelectedLabelMap['tags'].join(', ')}}</span>
           <i class="pi pi-angle-down text-2xl absolute right-2.5 duration-300"
             [ngClass]="{ 'rotate-180' : dropdownMenuState.tagsMenuVisible }"></i>
         </div>
@@ -66,10 +66,10 @@
     }
 
     <label class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
-      <span class="w-fit relative text-lg mb-0.75 required">Укажите номера телефонов</span>
+      <span class="w-fit relative text-lg mb-0.75 required">Укажите номер телефона</span>
       <div class="flex gap-5 w-full">
-        <div class="flex justify-center items-center bg-white rounded-md px-3 text-[20px]">+992</div>
-        <input type="text" class="h-12.5 text-[20px] border-0 outline-none bg-white rounded-md text-(--text-color) pl-5 w-full"
+        <div class="flex justify-center items-center liquid-glass-input w-fit!">+992</div>
+        <input type="text" class="liquid-glass-input"
           mkPhoneMask placeholder="(XX) XXX-XX-XX" formControlName="phone_number" (keypress)="allowOnlyNumbers($event)" />
       </div>
     </label>
@@ -167,23 +167,17 @@
 
     <label class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
       <span class="w-fit relative text-lg mb-0.75 required">Адрес</span>
-      <input type="text"
-        class="h-12.5 text-[20px] border-0 outline-none bg-white rounded-[5px] text-(--text-color) pl-5"
-        formControlName="address" />
+      <input type="text" class="liquid-glass-input" formControlName="address" />
     </label>
 
     <label class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
       <span class="w-fit relative text-lg mb-0.75 required">Долгота</span>
-      <input type="text"
-        class="h-12.5 text-[20px] border-0 outline-none bg-white rounded-[5px] text-(--text-color) pl-5"
-        formControlName="longitude" />
+      <input type="text" class="liquid-glass-input" formControlName="longitude" />
     </label>
 
     <label class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
       <span class="w-fit relative text-lg mb-0.75 required">Широта</span>
-      <input type="text"
-        class="h-12.5 text-[20px] border-0 outline-none bg-white rounded-[5px] text-(--text-color) pl-5"
-        formControlName="latitude" />
+      <input type="text" class="liquid-glass-input" formControlName="latitude" />
     </label>
 
     <div class="flex flex-col relative gap-1 font-semibold text-(--text-color) mb-0 w-full">

@@ -38,12 +38,12 @@ export class CompanyCard {
 
   onUpdateStatus = input<(id: number) => void>();
 
-  isShowEditMenu = input<boolean>();
   isActive = input<boolean>();
 
   atLunch = signal(false);
   isWorking = signal(true);
   isClosed = signal(false);
+  showMenu = signal(false);
 
   favoritesCount = signal(0);
 
