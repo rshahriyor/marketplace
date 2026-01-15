@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, forwardRef, inject, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormControl, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
-// import { ClickOutsideDirective } from '@core/directives/click-outside.directive';
+import { ClickOutsideDirective } from '../../../core/directives/click-outside.directive';
 
 export type DropdownType = {
   name: string
@@ -23,7 +23,7 @@ const VALUE_ACCESSOR_PROVIDERS = [
 
 @Component({
   selector: 'mk-dropdown',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ClickOutsideDirective],
   templateUrl: './dropdown.html',
   styleUrl: './dropdown.css',
   providers: VALUE_ACCESSOR_PROVIDERS,

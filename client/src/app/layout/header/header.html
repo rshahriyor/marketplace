@@ -2,9 +2,13 @@
     <div [routerLink]="'/'" class="logo max-w-70 w-full cursor-pointer">
         <img src="/assets/header-logo.svg" alt="logo">
     </div>
-    <div class="filter max-w-145 w-full relative">
-        <input type="text" placeholder="Поиск" class="w-full bg-white h-10 rounded-lg outline-0 pl-3 pr-8 text-(--text-color)">
+    <div (mkClickOutside)="showSearchDropdown.set(false)" class="filter max-w-145 w-full relative">
+        <input (focus)="showSearchDropdown.set(true)" [formControl]="searchFormControl" type="text" placeholder="Поиск"
+            class="w-full bg-white h-10 rounded-lg outline-0 pl-3 pr-8 text-(--text-color)">
         <i class="pi pi-search absolute right-3 top-1/2 transform -translate-y-1/2"></i>
+        @if (searchFormControl.value && showSearchDropdown()) {
+            <ng-container *ngTemplateOutlet="searchFitler"></ng-container>
+        }
     </div>
     <div class="profile max-w-70 w-full flex justify-center gap-3">
         @for (menuItem of menu; track $index) {
@@ -15,3 +19,25 @@
         }
     </div>
 </div>
+
+<ng-template #searchFitler>
+    <div class="absolute top-11 bg-white shadow-md max-h-92.5 w-full overflow-y-auto z-10 py-5 rounded-b-lg">
+        <section class="m-0 flex flex-col gap-2.5">
+            @if (searchData().length) {
+            <div>
+                <div class="gap-3.75 pl-4.5 flex items-center">
+                    <i class="pi pi-building text-(--text-color)"></i>
+                    <span class="text-(--text-color) font-bold text-[18px]">Предприятия</span>
+                </div>
+                <ul class="list-none my-0">
+                    @for (company of searchData(); track $index) {
+                    <li (click)="showSearchDropdown.set(false)" [routerLink]="`/m/${company.id}`" class="flex items-center py-1.5 px-13.75 gap-[.5px] cursor-pointer duration-300 hover:bg-[#ECEDF3]">
+                        <label class="text-(--text-color) font-medium w-full cursor-pointer">{{company.name}}</label>
+                    </li>
+                    }
+                </ul>
+            </div>
+            }
+        </section>
+    </div>
+</ng-template>

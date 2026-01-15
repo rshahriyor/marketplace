@@ -71,4 +71,9 @@ export class CompaniesService {
     toggleFavoriteCompany(company_id: number): Observable<IResponse<null>> {
         return this.http.post<IResponse<null>>(`${API_URL}/toggle_favorite/${company_id}`, {});
     }
+
+    searchCompanies(query: string): Observable<IResponse<ICompany[]>> {
+        const params = new HttpParams().set('q', query);
+        return this.http.get<IResponse<ICompany[]>>(`${API_URL}/search`, { params });
+    }
 }
