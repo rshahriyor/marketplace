@@ -7,7 +7,7 @@
             {{currentPage().name}}
         </button>
         @for (category of categories(); track $index) {
-        <button [routerLink]="`/m-i/${category.id}`" class="group flex items-center gap-2 w-full min-h-12.5
+        <button [routerLink]="'/m-i/'" [queryParams]="{ category_ids: category.id }" class="group flex items-center gap-2 w-full min-h-12.5
              bg-white border-b border-[#EAEAEA]
              px-4 py-3 text-left break-all
              text-[16px] font-semibold text-black
