@@ -1,1 +1,62 @@
-<p>footer works!</p>
+<footer class="bg-(--text-color) py-12.5">
+    <div class="max-w-267.5 w-full mx-auto flex justify-between items-start max-sm:flex-col max-sm:items-center max-sm:px-4 gap-10">
+
+        <div class="max-w-113 w-full flex flex-col gap-2.5 max-sm:items-center">
+            <img src="/assets/footer-logo.svg" width="288" height="78" />
+
+            <p class="text-(--body-bg-color) text-[17px] leading-6.75 font-normal m-0 max-sm:text-center">
+                MARKETS.TJ — это цифровой справочник организаций и заведений
+                Таджикистана. Сервис предоставляет пользователям доступ к информации
+                о компаниях, учебных заведениях, магазинах, кафе, аптеках и других
+                предприятиях. Платформа помогает легко находить нужные услуги,
+                фильтровать по категориям и оставлять отзывы.
+            </p>
+
+            <ul class="flex flex-col gap-4 text-white list-none p-0 m-0 max-sm:items-center">
+                <li class="flex items-center gap-2.5">
+                    <i class="pi pi-envelope"></i>
+                    <span>MARKETS.TJ</span>
+                </li>
+                <li class="flex items-center gap-2.5">
+                    <i class="pi pi-phone"></i>
+                    <span>(+992) 11 555 2 555</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="max-w-43 w-full max-sm:text-center">
+            <p class="text-white text-[23px] font-medium h-19.5 mb-3.75 flex items-center
+                 max-sm:justify-center max-sm:mb-0">
+                Документы
+            </p>
+
+            <ul class="flex flex-col gap-3 text-(--body-bg-color) list-none p-0 m-0 max-sm:items-center">
+                @for (menuList of menuListItems; track $index) {
+                <li class="flex items-center gap-5 text-[17px] font-normal">
+                    {{ menuList.label }}
+                </li>
+                }
+            </ul>
+        </div>
+
+        <div class="max-w-43 w-full max-sm:text-center">
+            <p class="text-white text-[23px] font-medium h-19.5 mb-3.75 flex items-center
+                 max-sm:justify-center max-sm:mb-0">
+                Наши соц. сети
+            </p>
+
+            <ul class="flex flex-col gap-3 text-(--body-bg-color) list-none p-0 m-0 max-sm:items-center">
+                @for (socialMediaList of socialMediaListItems; track $index) {
+                <li class="flex items-center gap-5 text-[17px] font-normal group cursor-pointer">
+                    <img [src]="socialMediaList.icon" />
+                    <a [href]="socialMediaList.src" target="_blank"
+                        class="no-underline text-(--body-bg-color) group-hover:text-white transition">
+                        {{ socialMediaList.label }}
+                    </a>
+                </li>
+                }
+            </ul>
+        </div>
+
+    </div>
+</footer>
