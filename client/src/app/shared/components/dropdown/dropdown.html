@@ -1,10 +1,10 @@
 <div class="relative" (mkClickOutside)="menuVisible = false">
-    <div class="cursor-pointer h-12.5 w-full bg-white flex relative justify-between items-center rounded-md px-2.5" [style]="dropdownStyle" (click)="openMenu()">
+    <div class="liquid-glass-input cursor-pointer flex relative justify-between items-center" [style]="dropdownStyle" (click)="openMenu()">
         <span class="text-(--text-color) font-medium" [style]="labelStyle">{{value?.[optionLabel] ?? ''}}</span>
         <i class="pi pi-angle-down text-2xl absolute right-2.5 duration-300" [ngClass]="{'rotate-180' : menuVisible}"></i>
     </div>
     @if (menuVisible) {
-    <div class="dropdown-menu absolute w-full bg-white z-10 shadow-lg">
+    <div class="dropdown-menu absolute w-full bg-white z-10 shadow-lg rounded-2xl overflow-auto">
         @if (showFilter) {
         <div class="flex py-3.75 px-5 gap-3.75 border-b border-[#f1efef]">
             <div class="relative w-full">

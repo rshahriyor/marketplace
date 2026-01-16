@@ -189,7 +189,7 @@
             optionValue="value" optionLabel="name">
           </mk-dropdown>
           <input type="text"
-            class="h-12.5 text-sm border-0 outline-none bg-white rounded-[5px] text-(--text-color) px-5 w-full"
+            class="liquid-glass-input"
             formControlName="account_url" />
         </div>
         }
@@ -199,19 +199,19 @@
     <label class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
       <span class="w-fit relative text-lg mb-0.75 required">Описание</span>
       <textarea type="text"
-        class="h-37.5 text-[20px] border-0 outline-none bg-white rounded-[5px] pl-2.5 pt-2.5 text-(--text-color) resize-y"
+        class="min-h-37.5 liquid-glass-input pt-2.5 resize-y"
         formControlName="desc"></textarea>
     </label>
   </form>
 
   <div class="flex gap-5">
     <button
-      class="h-12 border-0 rounded-lg font-semibold text-[18px] px-4.25 bg-[#5B42FF] text-white w-full text-center cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-1.25"
+      class="h-12 border-0 rounded-2xl font-semibold text-[18px] px-4.25 bg-[#5B42FF] text-white w-full text-center cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-1.25"
       (click)="addCompany()">
       Добавить
     </button>
     <button routerLink="/u"
-      class="h-12 w-full border-0 rounded-lg font-semibold text-[18px] px-4.25 text-(--text-color) bg-white text-center cursor-pointer flex items-center justify-center gap-1.25">
+      class="h-12 w-full border-0 rounded-2xl font-semibold text-[18px] px-4.25 text-(--text-color) bg-white text-center cursor-pointer flex items-center justify-center gap-1.25">
       Отмена
     </button>
   </div>

@@ -6,7 +6,7 @@
         </h1>
     </div>
 
-    <div class="bg-white w-full px-7.5 py-3.75 rounded-[18px]">
+    <div class="w-full px-7.5 py-3.75 rounded-[18px] border-2 border-white">
         <div class="flex justify-center items-center gap-15 max-sm:gap-7.5">
             <div class="w-33.75 h-33.75 rounded-full bg-[#F8F8F8] border border-[#E7E7E7] flex items-center justify-center">
                 <i class="pi pi-user text-[70px] text-(--text-color)"></i>
@@ -38,52 +38,52 @@
 
             <div class="flex flex-col gap-1.25">
                 <label class="text-[20px] font-semibold text-(--text-color)">Имя пользователя</label>
-                <input formControlName="username" [readonly]="!editing()" class="h-12.5 px-3.5 rounded-lg bg-(--body-bg-color) text-(--text-color) outline-none border-none text-[16px] read-only:bg-(--body-bg-color)/50" />
+                <input formControlName="username" [readonly]="!editing()" class="liquid-glass-input" />
             </div>
 
             <div class="flex flex-col gap-1.25">
                 <label class="text-[20px] font-semibold text-(--text-color)">Имя</label>
-                <input formControlName="first_name" [readonly]="!editing()" class="h-12.5 px-3.5 rounded-lg bg-(--body-bg-color) text-(--text-color) outline-none border-none text-[16px] read-only:bg-(--body-bg-color)/50" />
+                <input formControlName="first_name" [readonly]="!editing()" class="liquid-glass-input" />
             </div>
 
             <div class="flex flex-col gap-1.25">
                 <label class="text-[20px] font-semibold text-(--text-color)">Фамилия</label>
-                <input formControlName="last_name" [readonly]="!editing()" class="h-12.5 px-3.5 rounded-lg bg-(--body-bg-color) text-(--text-color) outline-none border-none text-[16px] read-only:bg-(--body-bg-color)/50" />
+                <input formControlName="last_name" [readonly]="!editing()" class="liquid-glass-input" />
             </div>
 
             <div class="flex flex-col gap-1.25">
                 <label class="text-[20px] font-semibold text-(--text-color)">Телефон</label>
-                <div class="flex items-center">
-                    <div class="h-12.5 w-full max-w-25 mr-2.5 rounded-lg bg-(--body-bg-color) text-(--text-color) flex items-center justify-center font-medium text-[18px]">
+                <div class="flex items-center gap-3">
+                    <div class="liquid-glass-input flex items-center justify-center font-medium w-fit!">
                         +992
                     </div>
                     <input mkPhoneMask formControlName="phone_number" [readonly]="!editing()" placeholder="(XX) XXX-XX-XX"
-                        class="h-12.5 w-full px-3.5 rounded-lg bg-(--body-bg-color) text-(--text-color) outline-none read-only:bg-(--body-bg-color)/50" />
+                        class="liquid-glass-input" />
                 </div>
             </div>
 
             <div class="flex flex-col gap-1.25">
                 <label class="text-[20px] font-semibold text-(--text-color)">Пол</label>
                 <div class="flex gap-6">
-                    <label class="flex items-center h-12.5 px-3.5 rounded-lg bg-(--body-bg-color) cursor-pointer w-full">
-                        <input type="radio" formControlName="gender_id" [value]="1" class="appearance-none w-5 h-5 rounded-full border-3 border-white mr-2.5 checked:border-[3.5px] checked:border-(--bg-color)" />
+                    <label class="flex items-center liquid-glass-input cursor-pointer">
+                        <input type="radio" formControlName="gender_id" [value]="1" class="appearance-none w-5 h-5 rounded-full border-3 border-white mr-2.5 checked:border-[3.5px] checked:border-(--bg-color) duration-200" />
                         Мужской
                     </label>
 
-                    <label class="flex items-center h-12.5 px-3.5 rounded-lg bg-(--body-bg-color) cursor-pointer w-full">
-                        <input type="radio" formControlName="gender_id" [value]="2" class="appearance-none w-5 h-5 rounded-full border-3 border-white mr-2.5 checked:border-[3.5px] checked:border-(--bg-color)" />
+                    <label class="flex items-center liquid-glass-input cursor-pointer">
+                        <input type="radio" formControlName="gender_id" [value]="2" class="appearance-none w-5 h-5 rounded-full border-3 border-white mr-2.5 checked:border-[3.5px] checked:border-(--bg-color) duration-200" />
                         Женский
                     </label>
                 </div>
             </div>
 
             <div class="flex gap-6 max-sm:flex-col">
-                <button [disabled]="editing() && profileForm.invalid" type="submit" (click)="editing() ? save() : edit()" (click)="editing.set(true)" class="cursor-pointer h-12.5 w-full rounded-lg text-[20px] bg-(--bg-color) text-white disabled:bg-(--bg-color)/90 disabled:cursor-not-allowed">
+                <button [disabled]="editing() && profileForm.invalid" type="submit" (click)="editing() ? save() : edit()" (click)="editing.set(true)" class="cursor-pointer h-12.5 w-full rounded-2xl text-[20px] bg-(--bg-color) text-white disabled:bg-(--bg-color)/90 disabled:cursor-not-allowed">
                     {{ editing() ? 'Сохранить' : 'Редактировать' }}
                 </button>
 
                 @if (editing()) {
-                <button (click)="cancelEdit()" class="cursor-pointer h-12.5 w-full rounded-lg text-[20px] bg-white border border-[#D2D2D2]">
+                <button (click)="cancelEdit()" class="cursor-pointer h-12.5 w-full rounded-2xl text-[20px] bg-white">
                     Отменить
                 </button>
                 }
