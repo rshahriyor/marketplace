@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnDestroy, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { Filter } from "../../shared/components/filter/filter";
 import { CompanyCard } from "../../shared/components/company-card/company-card";
 import { CompaniesService } from '../../core/services/companies.service';
@@ -6,21 +6,30 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ICompany } from '../../core/models/company.model';
 import { IFilter, IFilterRequest } from '../../core/models/filter.model';
 import { FilterService } from '../../core/services/filter.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'mk-company-filter',
-  imports: [Filter, CompanyCard],
+  imports: [Filter, CompanyCard, ReactiveFormsModule],
   templateUrl: './company-filter.html',
   styleUrl: './company-filter.css',
 })
 export class CompanyFilter implements OnInit {
 
   companiesList: WritableSignal<ICompany[]> = signal([]);
+
   categories: WritableSignal<IFilter[]> = signal([]);
+  categoriesClone: WritableSignal<IFilter[]> = signal([]);
+
   tags: WritableSignal<IFilter[]> = signal([]);
+  tagsClone: WritableSignal<IFilter[]> = signal([]);
+
   regions: WritableSignal<IFilter[]> = signal([]);
+  regionsClone: WritableSignal<IFilter[]> = signal([]);
+
   cities: WritableSignal<IFilter[]> = signal([]);
+  citiesClone: WritableSignal<IFilter[]> = signal([]);
 
   filterRequest: IFilterRequest = {
     category_ids: [],
@@ -28,12 +37,17 @@ export class CompanyFilter implements OnInit {
     region_ids: [],
     city_ids: [],
     is_favorite: false
-  }
+  };
+  categoriesFormControl = new FormControl('');
+  tagsFormControl = new FormControl('');
+  regionsFormControl = new FormControl('');
+  citiesFormControl = new FormControl('');
 
   private companyService = inject(CompaniesService);
   private filterService = inject(FilterService);
   private destroyRef = inject(DestroyRef);
   private activatedRoute = inject(ActivatedRoute);
+  private router = inject(Router);
 
   constructor() {
     this.activatedRoute.queryParams
@@ -57,6 +71,72 @@ export class CompanyFilter implements OnInit {
     this.getTags();
     this.getRegions();
     this.getCities();
+    this.handleSearchFilter();
+  }
+
+  toggleSelectAll(event: Event, type: 'category_ids' | 'tag_ids' | 'region_ids' | 'city_ids'): void {
+    const isChecked = (event.target as HTMLInputElement).checked;
+
+    const queryParams = { ...this.activatedRoute.snapshot.queryParams };
+
+    if (isChecked) {
+      const ids = this.getIdsByType(type);
+      queryParams[type] = ids.join(',');
+    } else {
+      delete queryParams[type];
+    }
+
+    this.router.navigate([], {
+      relativeTo: this.activatedRoute,
+      queryParams
+    });
+  }
+
+  private getIdsByType(type: 'category_ids' | 'tag_ids' | 'region_ids' | 'city_ids'): number[] {
+    switch (type) {
+      case 'category_ids':
+        return this.categories().map(c => c.id!);
+      case 'tag_ids':
+        return this.tags().map(t => t.id!);
+      case 'region_ids':
+        return this.regions().map(r => r.id!);
+      case 'city_ids':
+        return this.cities().map(c => c.id!);
+    }
+  }
+
+  private handleSearchFilter(): void {
+    this.categoriesFormControl.valueChanges
+      .pipe(
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((res) => {
+        this.categories.set(this.categoriesClone().filter(category => category.name.toLowerCase().includes(res.toLowerCase())));
+      });
+
+    this.tagsFormControl.valueChanges
+      .pipe(
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((res) => {
+        this.tags.set(this.tagsClone().filter(tag => tag.name.toLowerCase().includes(res.toLowerCase())));
+      });
+
+    this.regionsFormControl.valueChanges
+      .pipe(
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((res) => {
+        this.regions.set(this.regionsClone().filter(region => region.name.toLowerCase().includes(res.toLowerCase())));
+      });
+
+    this.citiesFormControl.valueChanges
+      .pipe(
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((res) => {
+        this.cities.set(this.citiesClone().filter(city => city.name.toLowerCase().includes(res.toLowerCase())));
+      });
   }
 
   private getCompanies(): void {
@@ -76,6 +156,7 @@ export class CompanyFilter implements OnInit {
       )
       .subscribe((res) => {
         this.categories.set(res.data);
+        this.categoriesClone.set(res.data);
       })
   }
 
@@ -86,6 +167,7 @@ export class CompanyFilter implements OnInit {
       )
       .subscribe((res) => {
         this.tags.set(res.data);
+        this.tagsClone.set(res.data);
       })
   }
 
@@ -96,6 +178,7 @@ export class CompanyFilter implements OnInit {
       )
       .subscribe((res) => {
         this.regions.set(res.data);
+        this.regionsClone.set(res.data);
       })
   }
 
@@ -106,6 +189,7 @@ export class CompanyFilter implements OnInit {
       )
       .subscribe((res) => {
         this.cities.set(res.data);
+        this.citiesClone.set(res.data);
       })
   }
 

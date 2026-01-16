@@ -8,10 +8,9 @@
       <span class="text-lg font-bold">Категории</span>
       <div>
         <li class="flex items-center gap-4.25">
-          <input type="checkbox" class="custom-checkbox">
+          <input (change)="toggleSelectAll($event, 'category_ids')" [checked]="categories().length && filterRequest.category_ids.length === categories().length" type="checkbox" class="custom-checkbox">
           <div class="relative max-w-50 w-full">
-            <input type="text"
-              class="max-w-50 h-10! liquid-glass-input">
+            <input [formControl]="categoriesFormControl" type="text" class="max-w-50 h-10! liquid-glass-input">
             <i class="pi pi-search absolute top-1/2 right-4.5 transform -translate-y-1/2 text-(--text-color)"></i>
           </div>
         </li>
@@ -24,10 +23,9 @@
       <span class="text-lg font-bold">Теги</span>
       <div>
         <li class="flex items-center gap-4.25">
-          <input type="checkbox" class="custom-checkbox">
+          <input (change)="toggleSelectAll($event, 'tag_ids')" [checked]="tags().length && filterRequest.tag_ids.length === tags().length" type="checkbox" class="custom-checkbox">
           <div class="relative max-w-50 w-full">
-            <input type="text"
-              class="max-w-50 h-10! liquid-glass-input">
+            <input [formControl]="tagsFormControl" type="text" class="max-w-50 h-10! liquid-glass-input">
             <i class="pi pi-search absolute top-1/2 right-4.5 transform -translate-y-1/2 text-(--text-color)"></i>
           </div>
         </li>
@@ -40,10 +38,9 @@
       <span class="text-lg font-bold">Регионы</span>
       <div>
         <li class="flex items-center gap-4.25">
-          <input type="checkbox" class="custom-checkbox">
+          <input (change)="toggleSelectAll($event, 'region_ids')" [checked]="regions().length && filterRequest.region_ids.length === regions().length" type="checkbox" class="custom-checkbox">
           <div class="relative max-w-50 w-full">
-            <input type="text"
-              class="max-w-50 h-10! liquid-glass-input">
+            <input [formControl]="regionsFormControl" type="text" class="max-w-50 h-10! liquid-glass-input">
             <i class="pi pi-search absolute top-1/2 right-4.5 transform -translate-y-1/2 text-(--text-color)"></i>
           </div>
         </li>
@@ -56,10 +53,9 @@
       <span class="text-lg font-bold">Города</span>
       <div>
         <li class="flex items-center gap-4.25">
-          <input type="checkbox" class="custom-checkbox">
+          <input (change)="toggleSelectAll($event, 'city_ids')" [checked]="cities().length && filterRequest.city_ids.length === cities().length" type="checkbox" class="custom-checkbox">
           <div class="relative max-w-50 w-full">
-            <input type="text"
-              class="max-w-50 h-10! liquid-glass-input">
+            <input [formControl]="citiesFormControl" type="text" class="max-w-50 h-10! liquid-glass-input">
             <i class="pi pi-search absolute top-1/2 right-4.5 transform -translate-y-1/2 text-(--text-color)"></i>
           </div>
         </li>
