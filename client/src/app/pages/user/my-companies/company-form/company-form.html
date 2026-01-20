@@ -24,17 +24,16 @@
         <span class="w-fit relative text-lg mb-0.75 required">Теги</span>
       </label>
       <div class="relative h-12.5" (mkClickOutside)="dropdownMenuState.tagsMenuVisible= false">
-        <div class="cursor-pointer h-12.5 w-full bg-white flex relative justify-between items-center rounded-[5px]"
+        <div class="cursor-pointer liquid-glass-input flex relative justify-between items-center"
           (click)="toggleDropdown('tags'); $event.preventDefault()"
           [ngClass]="{'invalid': !dropdownSelectedLabelMap['tags'].length}">
-          <span
-            class="pl-2.5 text-(--text-color) font-medium whitespace-nowrap overflow-hidden overflow-ellipsis max-w-125">{{dropdownSelectedLabelMap['tags'].join(', ')}}</span>
+          <span class="text-(--text-color) font-medium whitespace-nowrap overflow-hidden overflow-ellipsis max-w-125">{{dropdownSelectedLabelMap['tags'].join(', ')}}</span>
           <i class="pi pi-angle-down text-2xl absolute right-2.5 duration-300"
             [ngClass]="{ 'rotate-180' : dropdownMenuState.tagsMenuVisible }"></i>
         </div>
         @if (dropdownMenuState.tagsMenuVisible) {
-        <div class="dropdown-menu absolute w-full bg-white z-10 shadow-lg">
-          <div class="flex items-center relative gap-3.75 py-2 px-4.5">
+        <div class="dropdown-menu absolute w-full bg-white z-10 shadow-lg rounded-2xl overflow-auto">
+          <div class="flex items-center relative gap-3.75 py-3.75 px-4.5">
             <input type="checkbox" [checked]="isAllSelectedTag" (change)="toggleSelectAll($event)"
               class="custom-checkbox" />
             <div class="relative w-full">
@@ -194,6 +193,12 @@
         </div>
         }
       </div>
+    </div>
+
+    <div class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
+      <span class="w-fit relative text-lg mb-0.75 required">Статус</span>
+      <mk-dropdown formControlName="is_active" [options]="[{name: 'Скрыть', value: false}, {name: 'Показать', value: true}]" [required]="true" [optionLabel]="'name'"
+        [optionValue]="'value'" [showFilter]="true"></mk-dropdown>
     </div>
 
     <label class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">

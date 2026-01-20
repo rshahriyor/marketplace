@@ -73,8 +73,12 @@ export class CompaniesService {
         return this.http.put<IResponse<ICompany>>(`${API_URL}/${company_id}`, companyData);
     }
 
-    toggleFavoriteCompany(company_id: number): Observable<IResponse<null>> {
-        return this.http.post<IResponse<null>>(`${API_URL}/toggle_favorite/${company_id}`, {});
+    updateCompanyStatus(company_id: number, is_active: boolean): Observable<IResponse<ICompany>> {
+        return this.http.post<IResponse<ICompany>>(`${API_URL}/${company_id}/status`, { is_active });
+    }
+
+    toggleFavoriteCompany(company_id: number): Observable<IResponse<{}>> {
+        return this.http.post<IResponse<{}>>(`${API_URL}/toggle_favorite/${company_id}`, {});
     }
 
     searchCompanies(query: string): Observable<IResponse<ICompany[]>> {

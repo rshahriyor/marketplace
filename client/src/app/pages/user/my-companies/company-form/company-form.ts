@@ -9,10 +9,11 @@ import { CompaniesService } from '../../../../core/services/companies.service';
 import { DAYS_OFF_STATUS, WEEK_DAYS } from '../../../../core/utils/constants';
 import { formatPhone, getTimeSlots } from '../../../../core/utils/helper';
 import { PhoneMaskDirective } from "../../../../core/directives/phone-mask.directive";
+import { ClickOutsideDirective } from "../../../../core/directives/click-outside.directive";
 
 @Component({
   selector: 'mk-company-form',
-  imports: [ReactiveFormsModule, CommonModule, RouterLink, Dropdown, PhoneMaskDirective],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink, Dropdown, PhoneMaskDirective, ClickOutsideDirective],
   templateUrl: './company-form.html',
   styleUrl: './company-form.css',
 })
@@ -326,7 +327,8 @@ export class CompanyForm implements OnInit {
           address: company.address,
           longitude: company.longitude,
           latitude: company.latitude,
-          desc: company.desc
+          desc: company.desc,
+          is_active: company.is_active
         });
 
         company.tags.forEach((tag) => {
@@ -408,6 +410,7 @@ export class CompanyForm implements OnInit {
           })
         })
       ),
+      is_active: new FormControl(true)
     });
   }
 

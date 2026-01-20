@@ -6,6 +6,7 @@ import { CompaniesService } from '../../../core/services/companies.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { StatusCodeEnum } from '../../../core/enums/status-code.enum';
 import { AuthService } from '../../../core/services/auth.service';
+import { ClickOutsideDirective } from "../../../core/directives/click-outside.directive";
 
 
 export interface ISchedule {
@@ -21,31 +22,27 @@ export interface ISchedule {
 
 @Component({
   selector: 'mk-company-card',
-  imports: [RouterLink, CommonModule, TooltipDirective],
+  imports: [RouterLink, CommonModule, TooltipDirective, ClickOutsideDirective],
   templateUrl: './company-card.html',
   styleUrl: './company-card.css',
 })
 export class CompanyCard {
 
-  cardId = input.required<number>();
-  cardTitle = input.required<string>();
-  cardIsFavorited = input.required<boolean>();
-  cardFavoritesCount = input.required<number>();
-  cardOwn = input<boolean>();
+  companyId = input.required<number>();
+  companyTitle = input.required<string>();
+  companyIsFavorited = input.required<boolean>();
+  companyFavoritesCount = input.required<number>();
+  companyTags = input.required<any[]>();
+  companyOwn = input<boolean>();
+  companyIsActive = input<boolean>();
   
-  cardTags = input<any[]>();
   cardImage = input<any[]>();
 
-  onUpdateStatus = input<(id: number) => void>();
-
-  isActive = input<boolean>();
 
   atLunch = signal(false);
   isWorking = signal(true);
   isClosed = signal(false);
   showMenu = signal(false);
-
-  favoritesCount = signal(0);
 
   get schedule(): Partial<ISchedule> {
     return this._value();
@@ -58,6 +55,8 @@ export class CompanyCard {
     }
   }
 
+  readonly companyStatus: WritableSignal<boolean> = signal(false);
+  readonly favoritesCount: WritableSignal<number> = signal(0);
   readonly isFavorite: WritableSignal<boolean> = signal(false);
   readonly addToFavoriteLoading: WritableSignal<boolean> = signal(false);
   readonly imageLoading: WritableSignal<boolean> = signal(true);
@@ -77,8 +76,9 @@ export class CompanyCard {
   }
 
   ngOnInit(): void {
-    this.favoritesCount.set(this.cardFavoritesCount());
-    this.isFavorite.set(this.cardIsFavorited());
+    this.favoritesCount.set(this.companyFavoritesCount());
+    this.isFavorite.set(this.companyIsFavorited());
+    this.companyStatus.set(this.companyIsActive());
   }
 
   scheduleClick(evt: MouseEvent): void {
@@ -97,7 +97,7 @@ export class CompanyCard {
       return;
     }
     this.addToFavoriteLoading.set(true);
-    this.companyService.toggleFavoriteCompany(this.cardId())
+    this.companyService.toggleFavoriteCompany(this.companyId())
     .pipe(
       takeUntilDestroyed(this.destroyRef)
     )
@@ -110,25 +110,17 @@ export class CompanyCard {
     })
   }
 
-  // unLikeCard(): void {
-  //   if (!this.authService.accessToken) {
-  //     this.registerService.showModal();
-  //     return;
-  //   }
-  //   this.addToFavoriteLoading.set(true);
-  //   this.userActionsService.unlikeCompany(this.cardId())
-  //   .pipe(
-  //     takeUntilDestroyed(this.destroyRef)
-  //   )
-  //   .subscribe((res) => {
-  //     this.addToFavoriteLoading.set(false);
-  //     if (res.status.code === StatusCodeEnum.SUCCESS) {
-  //       this.isFavorite.set(false);
-  //       this.favoritesCount.update(prev => prev -= 1);
-  //     }
-  //     this.cdr.markForCheck();
-  //   })
-  // }
+  updateCompanyStatus(): void {
+    this.companyService.updateCompanyStatus(this.companyId(), !this.companyStatus())
+    .pipe(
+      takeUntilDestroyed(this.destroyRef)
+    )
+    .subscribe((res) => {
+      if (res.status.code === StatusCodeEnum.SUCCESS) {
+        this.companyStatus.set(!this.companyStatus());
+      }
+    })
+  }
 
   private calculateWorkingDay(): void {
     const realTime = new Date();
