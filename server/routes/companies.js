@@ -1,4 +1,4 @@
-const { getCompanies, getCompaniesByFilter, getCompaniesForMainPage, getCompany, getOwnCompanies, addCompany, toggleFavorite, updateCompany, searchCompanies } = require('../controllers/companies');
+const { getCompanies, getCompaniesByFilter, getCompaniesForMainPage, getCompany, getOwnCompanies, addCompany, toggleFavorite, updateCompany, searchCompanies, updateCompanyStatus } = require('../controllers/companies');
 const { responseSchema } = require('../utils/response');
 
 const companySchema = {
@@ -55,7 +55,8 @@ const companySchema = {
             }
         },
         is_favorite: { type: 'boolean' },
-        favorites_count: { type: 'number' }
+        favorites_count: { type: 'number' },
+        is_active: { type: 'boolean' }
     }
 };
 
@@ -198,9 +199,10 @@ const postCompanyOpts = {
                             account_url: { type: 'string' }
                         }
                     }
-                }
+                },
+                is_active: { type: 'boolean' }
             },
-            required: ['name', 'category_id', 'tag_id', 'region_id', 'city_id', 'desc', 'phone_number', 'latitude', 'longitude', 'address', 'schedules', 'social_media']
+            required: ['name', 'category_id', 'tag_id', 'region_id', 'city_id', 'desc', 'phone_number', 'latitude', 'longitude', 'address', 'schedules', 'social_media', 'is_active']
         },
         response: {
             201: responseSchema(companySchema)
@@ -292,16 +294,50 @@ const putCompanyOpts = {
                             account_url: { type: 'string' }
                         }
                     }
-                }
+                },
+                is_active: { type: 'boolean' }
             },
-            required: ['name', 'category_id', 'tag_id', 'region_id', 'city_id', 'desc', 'phone_number', 'latitude', 'longitude', 'address', 'schedules', 'social_media']
+            required: ['name', 'category_id', 'tag_id', 'region_id', 'city_id', 'desc', 'phone_number', 'latitude', 'longitude', 'address', 'schedules', 'social_media', 'is_active']
         },
         response: {
             200: responseSchema(companySchema)
         }
     },
     handler: updateCompany
-}
+};
+
+const updateCompanyStatusOpts = {
+    schema: {
+        security: [
+            {
+                BearerAuth: []
+            }
+        ],
+        params: {
+            type: 'object',
+            properties: {
+                id: { type: 'string' }
+            },
+            required: ['id']
+        },
+        body: {
+            type: 'object',
+            properties: {
+                is_active: { type: 'boolean' }
+            },
+            required: ['is_active']
+        },
+        response: {
+            200: responseSchema({
+                type: 'object',
+                properties: {
+                    message: { type: 'string' }
+                }
+            })
+        }
+    },
+    handler: updateCompanyStatus
+};
 
 const searchCompaniesOpts = {
     schema: {
@@ -336,6 +372,7 @@ function itemRoutes(fastify, options, done) {
     fastify.post('/companies', postCompanyOpts);
     fastify.post('/companies/toggle_favorite/:id', postToggleFavoriteOpts);
     fastify.put('/companies/:id', putCompanyOpts);
+    fastify.post('/companies/:id/status', updateCompanyStatusOpts);
     fastify.get('/companies/search', searchCompaniesOpts);
     done();
 };

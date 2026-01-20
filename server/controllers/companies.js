@@ -11,6 +11,7 @@ const BASE_COMPANY_QUERY = `
         c.phone_number AS company_phone_number,
         c.address AS company_address,
         c.created_by_user_id AS company_created_by_user_id,
+        c.is_active AS company_is_active,
         c.category_id,
         cat.name AS category_name,
         t.id AS tag_id,
@@ -70,7 +71,8 @@ const mapCompanies = (rows) => {
                 longitude: row.company_longitude,
                 address: row.company_address,
                 is_favorite: row.is_favorite,
-                favorites_count: row.favorites_count
+                favorites_count: row.favorites_count,
+                is_active: row.company_is_active
             });
         }
 
@@ -263,15 +265,15 @@ const getOwnCompanies = (req, reply) => {
 
 
 const addCompany = (req, reply) => {
-    const { name, category_id, tag_id, region_id, city_id, desc, phone_number, longitude, latitude, address, schedules, social_media } = req.body;
+    const { name, category_id, tag_id, region_id, city_id, desc, phone_number, longitude, latitude, address, schedules, social_media, is_active } = req.body;
     const userId = req.user.userId;
 
     const search_name = name.toLocaleLowerCase('ru-RU');
 
     const transaction = db.transaction(() => {
         const result = db
-            .prepare('INSERT INTO companies (name, search_name, category_id, region_id, city_id, desc, phone_number, longitude, latitude, address, created_by_user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-            .run(name, search_name, category_id, region_id, city_id, desc, phone_number, longitude, latitude, address, userId);
+            .prepare('INSERT INTO companies (name, search_name, category_id, region_id, city_id, desc, phone_number, longitude, latitude, address, created_by_user_id, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+            .run(name, search_name, category_id, region_id, city_id, desc, phone_number, longitude, latitude, address, userId, is_active ? 1 : 0);
 
         const companyId = result.lastInsertRowid;
 
@@ -328,7 +330,7 @@ const addCompany = (req, reply) => {
 
 const updateCompany = (req, reply) => {
     const { id } = req.params;
-    const { name, category_id, tag_id, region_id, city_id, desc, phone_number, longitude, latitude, address, schedules, social_media } = req.body;
+    const { name, category_id, tag_id, region_id, city_id, desc, phone_number, longitude, latitude, address, schedules, social_media, is_active } = req.body;
     const userId = req.user.userId;
 
     const companyCheck = db.prepare('SELECT created_by_user_id FROM companies WHERE id = ?').get(id);
@@ -353,9 +355,10 @@ const updateCompany = (req, reply) => {
                 phone_number = ?,
                 longitude = ?,
                 latitude = ?,
-                address = ?
+                address = ?,
+                is_active = ?
             WHERE id = ?
-        `).run(name, search_name, category_id, region_id, city_id, desc, phone_number, longitude, latitude, address, id);
+        `).run(name, search_name, category_id, region_id, city_id, desc, phone_number, longitude, latitude, address, is_active ? 1 : 0, id);
 
         db.prepare('DELETE FROM company_tags WHERE company_id = ?').run(id);
         if (Array.isArray(tag_id)) {
@@ -406,6 +409,36 @@ const updateCompany = (req, reply) => {
     return sendResponse(reply, 200, 0, 'UPDATED', mapCompanies(rows)[0]);
 };
 
+const updateCompanyStatus = (req, reply) => {
+    const { id } = req.params;
+    const { is_active } = req.body;
+    const userId = req.user.userId;
+
+    if (typeof is_active !== 'boolean' && is_active !== 0 && is_active !== 1) {
+        return sendResponse(reply, 400, -1, 'BAD_REQUEST', null, 'is_active must be boolean');
+    }
+
+    const companyCheck = db
+        .prepare('SELECT created_by_user_id FROM companies WHERE id = ?')
+        .get(id);
+
+    if (!companyCheck) {
+        return sendResponse(reply, 404, -2, 'NOT_FOUND', null, 'Company not found');
+    }
+
+    if (companyCheck.created_by_user_id !== userId) {
+        return sendResponse(reply, 403, -3, 'FORBIDDEN', null, 'You do not have permission to update this company');
+    }
+
+    db.prepare(`
+        UPDATE companies
+        SET is_active = ?
+        WHERE id = ?
+    `).run(is_active ? 1 : 0, id);
+
+    return sendResponse(reply, 200, 0, 'UPDATED_STATUS');
+};
+
 const toggleFavorite = (req, reply) => {
     const userId = req.user.userId;
     const companyId = req.params.id;
@@ -441,6 +474,7 @@ module.exports = {
     getOwnCompanies,
     addCompany,
     updateCompany,
+    updateCompanyStatus,
     toggleFavorite,
     searchCompanies
 };

@@ -21,7 +21,8 @@ db.prepare(`
     latitude REAL NOT NULL,
     longitude REAL NOT NULL,
     address TEXT NOT NULL,
-    created_by_user_id NUMBER NOT NULL
+    created_by_user_id NUMBER NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT 1
   )
 `).run();
 
