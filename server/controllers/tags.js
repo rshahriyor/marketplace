@@ -23,6 +23,20 @@ const getTag = (req, reply) => {
     return sendResponse(reply, 200, 0, 'OK', item);
 };
 
+const deleteTag = (req, reply) => {
+    const { id } = req.params;
+
+    const result = db
+        .prepare('DELETE FROM tags WHERE id = ?')
+        .run(id);
+
+    if (result.changes === 0) {
+        return sendResponse(reply, 404, -2, 'NOT_FOUND', null, 'Tag not found');
+    }
+
+    return sendResponse(reply, 200, 0, 'OK', null);
+}
+
 const getTagsByCategory = (req, reply) => {
     const { category_id } = req.query;
 
@@ -50,4 +64,4 @@ const addTag = (req, reply) => {
     return sendResponse(reply, 201, 0, 'CREATED', { id: result.lastInsertRowid, name, category_id });
 };
 
-module.exports = { getTags, getTag, getTagsByCategory, addTag };
+module.exports = { getTags, getTag, getTagsByCategory, addTag, deleteTag };

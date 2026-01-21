@@ -1,4 +1,4 @@
-const {getTags, getTag, getTagsByCategory, addTag} = require('../controllers/tags');
+const {getTags, getTag, getTagsByCategory, addTag, deleteTag} = require('../controllers/tags');
 const { responseSchema } = require('../utils/response');
 
 const tagSchema = {
@@ -37,6 +37,22 @@ const getTagOpts = {
     },
     handler: getTag
 };
+
+const deleteTagOpts = {
+    schema: {
+        params: {
+            type: 'object',
+            properties: {
+                id: { type: 'string' }
+            },
+            required: ['id']
+        },
+        response: {
+            200: responseSchema({ type: 'null' })
+        }
+    },
+    handler: deleteTag
+}
 
 const getTagsByCategoryOpts = {
     schema: {
@@ -78,6 +94,7 @@ function itemRoutes(fastify, options, done) {
     fastify.get('/tags/:id', getTagOpts);
     fastify.get('/tags/by_category', getTagsByCategoryOpts);
     fastify.post('/tags', postTagOpts)
+    fastify.delete('/tags/:id', deleteTagOpts);
     done();
 };
 
