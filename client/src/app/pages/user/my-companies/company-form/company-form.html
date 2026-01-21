@@ -73,36 +73,35 @@
       </div>
     </label>
 
-    <!-- <label class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
-        <span class="w-fit relative text-lg mb-0.75 required">Загрузите фотографии</span>
-      </label>
-      <div class="upload__container">
+    <div class="flex flex-col relative gap-1 font-semibold text-(--text-color)  mb-0 w-full">
+      <span class="w-fit relative text-lg mb-0.75 required">Загрузите фотографии</span>
+      <div class="flex gap-5 flex-wrap">
         @for (item of imageList(); track $index) {
-        <div class="upload__item">
-          @if(item.url.length) {
+        <div class="relative">
+          <!-- @if(item.url.length) {
           <img class="image__delete" src="/assets/icons/times.svg" (click)="deleteUplaodedImage(item.id)" />
-          }
+          } -->
   
-          <div class="uploader" [ngClass]="{'unable__upload': item.loading || item.url.length}"
+          <div class="w-45 h-27.5 bg-white rounded-xl flex items-center justify-center cursor-pointer relative overflow-hidden transition-[border] duration-300 ease-in-out" [ngClass]="{'unable__upload': item.url.length}"
             (click)="triggerFileInput(item.id)">
-            @if (item.loading) {
-            <span class="spinner"></span>
-            }@else if (!item.url.length) {
-            <img src="/assets/icons/plus.png" />
+            @if (!item.url.length) {
+            <i class="pi pi-plus"></i>
             } @else {
-            <img class="preview" [src]="item.url" />
+            <img class="w-full h-100 object-cover absolute top-0 left-0" [src]="item.url" />
             }
-            <input type="file" #fileInputs [attr.data-id]="item.id" accept="image/*"
+            <input class="hidden" type="file" #fileInputs [attr.data-id]="item.id" accept="image/*"
               (change)="onFileSelected($event, item.id)" />
           </div>
         </div>
         }
       </div>
-      @if (loadingData()) {
+      <!-- @if (loadingData()) {
       <div class="spin">
         <div class="custom-spinner"></div>
       </div>
-      } -->
+      }       -->
+    </div>
+
 
     <div class="flex flex-col relative gap-1 font-semibold text-(--text-color) mb-0 w-full">
       <span class="w-fit relative text-lg mb-0.75 required">Укажите график работы</span>

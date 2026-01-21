@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, DestroyRef, ElementRef, inject, OnInit, QueryList, signal, ViewChildren, WritableSignal } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { Dropdown } from '../../../../shared/components/dropdown/dropdown';
@@ -10,6 +10,10 @@ import { DAYS_OFF_STATUS, WEEK_DAYS } from '../../../../core/utils/constants';
 import { formatPhone, getTimeSlots } from '../../../../core/utils/helper';
 import { PhoneMaskDirective } from "../../../../core/directives/phone-mask.directive";
 import { ClickOutsideDirective } from "../../../../core/directives/click-outside.directive";
+import { FilesService } from '../../../../core/services/files.service';
+import { finalize } from 'rxjs';
+import { StatusCodeEnum } from '../../../../core/enums/status-code.enum';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'mk-company-form',
@@ -18,6 +22,7 @@ import { ClickOutsideDirective } from "../../../../core/directives/click-outside
   styleUrl: './company-form.css',
 })
 export class CompanyForm implements OnInit {
+  @ViewChildren('fileInputs') fileInputsRefs!: QueryList<ElementRef<HTMLInputElement>>;
 
   form: FormGroup;
 
@@ -61,11 +66,17 @@ export class CompanyForm implements OnInit {
     }
   ];
   socialMediaOptions = this.socialMediaList.map((sm) => ({ value: sm.id, name: sm.name }));
+  imageList = signal(Array.from({ length: 6 }).map((_, index) => ({ id: Math.floor(Math.random() * 1000), url: '' })));
+  selectedFiles: Blob[] | null = null;
+  uploadProgress = signal(0);
+  uploadedImageCount = 0;
+  imageUrl = environment.imageUrl;
 
   private tagOptionsClone = [];
 
   private fb = inject(FormBuilder);
   private companyService = inject(CompaniesService);
+  private filesService = inject(FilesService);
   private activatedRoute = inject(ActivatedRoute);
   private filterService = inject(FilterService);
   private destroyRef = inject(DestroyRef);
@@ -95,6 +106,60 @@ export class CompanyForm implements OnInit {
 
   get socialMediaAddress(): FormArray {
     return this.form.get('social_media') as FormArray;
+  }
+
+  triggerFileInput(id: number): void {
+    const input = this.fileInputsRefs.find(ref => +ref.nativeElement.dataset['id'] === id);
+    input?.nativeElement.click();
+  }
+
+  onFileSelected(event: any, imageId: number): void {
+    const input = (event.target as HTMLInputElement)
+    const file = input.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        this.selectedFiles = [file];
+        this.uploadImage(reader.result as string, imageId)
+      };
+      reader.readAsDataURL(file);
+    }
+
+    input.value = '';
+  }
+
+  uploadImage(imageUrl: string, imageId: number): void {
+    if (!this.selectedFiles) {
+      console.warn('No file selected');
+      return;
+    }
+
+    const formData = new FormData();
+    this.selectedFiles.forEach((file) => {
+      formData.append('files', file);
+      console.log(file);
+    });
+
+    this.imageList.update((prev) => prev.map((img) => ({ ...img, loading: img.id === imageId })));
+
+
+    this.filesService.uploadFile(formData)
+      .pipe(
+        finalize(() => this.imageList.update((list) => list.map((image) => ({ ...image, loading: false })))),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((res) => {
+        console.log(res);
+        if (res.status.code === StatusCodeEnum.SUCCESS) {
+          this.imageList.update((list) => list.map((image) => image.id === imageId ? ({ ...image, id: res.data.id, url: imageUrl, loading: false }) : { ...image, loading: false }));
+          this.uploadedImageCount++;
+          if (this.uploadedImageCount >= 6) {
+            this.imageList.update((prev) => [...prev, { id: this.uploadedImageCount, url: '', loading: false }]);
+          }
+        }
+        this.uploadProgress.set(null);
+      });
   }
 
   toggleDropdown(type: string): void {
@@ -214,19 +279,21 @@ export class CompanyForm implements OnInit {
       sm => sm.social_media_id && sm.account_url
     );
 
+    const file_ids = this.imageList().filter((image) => image.url).map((image) => image.id);
+
     const company_schedule = schedules.map((value, index) => {
       const is_working_day = value.start_at !== DAYS_OFF_STATUS[0];
       const is_day_and_night = value.start_at === DAYS_OFF_STATUS[1];
-      const without_breaks = lunch_start_at === DAYS_OFF_STATUS[2]; 
-    
+      const without_breaks = lunch_start_at === DAYS_OFF_STATUS[2];
+
       let start_at = value.start_at;
       let end_at = value.end_at;
-    
+
       if (!is_working_day || is_day_and_night) {
         start_at = '00:00';
         end_at = '23:59';
       }
-    
+
       return {
         day_of_week: index + 1,
         start_at,
@@ -245,8 +312,12 @@ export class CompanyForm implements OnInit {
       ...rest,
       schedules: company_schedule,
       social_media,
-      phone_number
+      phone_number,
+      file_ids
     };
+
+    console.log(payload);
+
 
     if (this.companyId() !== null) {
       this.companyService.updateCompany(this.companyId(), payload)
@@ -331,6 +402,8 @@ export class CompanyForm implements OnInit {
           is_active: company.is_active
         });
 
+        this.sortIncomingFiles(company.files);
+
         company.tags.forEach((tag) => {
           this.handleCheckBoxChange({ ...tag, id: tag.tag_id, name: tag.tag_name });
         })
@@ -374,6 +447,35 @@ export class CompanyForm implements OnInit {
           });
         }
       });
+  }
+
+  private sortIncomingFiles(images): void {
+    const existedImages = images.map((img) => ({
+      id: img.id,
+      url: `${this.imageUrl}/${img.file_name}`
+    }));
+
+    let newSlotImages;
+
+    if (existedImages.length < 6) {
+      newSlotImages = [
+        ...existedImages,
+        ...Array.from({ length: 6 - existedImages.length }).map(() => ({
+          id: Math.floor(Math.random() * 1000),
+          url: '',
+        }))
+      ];
+    } else {
+      newSlotImages = [
+        ...existedImages,
+        {
+          id: Math.floor(Math.random() * 1000),
+          url: '',
+        }
+      ];
+    }
+    this.imageList.set(newSlotImages);
+    this.uploadedImageCount = this.imageList().length;
   }
 
   private createForm(): void {

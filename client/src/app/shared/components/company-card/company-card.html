@@ -1,9 +1,10 @@
 <a class="flex h-full cursor-pointer flex-col gap-1.5 rounded-[18px] bg-white p-3.75
          max-sm:flex-row max-sm:max-h-36 max-sm:px-2.5 max-sm:py-2.75" [routerLink]="'/m/' + companyId()">
     <div class="relative h-44.75 w-full max-sm:max-w-46.25 max-sm:h-full">
-        <!-- @if (cardImage()) { -->
-        <img class="h-44.75 w-full rounded-2xl border border-[#D0D0D0] object-cover" loading="lazy" [src]="cardImage()"
+        @if (companyImage()) {
+        <img class="h-44.75 w-full rounded-2xl border border-[#D0D0D0] object-cover" loading="lazy" [src]="`${imageUrl}/${companyImage().file_name}`"
             [alt]="companyTitle()" />
+        }
 
         <!-- @if (imageLoading()) {
         <div class="absolute inset-0 z-[1001]">
@@ -24,7 +25,7 @@
         } @else {
         <div class="absolute right-2 top-2">
             <div class="relative flex cursor-pointer justify-end" (click)="eventsClick($event)">
-                <i (click)="showMenu.set(!showMenu())" class="pi pi-ellipsis-v hover:bg-(--text-color)/10 p-1.5 rounded-full duration-200"></i>
+                <i (click)="showMenu.set(!showMenu())" class="pi pi-ellipsis-v bg-white p-1.5 rounded-full duration-200"></i>
 
                 <ul (mkClickOutside)="showMenu.set(false)" class="absolute right-0 top-7.5 z-100 flex w-max flex-col rounded-2xl overflow-auto bg-(--body-bg-color) shadow-xl"
                     [class.hidden]="!showMenu()">

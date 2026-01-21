@@ -18,11 +18,9 @@
             <!-- MAIN IMAGE -->
             <!-- @if (companyData().images?.length) { -->
             <div class="relative max-h-82.5">
-                <!-- <img [src]="imageUrl + mainImagePath()" (load)="mainImageLoading = false"
-                    (click)="expandImageToView(mainImagePath())" (wheel)="onMainImageScroll($event)" ngSwipe
-                    (swipeEnd)="onSwipeEnd($event)" class="cursor-pointer border border-[#D0D0D0] bg-[#F3F3F3]
-                     object-cover max-w-[580px] w-full h-[330px] rounded-[15px]"> -->
-                <img class="cursor-pointer border border-[#D0D0D0] bg-[#F3F3F3] object-cover max-w-145 w-full h-82.5 rounded-[15px]">
+                <img [src]="`${imageUrl}/${mainImagePath()}`" (click)="expandImageToView(mainImagePath())"
+                    (wheel)="onMainImageScroll($event)" class="cursor-pointer border border-[#D0D0D0] bg-[#F3F3F3]
+                     object-cover max-w-145 w-full h-82.5 rounded-[15px]">
 
                 <div class="absolute top-3 w-full px-2.5 flex justify-between items-center">
                     <div class="flex items-center gap-1 rounded-full p-1.5"
@@ -36,9 +34,8 @@
                     </div>
 
                     <!-- EXPAND -->
-                    <button class="flex justify-center items-center bg-white/70 p-2 rounded-[10px]
+                    <button (click)="expandImageToView(mainImagePath())" class="flex justify-center items-center bg-white/70 p-2 rounded-[10px]
                        transition-transform duration-300 hover:scale-110 cursor-pointer">
-                        <!-- (click)="expandImageToView(mainImagePath())">-->
                         <i class="pi pi-expand text-lg"></i>
                     </button>
                 </div>
@@ -49,15 +46,14 @@
             } -->
 
             <!-- REST IMAGES -->
-            <div class="flex gap-6 overflow-x-auto"> <!-- (wheel)="onMouseWheel($event)">-->
-                <!-- @for (image of companyData().images; track $index) { -->
-                <img [src]="''" class="cursor-pointer border border-[#D0D0D0] bg-[#F3F3F3]
+            <div class="flex gap-6 overflow-x-auto" (wheel)="onMouseWheel($event)">
+                @for (image of company().files; track $index) {
+                <img #restImage [src]="`${imageUrl}/${image.file_name}`" class="cursor-pointer border border-[#D0D0D0] bg-[#F3F3F3]
                      object-cover min-w-45 max-w-45 h-25.25
-                     rounded-[15px]">
-                <!-- } @empty {
-                <img src="/assets/card.jpg" class="min-w-[180px] max-w-[180px] h-[101px]
-                        border border-[#D0D0D0] rounded-[15px]">
-                } -->
+                     rounded-[15px]" (click)="swapMainImage(image.id, $index)">
+                } @empty {
+                <div class="min-w-45 max-w-45 h-25.25 border border-[#D0D0D0] rounded-[15px]"></div>
+                }
             </div>
 
             <div class="bg-white p-3.75 rounded-[18px]">
@@ -159,7 +155,8 @@
                 <p class="text-[27px] text-(--text-color) font-semibold my-0">Социальные сети:</p>
                 <div class="flex flex-wrap justify-between gap-5">
                     @for (sm of company()?.social_media; track $index) {
-                    <a [href]="sm.account_url" target="_blank" class="flex items-center cursor-pointer gap-3 border border-(--body-bg-color) rounded-[18px] p-[12px_16px] max-w-65.25 w-full min-h-11 transition hover:bg-(--body-bg-color)">
+                    <a [href]="sm.account_url" target="_blank"
+                        class="flex items-center cursor-pointer gap-3 border border-(--body-bg-color) rounded-[18px] p-[12px_16px] max-w-65.25 w-full min-h-11 transition hover:bg-(--body-bg-color)">
                         <img [src]="sm.icon" [alt]="sm.social_media_name" width="19" height="19">
                         <span class="text-black/60 font-medium">
                             {{sm.social_media_name}}
@@ -177,3 +174,17 @@
             </div>
         </div>
     </div>
+</div>
+
+@if (expandImage()) {
+<div (click)="closeExpandedImage()"
+    class="w-screen h-screen bg-[#000000de] fixed top-0 left-0 z-9999 flex justify-center items-center">
+    <img #expandedImage [src]="expandedImageSrc" alt="expanded-image" class="w-fit h-[98vh] object-contain"
+        (click)="$event.stopPropagation(); changeExpandedImage($event)" (wheel)="onExpandedImageScroll($event)">
+    <!-- <img src="/assets/icons/close.svg" alt="close-icon"  class="close-expanded-image" width="31" height="31"> -->
+    <div class="flex justify-center items-center h-7.75 w-7.75 absolute top-2.5 right-2.5 cursor-pointer bg-[#FFFFFFB2] rounded-xl border-0 duration-200 scale-105">
+        <i class="pi pi-times text-white"
+            (click)="closeExpandedImage()"></i>
+    </div>
+</div>
+}

@@ -7,6 +7,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { StatusCodeEnum } from '../../../core/enums/status-code.enum';
 import { AuthService } from '../../../core/services/auth.service';
 import { ClickOutsideDirective } from "../../../core/directives/click-outside.directive";
+import { environment } from '../../../../environments/environment';
+import { IFile } from '../../../core/models/company.model';
 
 
 export interface ISchedule {
@@ -36,13 +38,14 @@ export class CompanyCard {
   companyOwn = input<boolean>();
   companyIsActive = input<boolean>();
   
-  cardImage = input<any[]>();
-
+  companyImage = input<IFile>();
 
   atLunch = signal(false);
   isWorking = signal(true);
   isClosed = signal(false);
   showMenu = signal(false);
+
+  imageUrl = environment.imageUrl;
 
   get schedule(): Partial<ISchedule> {
     return this._value();

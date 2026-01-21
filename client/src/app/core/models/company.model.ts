@@ -6,6 +6,7 @@ export interface ICompany {
         tag_id: number,
         tag_name: string
     }[],
+    files?: IFile[],
     is_favorite?: boolean,
     favorites_count?: number,
     is_active?: boolean,
@@ -41,4 +42,13 @@ export interface ICompaniesResponseForMainPage {
     companies: ICompany[],
     category_id: number,
     category_name: string
+}
+
+export interface IFile {
+    id?: number,
+    file_name?: string,
+    mime_type?: string,
+    original_name?: string,
+    size?: number
+    created_at?: Date,
 }

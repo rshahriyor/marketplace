@@ -5,6 +5,7 @@ interface IEnvironment {
     key: string;
     domain: string;
     apiUrl: string;
+    imageUrl: string;
 }
 
 export const environment: IEnvironment = {
@@ -12,4 +13,5 @@ export const environment: IEnvironment = {
     key: '',
     domain: DOMAIN,
     apiUrl: DOMAIN,
+    imageUrl: DOMAIN + '/uploads'
 };
