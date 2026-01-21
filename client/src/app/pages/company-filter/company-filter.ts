@@ -8,10 +8,11 @@ import { IFilter, IFilterRequest } from '../../core/models/filter.model';
 import { FilterService } from '../../core/services/filter.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'mk-company-filter',
-  imports: [Filter, CompanyCard, ReactiveFormsModule],
+  imports: [Filter, CompanyCard, ReactiveFormsModule, CommonModule],
   templateUrl: './company-filter.html',
   styleUrl: './company-filter.css',
 })
@@ -38,6 +39,13 @@ export class CompanyFilter implements OnInit {
     city_ids: [],
     is_favorite: false
   };
+  showAllFilter: { companyCategory: boolean, companyTag: boolean, city: boolean, region: boolean } = {
+    companyCategory: false,
+    companyTag: false,
+    city: false,
+    region: false
+  };
+
   categoriesFormControl = new FormControl('');
   tagsFormControl = new FormControl('');
   regionsFormControl = new FormControl('');
@@ -90,6 +98,24 @@ export class CompanyFilter implements OnInit {
       relativeTo: this.activatedRoute,
       queryParams
     });
+  }
+
+  loadFilterWithoutLimit(type: 'company_categories' | 'company_tags' | 'regions' | 'cities') {
+    switch (type) {
+      case 'company_categories':
+        this.showAllFilter.companyCategory = !this.showAllFilter.companyCategory;
+          break;
+      case 'company_tags':
+        this.showAllFilter.companyTag = !this.showAllFilter.companyTag;
+        break;
+      case 'regions':
+        this.showAllFilter.region = !this.showAllFilter.region;
+        break;
+      case 'cities':
+        this.showAllFilter.city = !this.showAllFilter.city;
+        break;
+      default:
+    }
   }
 
   private getIdsByType(type: 'category_ids' | 'tag_ids' | 'region_ids' | 'city_ids'): number[] {

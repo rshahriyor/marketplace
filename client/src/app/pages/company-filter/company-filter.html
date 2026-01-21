@@ -6,7 +6,7 @@
     </div>
     <div class="flex flex-col gap-2">
       <span class="text-lg font-bold">Категории</span>
-      <div>
+      <div class="flex flex-col gap-1.5">
         <li class="flex items-center gap-4.25">
           <input (change)="toggleSelectAll($event, 'category_ids')" [checked]="categories().length && filterRequest.category_ids.length === categories().length" type="checkbox" class="custom-checkbox">
           <div class="relative max-w-50 w-full">
@@ -14,14 +14,21 @@
             <i class="pi pi-search absolute top-1/2 right-4.5 transform -translate-y-1/2 text-(--text-color)"></i>
           </div>
         </li>
-        @for (category of categories(); track $index) {
-        <mk-filter [id]="category.id" [label]="category.name" [filterRequestType]="'category_ids'"></mk-filter>
+        <div class="max-h-70 overflow-auto">
+          @for (category of (categories() | slice: 0 : (showAllFilter.companyCategory ? categories().length : 5)); track $index) {
+          <mk-filter [id]="category.id" [label]="category.name" [filterRequestType]="'category_ids'"></mk-filter>
+          }
+        </div>
+        @if (categories().length > 5) {
+          <div (click)="loadFilterWithoutLimit('company_categories')" class="flex items-center gap-2.5">
+            <span class="text-[#4A6FF1] font-medium text-[14px] cursor-pointer w-fit border border-[#CECECE] ml-9.25 px-3.75 py-1 rounded-lg transition duration-300 hover:bg-[#CECECE20]">{{showAllFilter.companyCategory ? 'Скрыть' : 'Показать все'}}</span>
+          </div>
         }
       </div>
     </div>
     <div class="flex flex-col gap-2">
       <span class="text-lg font-bold">Теги</span>
-      <div>
+      <div class="flex flex-col gap-1.5">
         <li class="flex items-center gap-4.25">
           <input (change)="toggleSelectAll($event, 'tag_ids')" [checked]="tags().length && filterRequest.tag_ids.length === tags().length" type="checkbox" class="custom-checkbox">
           <div class="relative max-w-50 w-full">
@@ -29,14 +36,21 @@
             <i class="pi pi-search absolute top-1/2 right-4.5 transform -translate-y-1/2 text-(--text-color)"></i>
           </div>
         </li>
-        @for (tag of tags(); track $index) {
-        <mk-filter [id]="tag.id" [label]="tag.name" [filterRequestType]="'tag_ids'"></mk-filter>
+        <div class="max-h-70 overflow-auto">
+          @for (tag of (tags() | slice : 0 : (showAllFilter.companyTag ? tags().length : 5)); track $index) {
+            <mk-filter [id]="tag.id" [label]="tag.name" [filterRequestType]="'tag_ids'"></mk-filter>
+            }
+        </div>
+        @if (tags().length > 5) {
+          <div (click)="loadFilterWithoutLimit('company_tags')" class="flex items-center gap-2.5">
+            <span class="text-[#4A6FF1] font-medium text-[14px] cursor-pointer w-fit border border-[#CECECE] ml-9.25 px-3.75 py-1 rounded-lg transition duration-300 hover:bg-[#CECECE20]">{{showAllFilter.companyTag ? 'Скрыть' : 'Показать все'}}</span>
+          </div>
         }
       </div>
     </div>
     <div class="flex flex-col gap-2">
       <span class="text-lg font-bold">Регионы</span>
-      <div>
+      <div class="flex flex-col gap-1.5">
         <li class="flex items-center gap-4.25">
           <input (change)="toggleSelectAll($event, 'region_ids')" [checked]="regions().length && filterRequest.region_ids.length === regions().length" type="checkbox" class="custom-checkbox">
           <div class="relative max-w-50 w-full">
@@ -44,14 +58,21 @@
             <i class="pi pi-search absolute top-1/2 right-4.5 transform -translate-y-1/2 text-(--text-color)"></i>
           </div>
         </li>
-        @for (region of regions(); track $index) {
-        <mk-filter [id]="region.id" [label]="region.name" [filterRequestType]="'region_ids'"></mk-filter>
+        <div class="max-h-70 overflow-auto">
+          @for (region of (regions() | slice : 0 : (showAllFilter.region ? regions().length : 5)); track $index) {
+          <mk-filter [id]="region.id" [label]="region.name" [filterRequestType]="'region_ids'"></mk-filter>
+          }
+        </div>
+        @if (regions().length > 5) {
+          <div (click)="loadFilterWithoutLimit('regions')" class="flex items-center gap-2.5">
+            <span class="text-[#4A6FF1] font-medium text-[14px] cursor-pointer w-fit border border-[#CECECE] ml-9.25 px-3.75 py-1 rounded-lg transition duration-300 hover:bg-[#CECECE20]">{{showAllFilter.region ? 'Скрыть' : 'Показать все'}}</span>
+          </div>
         }
       </div>
     </div>
     <div class="flex flex-col gap-2">
       <span class="text-lg font-bold">Города</span>
-      <div>
+      <div class="flex flex-col gap-1.5">
         <li class="flex items-center gap-4.25">
           <input (change)="toggleSelectAll($event, 'city_ids')" [checked]="cities().length && filterRequest.city_ids.length === cities().length" type="checkbox" class="custom-checkbox">
           <div class="relative max-w-50 w-full">
@@ -59,8 +80,15 @@
             <i class="pi pi-search absolute top-1/2 right-4.5 transform -translate-y-1/2 text-(--text-color)"></i>
           </div>
         </li>
-        @for (city of cities(); track $index) {
-        <mk-filter [id]="city.id" [label]="city.name" [filterRequestType]="'city_ids'"></mk-filter>
+        <div class="max-h-70 overflow-auto">
+          @for (city of (cities() | slice : 0 : (showAllFilter.city ? cities().length : 5)); track $index) {
+          <mk-filter [id]="city.id" [label]="city.name" [filterRequestType]="'city_ids'"></mk-filter>
+          }
+        </div>
+        @if (cities().length > 5) {
+          <div (click)="loadFilterWithoutLimit('cities')" class="flex items-center gap-2.5">
+            <span class="text-[#4A6FF1] font-medium text-[14px] cursor-pointer w-fit border border-[#CECECE] ml-9.25 px-3.75 py-1 rounded-lg transition duration-300 hover:bg-[#CECECE20]">{{showAllFilter.city ? 'Скрыть' : 'Показать все'}}</span>
+          </div>
         }
       </div>
     </div>
