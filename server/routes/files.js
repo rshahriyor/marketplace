@@ -1,4 +1,4 @@
-const { uploadPhoto, getFiles } = require('../controllers/files');
+const { uploadFile, getFiles, deleteFile } = require('../controllers/files');
 const { responseSchema } = require('../utils/response');
 
 const fileSchema = {
@@ -32,12 +32,30 @@ const uploadFileOpts = {
             201: responseSchema(fileSchema)
         }
     },
-    handler: uploadPhoto
+    handler: uploadFile
 };
+
+const deleteFileOpts = {
+    schema: {
+        params: {
+            type: 'object',
+            properties: {
+                id: { type: 'number' }
+            },
+            required: ['id']
+        },
+        response: {
+            200: responseSchema({ type: 'object', properties: { id: { type: 'number' } } })
+        }
+    },
+    handler: deleteFile
+};
+
 
 function fileRoutes(fastify, options, done) {
     fastify.get('/files', getFilesOpts);
     fastify.post('/files/upload', uploadFileOpts);
+    fastify.delete('/files/:id', deleteFileOpts);
     done();
 }
 

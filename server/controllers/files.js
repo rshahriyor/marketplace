@@ -12,11 +12,31 @@ const getFiles = (req, reply) => {
     return sendResponse(reply, 200, 0, 'OK', files);
 }
 
+const deleteFile = (req, reply) => {
+    const { id } = req.params;
+    const file = db.prepare('SELECT * FROM files WHERE id = ?').get(id);
+
+    if (!file) {
+        return sendResponse(reply, 404, -1, 'NOT_FOUND', null, 'File not found');
+    }
+
+    // Удаляем файл с диска
+    const filePath = path.join(__dirname, '..', 'uploads', file.file_name);
+    if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+    }
+
+    // Удаляем запись из таблицы
+    db.prepare('DELETE FROM files WHERE id = ?').run(id);
+
+    return sendResponse(reply, 200, 0, 'DELETED', { id });
+};
+
 /**
  * POST /files/upload
  * file: photo
  */
-const uploadPhoto = async (req, reply) => {
+const uploadFile = async (req, reply) => {
     const data = await req.file();
 
     if (!data) {
@@ -53,5 +73,6 @@ const uploadPhoto = async (req, reply) => {
 
 module.exports = {
     getFiles,
-    uploadPhoto
+    uploadFile,
+    deleteFile
 };
