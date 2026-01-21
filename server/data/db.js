@@ -6,6 +6,7 @@ const db = new Database('db.sqlite');
 // db.prepare(`DROP TABLE IF EXISTS company_tags`).run();
 // db.prepare(`DROP TABLE IF EXISTS companies`).run();
 // db.prepare(`DROP TABLE IF EXISTS favorites`).run();
+// db.prepare(`DROP TABLE IF EXISTS files`).run();
 
 // companies
 db.prepare(`
@@ -41,6 +42,29 @@ db.prepare(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     category_id NUMBER NOT NULL
+  )
+`).run();
+
+// files
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS files (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    file_name TEXT NOT NULL,
+    original_name TEXT NOT NULL,
+    mime_type TEXT,
+    size INTEGER,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+  )
+`).run();
+
+// company_files (many-to-many relationship between companies and files)
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS company_files (
+    company_id NUMBER NOT NULL,
+    file_id NUMBER NOT NULL,
+    PRIMARY KEY (company_id, file_id),
+    FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE,
+    FOREIGN KEY (file_id) REFERENCES files(id) ON DELETE CASCADE
   )
 `).run();
 

@@ -28,14 +28,20 @@ const BASE_COMPANY_QUERY = `
         s.is_working_day AS schedule_is_working_day,
         s.is_day_and_night AS schedule_is_day_and_night,
         s.without_breaks AS schedule_without_breaks,
+        f.id AS file_id,
+        f.file_name AS file_name,
+        f.original_name AS file_original_name,
+        f.mime_type AS file_mime_type,
+        f.size AS file_size,
+        f.created_at AS file_created_at,
         sm.id AS social_media_id,
         sm.name AS social_media_name,
         sma.account_url AS social_media_account_url,
-        CASE WHEN f.id IS NOT NULL THEN 1 ELSE 0 END AS is_favorite,
+        CASE WHEN fav.id IS NOT NULL THEN 1 ELSE 0 END AS is_favorite,
         (
             SELECT COUNT(1)
-            FROM favorites fav
-            WHERE fav.company_id = c.id
+            FROM favorites fav2
+            WHERE fav2.company_id = c.id
         ) AS favorites_count
     FROM companies c
     JOIN categories cat ON cat.id = c.category_id
@@ -44,9 +50,11 @@ const BASE_COMPANY_QUERY = `
     LEFT JOIN regions r ON r.id = c.region_id
     LEFT JOIN cities ci ON ci.id = c.city_id
     LEFT JOIN schedules s ON s.company_id = c.id
+    LEFT JOIN company_files cf ON cf.company_id = c.id
+    LEFT JOIN files f ON f.id = cf.file_id
     LEFT JOIN social_media_accounts sma ON sma.company_id = c.id
     LEFT JOIN social_media sm ON sm.id = sma.social_media_id
-    LEFT JOIN favorites f ON f.company_id = c.id AND f.user_id = ?
+    LEFT JOIN favorites fav ON fav.company_id = c.id AND fav.user_id = ?
 `;
 const mapCompanies = (rows) => {
     const map = new Map();
@@ -61,6 +69,7 @@ const mapCompanies = (rows) => {
                 tags: [],
                 schedules: [],
                 social_media: [],
+                files: [],
                 region_id: row.region_id,
                 region_name: row.region_name,
                 city_id: row.city_id,
@@ -115,6 +124,17 @@ const mapCompanies = (rows) => {
                 social_media_id: row.social_media_id,
                 social_media_name: row.social_media_name,
                 account_url: row.social_media_account_url
+            });
+        }
+
+        if (row.file_id && !company.files.some(file => file.id === row.file_id)) {
+            company.files.push({
+                id: row.file_id,
+                file_name: row.file_name,
+                original_name: row.file_original_name,
+                mime_type: row.file_mime_type,
+                size: row.file_size,
+                created_at: row.file_created_at
             });
         }
     }
@@ -265,7 +285,7 @@ const getOwnCompanies = (req, reply) => {
 
 
 const addCompany = (req, reply) => {
-    const { name, category_id, tag_id, region_id, city_id, desc, phone_number, longitude, latitude, address, schedules, social_media, is_active } = req.body;
+    const { name, category_id, tag_id, region_id, city_id, desc, phone_number, longitude, latitude, address, schedules, social_media, is_active, file_ids } = req.body;
     const userId = req.user.userId;
 
     const search_name = name.toLocaleLowerCase('ru-RU');
@@ -315,6 +335,14 @@ const addCompany = (req, reply) => {
             }
         }
 
+        // Save company_files relations if file_ids provided
+        if (Array.isArray(file_ids)) {
+            const stmtFiles = db.prepare('INSERT INTO company_files (company_id, file_id) VALUES (?, ?)');
+            for (const fileId of file_ids) {
+                stmtFiles.run(companyId, fileId);
+            }
+        }
+
         return companyId;
     });
 
@@ -330,7 +358,7 @@ const addCompany = (req, reply) => {
 
 const updateCompany = (req, reply) => {
     const { id } = req.params;
-    const { name, category_id, tag_id, region_id, city_id, desc, phone_number, longitude, latitude, address, schedules, social_media, is_active } = req.body;
+    const { name, category_id, tag_id, region_id, city_id, desc, phone_number, longitude, latitude, address, schedules, social_media, is_active, file_ids } = req.body;
     const userId = req.user.userId;
 
     const companyCheck = db.prepare('SELECT created_by_user_id FROM companies WHERE id = ?').get(id);
@@ -395,6 +423,15 @@ const updateCompany = (req, reply) => {
             );
             for (const sm of social_media) {
                 stmtSocial.run(id, sm.social_media_id, sm.account_url);
+            }
+        }
+
+        // Update company_files relations: remove old and insert new if file_ids provided
+        db.prepare('DELETE FROM company_files WHERE company_id = ?').run(id);
+        if (Array.isArray(file_ids)) {
+            const stmtFiles = db.prepare('INSERT INTO company_files (company_id, file_id) VALUES (?, ?)');
+            for (const fileId of file_ids) {
+                stmtFiles.run(id, fileId);
             }
         }
     });

@@ -30,6 +30,17 @@ fastify.register(require('@fastify/cors'), {
     allowedHeaders: ['Content-Type', 'Authorization']
 });
 
+fastify.register(require('@fastify/multipart'), {
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5 MB (по желению)
+    }
+});
+
+fastify.register(require('@fastify/static'), {
+    root: require('path').join(__dirname, 'uploads'),
+    prefix: '/uploads/'
+});
+
 fastify.register(require('@fastify/jwt'), {
     secret: 'supersecret'
 });
@@ -54,6 +65,7 @@ fastify.register(require('./routes/users.js'));
 fastify.register(require('./routes/genders.js'));
 fastify.register(require('./routes/login.js'));
 fastify.register(require('./routes/social-media.js'));
+fastify.register(require('./routes/files.js'));
 
 const start = async () => {
     try {

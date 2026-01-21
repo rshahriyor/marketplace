@@ -56,7 +56,21 @@ const companySchema = {
         },
         is_favorite: { type: 'boolean' },
         favorites_count: { type: 'number' },
-        is_active: { type: 'boolean' }
+        is_active: { type: 'boolean' },
+        files: {
+            type: 'array',
+            items: { 
+                type: 'object', 
+                properties: {
+                    id: { type: 'number' },
+                    file_name: { type: 'string' },
+                    original_name: { type: 'string' },
+                    mime_type: { type: 'string' },
+                    size: { type: 'number' },
+                    created_at: { type: 'string' }
+                }
+            }
+        }
     }
 };
 
@@ -200,9 +214,14 @@ const postCompanyOpts = {
                         }
                     }
                 },
-                is_active: { type: 'boolean' }
+                is_active: { type: 'boolean' },
+                file_ids: {
+                    type: 'array',
+                    items: { type: 'number' },
+                    minItems: 0
+                }
             },
-            required: ['name', 'category_id', 'tag_id', 'region_id', 'city_id', 'desc', 'phone_number', 'latitude', 'longitude', 'address', 'schedules', 'social_media', 'is_active']
+            required: ['name', 'category_id', 'tag_id', 'region_id', 'city_id', 'desc', 'phone_number', 'latitude', 'longitude', 'address', 'schedules', 'social_media', 'is_active', 'file_ids']
         },
         response: {
             201: responseSchema(companySchema)
@@ -295,9 +314,14 @@ const putCompanyOpts = {
                         }
                     }
                 },
-                is_active: { type: 'boolean' }
+                is_active: { type: 'boolean' },
+                file_ids: {
+                    type: 'array',
+                    items: { type: 'number' },
+                    minItems: 0
+                }
             },
-            required: ['name', 'category_id', 'tag_id', 'region_id', 'city_id', 'desc', 'phone_number', 'latitude', 'longitude', 'address', 'schedules', 'social_media', 'is_active']
+            required: ['name', 'category_id', 'tag_id', 'region_id', 'city_id', 'desc', 'phone_number', 'latitude', 'longitude', 'address', 'schedules', 'social_media', 'is_active', 'file_ids']
         },
         response: {
             200: responseSchema(companySchema)
