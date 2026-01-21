@@ -6,7 +6,7 @@
             <i [class]="currentPage().icon" class="text-2xl"></i>
             {{currentPage().name}}
         </button>
-        @for (category of categories(); track $index) {
+        @for (category of (categories() | slice:0:categoryListCount); track $index) {
         <button [routerLink]="'/m-i/'" [queryParams]="{ category_ids: category.id }" class="group flex items-center gap-2 w-full min-h-12.5
              bg-white border-b border-[#EAEAEA]
              px-4 py-3 text-left break-all
@@ -17,5 +17,11 @@
             {{category.name}}
         </button>
         }
+        <button (click)="showMoreCategoryList()" class="flex items-center gap-2 w-full min-h-12.5 bg-white border-b border-[#EAEAEA] px-4 py-3 text-left break-all text-[16px] font-semibold text-black transition duration-200 hover:bg-(--bg-color)/80 hover:text-white cursor-pointer show-more">
+            <!-- <img [class.rotate]="isShowFullCategoryList" src="/assets/icons/angle-down.svg" alt="angle-down" width="22"
+                height="22" class="change-color-icon"> -->
+                <i class="pi pi-angle-down text-2xl duration-200" [ngClass]="{ 'rotate-180' : isShowFullCategoryList }"></i>
+            {{isShowFullCategoryList ? 'Меньше':'Еще'}}
+        </button>
     </div>
 </aside>

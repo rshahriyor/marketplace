@@ -94,7 +94,7 @@ export class CompanyForm implements OnInit {
     this.getCategoryOptions();
     this.getCityOptions();
     this.getRegionOptions();
-    this.getTagOptions();
+    this.checkCategoryOptions();
     if (this.companyId()) {
       this.getCompanyDetail();
     }
@@ -384,15 +384,29 @@ export class CompanyForm implements OnInit {
       });
   }
 
-  private getTagOptions(): void {
-    this.filterService.getTags()
+  private checkCategoryOptions(): void {
+    this.form.get('category_id')?.valueChanges
       .pipe(
         takeUntilDestroyed(this.destroyRef)
       )
-      .subscribe((res) => {
-        this.tagOptions = res.data;
-        this.tagOptionsClone = res.data.slice();
+      .subscribe((categoryId) => {
+        if (categoryId) {
+          this.getTagOptions(categoryId);
+        } else {
+          this.tagOptions = [];
+        }
       });
+  }
+
+  private getTagOptions(category_id: number): void {
+    this.filterService.getTagsByCategory({category_id})
+    .pipe(
+      takeUntilDestroyed(this.destroyRef)
+    )
+    .subscribe((res) => {
+      this.tagOptions = res.data;
+      this.tagOptionsClone = res.data.slice();
+    });
   }
 
   private getCompanyDetail(): void {

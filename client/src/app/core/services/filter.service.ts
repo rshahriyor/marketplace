@@ -29,6 +29,10 @@ export class FilterService {
         return this.http.get<IResponse<IFilter[]>>(`${API_URL}/tags`);
     }
 
+    getTagsByCategory(params: { category_id: number }): Observable<IResponse<IFilter[]>> {
+        return this.http.get<IResponse<IFilter[]>>(`${API_URL}/tags/by_category`, { params });
+    }
+
     getRegions(): Observable<IResponse<IFilter[]>> {
         return this.http.get<IResponse<IFilter[]>>(`${API_URL}/regions`);
     }
