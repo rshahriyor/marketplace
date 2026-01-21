@@ -15,8 +15,6 @@
                 </h1>
             </div>
 
-            <!-- MAIN IMAGE -->
-            <!-- @if (companyData().images?.length) { -->
             <div class="relative max-h-82.5">
                 <img [src]="`${imageUrl}/${mainImagePath()}`" (click)="expandImageToView(mainImagePath())"
                     (wheel)="onMainImageScroll($event)" class="cursor-pointer border border-[#D0D0D0] bg-[#F3F3F3]
@@ -33,19 +31,13 @@
                         </span>
                     </div>
 
-                    <!-- EXPAND -->
                     <button (click)="expandImageToView(mainImagePath())" class="flex justify-center items-center bg-white/70 p-2 rounded-[10px]
                        transition-transform duration-300 hover:scale-110 cursor-pointer">
                         <i class="pi pi-expand text-lg"></i>
                     </button>
                 </div>
             </div>
-            <!-- } @else {
-            <img src="/assets/card.jpg" class="border border-[#D0D0D0] bg-[#F3F3F3]
-                        object-cover max-w-[580px] w-full h-[330px] rounded-[15px]">
-            } -->
 
-            <!-- REST IMAGES -->
             <div class="flex gap-6 overflow-x-auto" (wheel)="onMouseWheel($event)">
                 @for (image of company().files; track $index) {
                 <img #restImage [src]="`${imageUrl}/${image.file_name}`" class="cursor-pointer border border-[#D0D0D0] bg-[#F3F3F3]
@@ -155,11 +147,11 @@
                 <p class="text-[27px] text-(--text-color) font-semibold my-0">Социальные сети:</p>
                 <div class="flex flex-wrap justify-between gap-5">
                     @for (sm of company()?.social_media; track $index) {
-                    <a [href]="sm.account_url" target="_blank"
+                    <a [href]="`${sm.url}/${sm.account_url}`" target="_blank"
                         class="flex items-center cursor-pointer gap-3 border border-(--body-bg-color) rounded-[18px] p-[12px_16px] max-w-65.25 w-full min-h-11 transition hover:bg-(--body-bg-color)">
                         <img [src]="sm.icon" [alt]="sm.social_media_name" width="19" height="19">
                         <span class="text-black/60 font-medium">
-                            {{sm.social_media_name}}
+                            {{sm.account_url}}
                         </span>
                     </a>
                     }

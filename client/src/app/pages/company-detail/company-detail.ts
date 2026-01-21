@@ -7,14 +7,13 @@ import { ICompany } from '../../core/models/company.model';
 import { Menu } from "../../shared/components/menu/menu";
 import { FormatPhonePipe } from "../../core/pipes/format-phone";
 import { DayOfWeekPipe } from "../../core/pipes/day-of-week";
-import { TooltipDirective } from '../../core/directives/tooltip.directive';
 import { environment } from '../../../environments/environment';
 
-const socialMediaIconsById: Record<number, string> = {
-  1: '/assets/social/instagram.svg',
-  2: '/assets/social/telegram.svg',
-  3: '/assets/social/whatsapp.svg',
-  4: '/assets/social/facebook.svg'
+const socialMediaIconsById: Record<number, {url: string, icon: string}> = {
+  1: {url: 'https://instagram.com', icon: '/assets/social/instagram.svg'},
+  2: {url: 'https://t.me', icon: '/assets/social/telegram.svg'},
+  3: {url: 'https://wa.me', icon: '/assets/social/whatsapp.svg'},
+  4: {url: 'https://facebook.com', icon: '/assets/social/facebook.svg'}
 };
 
 @Component({
@@ -152,13 +151,16 @@ export class CompanyDetail implements OnInit {
       this.company.set(company);
       this.schedule = company.schedules;
       this.calculateWorkingDay();
+      console.log(company);
+      
     })
   }
 
   private mapSocialMediaWithIcons(socialMedia: any[] = []): any[] {
     return socialMedia.map(sm => ({
       ...sm,
-      icon: socialMediaIconsById[sm.social_media_id]
+      icon: socialMediaIconsById[sm.social_media_id].icon,
+      url: socialMediaIconsById[sm.social_media_id].url
     }));
   }
 

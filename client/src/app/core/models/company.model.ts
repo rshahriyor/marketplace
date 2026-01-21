@@ -34,7 +34,8 @@ export interface ICompany {
         social_media_id?: number,
         social_media_name?: string,
         account_url?: string,
-        icon?: string
+        icon?: string,
+        url?: string
     }[]
 }
 
