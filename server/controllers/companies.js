@@ -157,6 +157,7 @@ const getCompanies = (req, reply) => {
 const getCompaniesByFilter = (req, reply) => {
     const { category_ids, tag_ids, region_ids, city_ids, is_favorite } = req.query;
     const userId = req.user?.userId ?? null;
+    const isFavoriteFlag = is_favorite === true || is_favorite === 'true';
 
     let sql = BASE_COMPANY_QUERY + ' WHERE 1=1 ';
     const params = [userId];
@@ -192,7 +193,7 @@ const getCompaniesByFilter = (req, reply) => {
         params.push(...ids);
     }
 
-    if (is_favorite === 'true') {
+    if (isFavoriteFlag) {
         sql += ` AND EXISTS (SELECT 1 FROM favorites f2 WHERE f2.user_id = ? AND f2.company_id = c.id)`;
         params.push(userId);
     }
