@@ -160,6 +160,7 @@ const getCompaniesByFilter = (req, reply) => {
     const isFavoriteFlag = is_favorite === true || is_favorite === 'true';
 
     let sql = BASE_COMPANY_QUERY + ' WHERE 1=1 ';
+    sql += ' AND c.is_active = 1';
     const params = [userId];
 
     if (category_ids) {
@@ -219,7 +220,7 @@ const searchCompanies = (req, reply) => {
     const rows = db.prepare(`
         ${BASE_COMPANY_QUERY}
         WHERE
-            c.search_name LIKE ?
+            c.search_name LIKE ? AND c.is_active = 1
         ORDER BY c.id
     `).all(userId, search);
 
@@ -229,7 +230,7 @@ const searchCompanies = (req, reply) => {
 
 const getCompaniesForMainPage = (req, reply) => {
     const userId = req.user?.userId ?? null;
-    const rows = db.prepare(BASE_COMPANY_QUERY).all(userId);
+    const rows = db.prepare(BASE_COMPANY_QUERY + ' WHERE c.is_active = 1').all(userId);
     const companies = mapCompanies(rows);
 
     const day = new Date().getDay();
