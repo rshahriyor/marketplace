@@ -78,9 +78,11 @@
       <div class="flex gap-5 flex-wrap">
         @for (item of imageList(); track $index) {
         <div class="relative">
-          <!-- @if(item.url.length) {
-          <img class="image__delete" src="/assets/icons/times.svg" (click)="deleteUplaodedImage(item.id)" />
-          } -->
+          @if(item.url.length) {
+            <div (click)="deleteUplaodedImage(item.id)" class="flex justify-center items-center w-7 h-7 absolute cursor-pointer -right-2.5 -top-2.5 z-10 bg-red-500 rounded-full">
+              <i class="pi pi-minus text-white"></i>
+            </div>
+          }
   
           <div class="w-45 h-27.5 bg-white rounded-xl flex items-center justify-center cursor-pointer relative overflow-hidden transition-[border] duration-300 ease-in-out" [ngClass]="{'unable__upload': item.url.length}"
             (click)="triggerFileInput(item.id)">

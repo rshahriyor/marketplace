@@ -138,27 +138,41 @@ export class CompanyForm implements OnInit {
     const formData = new FormData();
     this.selectedFiles.forEach((file) => {
       formData.append('files', file);
-      console.log(file);
     });
 
-    this.imageList.update((prev) => prev.map((img) => ({ ...img, loading: img.id === imageId })));
-
+    this.imageList.update((prev) => prev.map((img) => ({ ...img })));
 
     this.filesService.uploadFile(formData)
       .pipe(
-        finalize(() => this.imageList.update((list) => list.map((image) => ({ ...image, loading: false })))),
+        finalize(() => this.imageList.update((list) => list.map((image) => ({ ...image })))),
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe((res) => {
         console.log(res);
         if (res.status.code === StatusCodeEnum.SUCCESS) {
-          this.imageList.update((list) => list.map((image) => image.id === imageId ? ({ ...image, id: res.data.id, url: imageUrl, loading: false }) : { ...image, loading: false }));
+          this.imageList.update((list) => list.map((image) => image.id === imageId ? ({ ...image, id: res.data.id, url: imageUrl }) : { ...image }));
           this.uploadedImageCount++;
           if (this.uploadedImageCount >= 6) {
-            this.imageList.update((prev) => [...prev, { id: this.uploadedImageCount, url: '', loading: false }]);
+            this.imageList.update((prev) => [...prev, { id: this.uploadedImageCount, url: '' }]);
           }
         }
         this.uploadProgress.set(null);
+      });
+  }
+
+  deleteUplaodedImage(imageId: number): void {
+    this.filesService.deleteFile(imageId)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((res: any) => {
+        if (res.status.code === StatusCodeEnum.SUCCESS) {
+          this.imageList.update((prev) => prev.map((image) => image.id === imageId ? ({ ...image, url: '' }) : image));
+          if (this.uploadedImageCount >= 6) {
+            this.imageList.update((prev) => prev.slice(0, -1));
+          }
+          this.uploadedImageCount--;
+        }
       });
   }
 

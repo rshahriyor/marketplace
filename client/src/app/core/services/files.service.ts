@@ -17,4 +17,8 @@ export class FilesService {
         return this.http.post<IResponse<any>>(`${API_URL}/upload`, formData);
     }
 
+    deleteFile(fileId: number): Observable<IResponse<any>> {
+        return this.http.delete<IResponse<any>>(`${API_URL}/${fileId}`);
+    }
+
 }

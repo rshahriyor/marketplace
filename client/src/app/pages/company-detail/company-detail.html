@@ -173,9 +173,8 @@
     class="w-screen h-screen bg-[#000000de] fixed top-0 left-0 z-9999 flex justify-center items-center">
     <img #expandedImage [src]="expandedImageSrc" alt="expanded-image" class="w-fit h-[98vh] object-contain"
         (click)="$event.stopPropagation(); changeExpandedImage($event)" (wheel)="onExpandedImageScroll($event)">
-    <!-- <img src="/assets/icons/close.svg" alt="close-icon"  class="close-expanded-image" width="31" height="31"> -->
-    <div class="flex justify-center items-center h-7.75 w-7.75 absolute top-2.5 right-2.5 cursor-pointer bg-[#FFFFFFB2] rounded-xl border-0 duration-200 scale-105">
-        <i class="pi pi-times text-white"
+    <div class="flex justify-center items-center h-7.75 w-7.75 absolute top-2.5 right-2.5 cursor-pointer bg-[#FFFFFFB2] rounded-xl border-0 transition-transform duration-300 hover:scale-110">
+        <i class="pi pi-times text-(--text-color)"
             (click)="closeExpandedImage()"></i>
     </div>
 </div>
