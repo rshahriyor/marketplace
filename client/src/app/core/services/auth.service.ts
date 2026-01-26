@@ -17,6 +17,10 @@ export class AuthService {
         return this.http.post<IResponse<{ code: number, token: string, message: string }>>(API_URL, { username, password });
     }
 
+    clearTokens(): void {
+        localStorage.clear();
+    }
+
     get accessToken(): string {
         return localStorage.getItem('token');
     }
