@@ -6,10 +6,11 @@ import { AuthService } from '../../../core/services/auth.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs';
 import { StatusCodeEnum } from '../../../core/enums/status-code.enum';
+import { Logo } from '../../../shared/components/logo/logo';
 
 @Component({
   selector: 'mk-login',
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, Logo],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })

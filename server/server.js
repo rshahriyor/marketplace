@@ -26,6 +26,7 @@ fastify.register(require('@fastify/swagger-ui'), {
 
 fastify.register(require('@fastify/cors'), {
     origin: 'http://localhost:4200',
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 });

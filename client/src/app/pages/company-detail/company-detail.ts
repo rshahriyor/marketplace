@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, DestroyRef, ElementRef, inject, OnInit, QueryList, signal, ViewChild, ViewChildren, WritableSignal } from '@angular/core';
+import { Component, computed, DestroyRef, ElementRef, inject, QueryList, signal, ViewChild, ViewChildren, WritableSignal } from '@angular/core';
 import { CompaniesService } from '../../core/services/companies.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
@@ -22,7 +22,7 @@ const socialMediaIconsById: Record<number, {url: string, icon: string}> = {
   templateUrl: './company-detail.html',
   styleUrl: './company-detail.css',
 })
-export class CompanyDetail implements OnInit {
+export class CompanyDetail {
   @ViewChild('scrollCompanyRestImages') scrollCompanyRestImages: ElementRef<HTMLDivElement>;
   @ViewChildren('restImage') restImages: QueryList<ElementRef<HTMLImageElement>>;
 
@@ -62,12 +62,10 @@ export class CompanyDetail implements OnInit {
   private activeRoute = inject(ActivatedRoute);
   
   constructor() {
-    const { id } = this.activeRoute.snapshot.params;
-    this.companyId.set(id);
-  }
-
-  ngOnInit(): void {
-    this.getCompanyDetail();
+    this.activeRoute.params.subscribe(params => {
+      this.companyId.set(params['id']);
+      this.getCompanyDetail();
+    });
   }
 
   expandImageToView(path: string) {

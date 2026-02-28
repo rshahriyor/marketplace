@@ -1,7 +1,7 @@
 <header class="container max-w-295 mx-auto">
     <div class="flex items-center justify-between gap-5 pt-5">
         <div [routerLink]="'/'" class="logo max-w-70 w-full cursor-pointer">
-            <img src="/assets/header-logo.svg" alt="logo">
+            <mk-logo class="w-full text-[35px] text-(--text-color)"></mk-logo>
         </div>
         <div (mkClickOutside)="showSearchDropdown.set(false)" class="filter max-w-145 w-full relative">
             <input (focus)="showSearchDropdown.set(true)" [formControl]="searchFormControl" type="text" placeholder="Поиск"

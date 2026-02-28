@@ -3,7 +3,7 @@
 
     <!-- Logo -->
     <div class="flex justify-center items-center cursor-pointer" [routerLink]="['/']">
-        <img src="/assets/footer-logo.svg" alt="">
+        <mk-logo class="w-fit text-[50px] text-white" childClass="text-blue-400"></mk-logo>
     </div>
 
     <!-- Content -->
@@ -25,7 +25,7 @@
                     <input id="login" type="text" formControlName="username" placeholder="Введите логин"
                         [ngClass]="{ 'border-2 border-orange-400': isWrongCredentials }" class="w-full max-w-105 h-13.75
                      pl-14.5 pr-4 py-3.5
-                     rounded-md outline-none
+                     rounded-2xl outline-none
                      bg-white/40 text-white text-[16px]
                      placeholder-white/70 placeholder:font-semibold" />
                     <i class="pi pi-user text-2xl absolute left-4 top-1/2 -translate-y-[50%] text-white/70"></i>
@@ -42,7 +42,7 @@
                     <input id="password" type="password" formControlName="password" placeholder="Введите пароль"
                         [ngClass]="{ 'border-2 border-orange-400': isWrongCredentials }" class="w-full max-w-105 h-13.75
                      pl-14.5 pr-4 py-3.5
-                     rounded-md outline-none
+                     rounded-2xl outline-none
                      bg-white/40 text-white text-[16px]
                      placeholder-white/70 placeholder:font-semibold" />
 
@@ -61,7 +61,7 @@
             <!-- Button -->
             <div class="relative mt-6.5">
                 <button type="submit" [disabled]="form.invalid || loading()" class="w-full max-w-105 h-13.75
-                   rounded-[10px]
+                   rounded-2xl
                    bg-white text-[#6600FF]
                    text-[23px] font-medium
                    transition

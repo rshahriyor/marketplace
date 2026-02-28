@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Logo } from "../../shared/components/logo/logo";
 
 interface IMenuItem {
   label?: string;
@@ -13,7 +14,7 @@ interface IMenuItem {
 
 @Component({
   selector: 'mk-footer',
-  imports: [],
+  imports: [Logo],
   templateUrl: './footer.html',
   styleUrl: './footer.css',
 })

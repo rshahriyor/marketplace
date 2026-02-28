@@ -6,10 +6,11 @@ import { CompaniesService } from '../../core/services/companies.service';
 import { ICompany } from '../../core/models/company.model';
 import { NgTemplateOutlet } from '@angular/common';
 import { ClickOutsideDirective } from "../../core/directives/click-outside.directive";
+import { Logo } from "../../shared/components/logo/logo";
 
 @Component({
   selector: 'mk-header',
-  imports: [RouterLink, ReactiveFormsModule, NgTemplateOutlet, ClickOutsideDirective],
+  imports: [RouterLink, ReactiveFormsModule, NgTemplateOutlet, ClickOutsideDirective, Logo],
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
